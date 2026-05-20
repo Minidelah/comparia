@@ -29,10 +29,12 @@ export default function AdminAwinImportButton() {
 
     try {
       const token = new URLSearchParams(window.location.search).get("token");
-      const endpoint = token ? `/api/admin/awin/import?token=${encodeURIComponent(token)}` : "/api/admin/awin/import";
-      const response = await fetch(endpoint, {
+      const response = await fetch("/api/admin/awin/import", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({ dryRun: false }),
       });
       const payload = await response.json().catch(() => ({}));

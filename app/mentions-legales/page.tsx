@@ -56,7 +56,8 @@ export default function LegalNoticePage() {
 
       <h2>Propriété intellectuelle</h2>
       <p>
-        Les textes, interfaces, visuels, composants et éléments de marque de Comparia sont protégés. Les marques et logos de partenaires appartiennent à leurs
+        Les textes, interfaces, visuels, composants, bases de données, tunnels de comparaison et éléments de marque de Comparia sont protégés. Toute reproduction,
+        extraction automatisée, copie substantielle ou réutilisation non autorisée est interdite. Les marques et logos de partenaires appartiennent à leurs
         propriétaires respectifs et peuvent être utilisés à titre d’identification ou dans le cadre de relations d’affiliation.
       </p>
 

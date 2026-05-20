@@ -273,9 +273,9 @@ export default function ComparatorWizard({ category }: { category: Category }) {
           </p>
           {leadState === "local" && leadError && (
             <div className="mt-4 rounded-2xl border border-amber-300/30 bg-amber-300/10 p-4 text-sm leading-6 text-amber-100">
-              <p className="font-semibold">Diagnostic Supabase</p>
+              <p className="font-semibold">Sauvegarde non confirmée</p>
               <p className="mt-1">{leadError}</p>
-              <p className="mt-2 text-amber-100/80">Ouvre <code className="rounded bg-black/20 px-1">/api/debug/supabase</code> pour voir le statut de connexion.</p>
+              <p className="mt-2 text-amber-100/80">Le comparatif reste utilisable. Vérifie le dashboard admin si le problème persiste.</p>
             </div>
           )}
           <div className="mt-4 flex flex-wrap gap-2">

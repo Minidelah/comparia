@@ -468,7 +468,8 @@ function normalizeSearchText(value: unknown) {
 
 function normalizeDestinationUrl(value?: string) {
   if (!value) return null;
-  if (value.startsWith("http://") || value.startsWith("https://")) return value;
+  if (value.startsWith("https://")) return value;
+  if (value.startsWith("http://")) return value.replace(/^http:\/\//, "https://");
   return `https://${value.replace(/^\/+/, "")}`;
 }
 
@@ -493,7 +494,7 @@ function isAwinProgramme(value: unknown): value is AwinProgramme {
 }
 
 function isSafeUrl(value: string) {
-  return value.startsWith("https://") || value.startsWith("http://");
+  return value.startsWith("https://");
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

@@ -1,28 +1,38 @@
 import { createSupabaseAdminClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { enforceSameOrigin, isSafeSlug, rateLimit, rejectLargeRequest, sanitizeMetadata, sanitizeText, secureJson } from "@/lib/security/request";
 
 export async function POST(request: Request) {
+  const blockedOrigin = enforceSameOrigin(request);
+  if (blockedOrigin) return blockedOrigin;
+
+  const tooLarge = rejectLargeRequest(request, 20_000);
+  if (tooLarge) return tooLarge;
+
+  const limited = rateLimit(request, { key: "leads", limit: 25, windowMs: 60 * 1000 });
+  if (limited) return limited;
+
   const body = await request.json().catch(() => null);
 
   if (!body || typeof body !== "object") {
-    return Response.json({ error: "invalid_payload" }, { status: 400 });
+    return secureJson({ error: "invalid_payload" }, { status: 400 });
   }
 
-  const email = getString(body, "email").trim();
-  const phone = getString(body, "phone").trim();
-  const firstName = getString(body, "firstName").trim();
-  const categorySlug = getString(body, "categorySlug");
+  const email = getString(body, "email", 254).toLowerCase();
+  const phone = getString(body, "phone", 40);
+  const firstName = getString(body, "firstName", 80);
+  const categorySlug = getString(body, "categorySlug", 80);
   const rawAnswers = "answers" in body ? (body as Record<string, unknown>).answers : null;
-  const answers = Array.isArray(rawAnswers) ? rawAnswers.filter((item: unknown): item is string => typeof item === "string") : [];
+  const answers = Array.isArray(rawAnswers) ? rawAnswers.filter((item: unknown): item is string => typeof item === "string").slice(0, 30).map((item) => sanitizeText(item, 120)) : [];
   const consentContact = "consentContact" in body && body.consentContact === true;
   const intentScore = "intentScore" in body && typeof body.intentScore === "number" ? Math.max(0, Math.min(100, Math.round(body.intentScore))) : null;
-  const metadata = isRecord(body) && isRecord(body.metadata) ? body.metadata : {};
+  const metadata = isRecord(body) && isRecord(body.metadata) ? sanitizeMetadata(body.metadata) : {};
 
-  if (!isValidEmail(email) || !isValidPhone(phone) || !categorySlug || !consentContact) {
-    return Response.json({ error: "invalid_payload" }, { status: 400 });
+  if (!isValidEmail(email) || !isValidPhone(phone) || !isSafeSlug(categorySlug) || !consentContact) {
+    return secureJson({ error: "invalid_payload" }, { status: 400 });
   }
 
   if (!isSupabaseConfigured()) {
-    return Response.json({ ok: true, persisted: false, reason: "supabase_not_configured" });
+    return secureJson({ ok: true, persisted: false, reason: "supabase_not_configured" });
   }
 
   const supabase = createSupabaseAdminClient();
@@ -36,8 +46,8 @@ export async function POST(request: Request) {
     intent_score: intentScore,
     metadata: {
       ...metadata,
-      userAgent: request.headers.get("user-agent"),
-      referrer: request.headers.get("referer"),
+      userAgent: sanitizeText(request.headers.get("user-agent") ?? "", 300),
+      referrer: sanitizeText(request.headers.get("referer") ?? "", 500),
     },
     source: "comparator_wizard",
   };
@@ -45,7 +55,7 @@ export async function POST(request: Request) {
   const richInsert = await supabase.from("leads").insert(richPayload).select("id").single();
 
   if (!richInsert.error) {
-    return Response.json({ ok: true, persisted: true, leadId: richInsert.data?.id });
+    return secureJson({ ok: true, persisted: true, leadId: richInsert.data?.id });
   }
 
   if (isMissingColumnError(richInsert.error)) {
@@ -62,28 +72,19 @@ export async function POST(request: Request) {
       .single();
 
     if (!fallbackInsert.error) {
-      return Response.json({ ok: true, persisted: true, leadId: fallbackInsert.data?.id, downgraded: true });
+      return secureJson({ ok: true, persisted: true, leadId: fallbackInsert.data?.id, downgraded: true });
     }
 
     console.error("Failed to persist lead fallback", fallbackInsert.error);
-    return Response.json({ ok: true, persisted: false, reason: "persistence_failed", details: sanitizeError(fallbackInsert.error) }, { status: 202 });
+    return secureJson({ ok: true, persisted: false, reason: "persistence_failed" }, { status: 202 });
   }
 
   console.error("Failed to persist lead", richInsert.error);
-  return Response.json({ ok: true, persisted: false, reason: "persistence_failed", details: sanitizeError(richInsert.error) }, { status: 202 });
+  return secureJson({ ok: true, persisted: false, reason: "persistence_failed" }, { status: 202 });
 }
 
-function sanitizeError(error: { code?: string; message?: string; details?: string; hint?: string }) {
-  return {
-    code: error.code,
-    message: error.message,
-    details: error.details,
-    hint: error.hint,
-  };
-}
-
-function getString(body: object, key: string) {
-  return key in body && typeof (body as Record<string, unknown>)[key] === "string" ? ((body as Record<string, string>)[key] ?? "") : "";
+function getString(body: object, key: string, maxLength: number) {
+  return key in body && typeof (body as Record<string, unknown>)[key] === "string" ? sanitizeText(String((body as Record<string, unknown>)[key]), maxLength) : "";
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -96,9 +97,10 @@ function isMissingColumnError(error: { code?: string; message?: string }) {
 }
 
 function isValidEmail(value: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  return value.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
 function isValidPhone(value: string) {
-  return value.replace(/\D/g, "").length >= 10;
+  const digits = value.replace(/\D/g, "");
+  return digits.length >= 10 && digits.length <= 15;
 }

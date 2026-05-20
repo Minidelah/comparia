@@ -163,6 +163,6 @@ function normalizeBadge(value?: string): OfferBadge {
 
 function normalizeUrl(value: string | null) {
   if (!value) return undefined;
-  if (value.startsWith("https://") || value.startsWith("http://") || value.startsWith("/")) return value;
+  if (value.startsWith("https://") || value.startsWith("/")) return value;
   return undefined;
 }

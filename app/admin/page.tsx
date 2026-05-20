@@ -1,10 +1,19 @@
+import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import AdminAwinImportButton from "@/components/AdminAwinImportButton";
 import SiteNav from "@/components/SiteNav";
 import SiteFooter from "@/components/SiteFooter";
 import { createSupabaseAdminClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { ADMIN_SESSION_COOKIE, isAdminSessionToken, isSecretEqual } from "@/lib/security/request";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Admin — Comparia",
+  robots: { index: false, follow: false, googleBot: { index: false, follow: false } },
+};
 
 type AdminSearchParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -65,7 +74,15 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
   const token = getParam(params.token);
   const expectedToken = process.env.ADMIN_DASHBOARD_TOKEN;
   const isProduction = process.env.NODE_ENV === "production";
-  const allowed = expectedToken ? token === expectedToken : !isProduction;
+  const cookieStore = await cookies();
+  const sessionToken = cookieStore.get(ADMIN_SESSION_COOKIE)?.value ?? "";
+  const queryTokenIsValid = expectedToken ? isSecretEqual(token ?? "", expectedToken) : false;
+
+  if (queryTokenIsValid) {
+    redirect(`/admin/session?token=${encodeURIComponent(token ?? "")}`);
+  }
+
+  const allowed = expectedToken ? isAdminSessionToken(sessionToken, expectedToken) : !isProduction;
 
   if (!allowed) {
     return <LockedAdmin expectedTokenConfigured={Boolean(expectedToken)} />;
@@ -278,7 +295,7 @@ function LockedAdmin({ expectedTokenConfigured }: { expectedTokenConfigured: boo
         <h1 className="mt-3 text-3xl font-semibold">Dashboard verrouillé.</h1>
         <p className="mt-4 text-sm leading-6 text-amber-100/80">
           {expectedTokenConfigured
-            ? "Ajoute ?token=TON_TOKEN_ADMIN à l’URL pour ouvrir le dashboard."
+            ? "Ajoute ?token=TON_TOKEN_ADMIN une seule fois : Comparia créera ensuite une session admin sécurisée."
             : "En production, configure ADMIN_DASHBOARD_TOKEN dans tes variables d’environnement avant d’ouvrir cette page."}
         </p>
       </section>
