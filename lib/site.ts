@@ -1,9 +1,9 @@
 export const siteConfig = {
   name: "Comparia",
   tagline: "Comparateurs intelligents",
-  url: process.env.NEXT_PUBLIC_SITE_URL || "https://comparia.fr",
-  contactEmail: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "contact@comparia.fr",
-  privacyEmail: process.env.NEXT_PUBLIC_PRIVACY_EMAIL || "privacy@comparia.fr",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.comparetesfactures.fr",
+  contactEmail: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "contact@comparetesfactures.fr",
+  privacyEmail: process.env.NEXT_PUBLIC_PRIVACY_EMAIL || "privacy@comparetesfactures.fr",
   legal: {
     editorName: process.env.NEXT_PUBLIC_LEGAL_EDITOR_NAME || "ELGH",
     editorStatus: process.env.NEXT_PUBLIC_LEGAL_EDITOR_STATUS || "Éditeur indépendant de Comparia",
