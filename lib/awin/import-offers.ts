@@ -432,7 +432,7 @@ function buildAwinUrl(pathname: string, token: string, params: Record<string, st
 }
 
 function buildOfferDescription(categoryTitle: string, provider: string) {
-  return `Offre ${categoryTitle.toLowerCase()} récupérée depuis Awin pour tester une conversion réelle avec ${provider}.`;
+  return `Compare une offre ${categoryTitle.toLowerCase()} proposée par ${provider}. Vérifie les garanties, le prix final et les conditions avant de souscrire.`;
 }
 
 function countByCategory(offers: { category: string }[]) {

@@ -24,7 +24,7 @@ export default function GatedOffers({ categorySlug, categoryTitle, categorySavin
               categorySlug,
               badge: "Meilleur choix" as const,
               title: `Meilleure offre ${categoryTitle.toLowerCase()}`,
-              description: "Le choix à mettre en avant quand les partenaires réels seront connectés.",
+              description: "Une offre à comparer selon ton profil, tes besoins et les conditions affichées avant souscription.",
               annualSavings: categorySaving,
             },
           ],
@@ -111,7 +111,7 @@ export default function GatedOffers({ categorySlug, categoryTitle, categorySavin
           <h2 className="mt-3 text-3xl font-semibold">Choisis avec le moins de friction possible.</h2>
         </div>
         <p className="max-w-xl text-sm leading-6 text-slate-400">
-          Les emplacements d’offres sont prêts pour accueillir tes partenaires réels, tes liens affiliés et tes tests de conversion.
+          Les offres sont classées pour t’aider à comparer vite : économies estimées, profil compatible et activation simple.
         </p>
       </div>
       <div className="mt-5 grid gap-4 lg:grid-cols-3">
