@@ -125,7 +125,9 @@ const CATEGORY_RULES: CategoryRule[] = [
   },
   {
     slug: "change-chf-eur",
-    keywords: ["change", "devise", "currency", "forex", "transfert argent", "money transfer", "chf", "eur"],
+    keywords: ["change chf", "chf eur", "frontalier", "devise", "currency exchange", "forex", "transfert argent", "money transfer", "chf", "wise", "revolut"],
+    negativeKeywords: ["chien", "chat", "animal", "animaux", "pet", "vétérinaire", "veterinaire", "dépannage", "depannage", "plomberie"],
+    minimumScore: 2,
   },
 ];
 

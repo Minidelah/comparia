@@ -196,6 +196,36 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="px-5 pb-14 sm:px-8 lg:px-10">
+        <div className="mx-auto max-w-7xl overflow-hidden rounded-[2rem] border border-emerald-300/15 bg-gradient-to-br from-emerald-400/[0.10] via-cyan-400/[0.06] to-blue-500/[0.08] p-6 sm:p-8">
+          <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300/30 bg-emerald-300/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200">
+                <CompariaIcon name="cashback" className="h-4 w-4" />
+                Cashback prêt à brancher
+              </div>
+              <h2 className="mt-4 text-3xl font-bold sm:text-4xl">Transforme chaque économie en action mesurable.</h2>
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
+                Les offres sont déjà structurées pour gérer cashback, priorité, note, tags et lien affilié. Quand un partenaire propose une récompense,
+                Comparia peut l’afficher proprement sans mélanger recommandation objective et rémunération.
+              </p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {[
+                ["Cashback", "Montant isolé et lisible avant le clic."],
+                ["Affiliation", "Clics trackés avec catégorie, source et horodatage."],
+                ["Priorité", "Les offres restent classées selon l’intérêt utilisateur."],
+              ].map(([title, body]) => (
+                <article key={title} className="rounded-2xl border border-white/10 bg-slate-950/60 p-5">
+                  <p className="text-lg font-bold text-white">{title}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section id="fonctionnement" className="px-5 pb-14 sm:px-8 lg:px-10">
         <div className="mx-auto max-w-7xl">
           <div className="mb-10">

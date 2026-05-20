@@ -1,5 +1,7 @@
 "use client";
 
+import { trackAffiliateClick } from "@/lib/affiliate/tracking";
+
 type Props = {
   offerId: string;
   categorySlug?: string;
@@ -11,27 +13,12 @@ export default function AffiliateCTA({ offerId, categorySlug, href = "/onboardin
   async function handleClick() {
     const lead = categorySlug ? readLead(categorySlug) : null;
 
-    await fetch("/api/affiliate/click", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        offerId,
-        categorySlug,
-        leadId: lead?.leadId,
-        sourceScreen: "comparator_detail",
-      }),
-    }).catch(() => null);
-
-    await fetch("/api/events", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        eventName: "affiliate_cta_clicked",
-        categorySlug,
-        leadId: lead?.leadId,
-        meta: { offerId },
-      }),
-      keepalive: true,
+    await trackAffiliateClick({
+      offerId,
+      category: categorySlug,
+      affiliateLink: href,
+      leadId: lead?.leadId,
+      source: "comparator_detail",
     }).catch(() => null);
 
     window.location.href = href;
@@ -43,7 +30,6 @@ export default function AffiliateCTA({ offerId, categorySlug, href = "/onboardin
     </button>
   );
 }
-
 
 function readLead(categorySlug: string) {
   try {

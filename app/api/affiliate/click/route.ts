@@ -18,9 +18,12 @@ export async function POST(request: Request) {
   }
 
   const offerId = getString(body, "offerId", 120);
-  const categorySlug = getString(body, "categorySlug", 80);
+  const categorySlug = getString(body, "categorySlug", 80) || getString(body, "category", 80);
   const leadId = getString(body, "leadId", 80);
-  const sourceScreen = getString(body, "sourceScreen", 80);
+  const sourceScreen = getString(body, "sourceScreen", 80) || getString(body, "source", 80);
+  const affiliateLink = getString(body, "affiliateLink", 1000);
+  const timestamp = getString(body, "timestamp", 80);
+  const userId = getString(body, "userId", 80);
 
   if (!offerId || !sourceScreen || (categorySlug && !isSafeSlug(categorySlug))) {
     return secureJson({ error: "invalid_payload" }, { status: 400 });
@@ -37,6 +40,10 @@ export async function POST(request: Request) {
       offer_slot_id: offerId,
       category_slug: categorySlug || null,
       lead_id: isUuidLike(leadId) ? leadId : null,
+      user_id_hint: isUuidLike(userId) ? userId : null,
+      affiliate_link: isSafeAffiliateLink(affiliateLink) ? affiliateLink : null,
+      affiliate_domain: getDomain(affiliateLink),
+      client_timestamp: isSafeTimestamp(timestamp) ? timestamp : null,
     },
   });
 
@@ -54,4 +61,23 @@ function getString(body: object, key: string, maxLength: number) {
 
 function isUuidLike(value: string) {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+}
+
+function isSafeAffiliateLink(value: string) {
+  return value.startsWith("https://") || value.startsWith("/");
+}
+
+function isSafeTimestamp(value: string) {
+  if (!value) return false;
+  const date = new Date(value);
+  return Number.isFinite(date.getTime());
+}
+
+function getDomain(value: string) {
+  if (!value || value.startsWith("/")) return null;
+  try {
+    return new URL(value).hostname.replace(/^www\./, "");
+  } catch {
+    return null;
+  }
 }
