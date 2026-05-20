@@ -37,6 +37,29 @@ type AffiliateClickRow = {
   meta: Record<string, unknown> | null;
 };
 
+type TrafficDay = {
+  key: string;
+  label: string;
+  visitors: number;
+  pageViews: number;
+};
+
+type TrafficPage = {
+  path: string;
+  visitors: number;
+  pageViews: number;
+};
+
+type TrafficAnalytics = {
+  todayVisitors: number;
+  sevenDayVisitors: number;
+  thirtyDayVisitors: number;
+  monthVisitors: number;
+  thirtyDayPageViews: number;
+  daily: TrafficDay[];
+  topPages: TrafficPage[];
+};
+
 export default async function AdminPage({ searchParams }: { searchParams: AdminSearchParams }) {
   const params = await searchParams;
   const token = getParam(params.token);
@@ -55,6 +78,8 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
   const supabase = createSupabaseAdminClient();
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
+  const ninetyDaysStart = new Date(todayStart);
+  ninetyDaysStart.setDate(todayStart.getDate() - 90);
 
   const [
     leadsResult,
@@ -67,6 +92,7 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
     capturedCountResult,
     unlockedCountResult,
     clicksCountResult,
+    pageViewsResult,
   ] = await Promise.all([
     supabase.from("leads").select("id,email,phone,first_name,consent_contact,category_slug,answer_snapshot,intent_score,source,created_at").order("created_at", { ascending: false }).limit(80),
     supabase.from("funnel_events").select("id,event_name,category_slug,lead_id,meta,created_at").order("created_at", { ascending: false }).limit(120),
@@ -78,12 +104,20 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
     supabase.from("funnel_events").select("id", { count: "exact", head: true }).eq("event_name", "lead_captured"),
     supabase.from("funnel_events").select("id", { count: "exact", head: true }).eq("event_name", "offers_unlocked"),
     supabase.from("affiliate_clicks").select("id", { count: "exact", head: true }),
+    supabase
+      .from("funnel_events")
+      .select("id,event_name,category_slug,lead_id,meta,created_at")
+      .eq("event_name", "page_view")
+      .gte("created_at", ninetyDaysStart.toISOString())
+      .order("created_at", { ascending: false })
+      .limit(5000),
   ]);
 
   const leads = (leadsResult.data ?? []) as LeadRow[];
   const events = (eventsResult.data ?? []) as FunnelEventRow[];
   const clicks = (clicksResult.data ?? []) as AffiliateClickRow[];
-  const errors = [leadsResult.error, eventsResult.error, clicksResult.error]
+  const pageViews = (pageViewsResult.data ?? []) as FunnelEventRow[];
+  const errors = [leadsResult.error, eventsResult.error, clicksResult.error, pageViewsResult.error]
     .filter(Boolean)
     .map((error) => error?.message)
     .filter(Boolean) as string[];
@@ -97,6 +131,7 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
   const affiliateClicks = clicksCountResult.count ?? clicks.length;
   const categories = buildCategoryStats(leads);
   const averageIntent = calculateAverageIntent(leads);
+  const traffic = buildTrafficAnalytics(pageViews);
 
   return (
     <main className="min-h-screen bg-[#05070d] px-5 py-6 text-white sm:px-8">
@@ -134,6 +169,19 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
         )}
 
         <section className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+          <AdminMetric label="Visiteurs aujourd’hui" value={String(traffic.todayVisitors)} tone="cyan" />
+          <AdminMetric label="Visiteurs 7 jours" value={String(traffic.sevenDayVisitors)} tone="emerald" />
+          <AdminMetric label="Visiteurs 30 jours" value={String(traffic.thirtyDayVisitors)} tone="blue" />
+          <AdminMetric label="Visiteurs ce mois" value={String(traffic.monthVisitors)} tone="purple" />
+          <AdminMetric label="Pages vues 30j" value={String(traffic.thirtyDayPageViews)} tone="amber" />
+        </section>
+
+        <section className="mt-5 grid gap-5 xl:grid-cols-[1.2fr_0.8fr]">
+          <TrafficTimeline days={traffic.daily} />
+          <TopPages pages={traffic.topPages} />
+        </section>
+
+        <section className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
           <AdminMetric label="Leads total" value={String(totalLeads)} tone="cyan" />
           <AdminMetric label="Leads aujourd’hui" value={String(leadsToday)} tone="emerald" />
           <AdminMetric label="Score moyen" value={averageIntent ? `${averageIntent}/100` : "—"} tone="blue" />
@@ -146,13 +194,13 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
             <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Tunnel</p>
             <h2 className="mt-3 text-2xl font-semibold">Où les utilisateurs avancent.</h2>
             <div className="mt-6 space-y-4">
-              <FunnelBar label="Pages vues" value={views} max={Math.max(views, 1)} />
+              <FunnelBar label="Comparateurs vus" value={views} max={Math.max(views, 1)} />
               <FunnelBar label="Formulaires soumis" value={submits} max={Math.max(views, submits, 1)} />
               <FunnelBar label="Leads capturés" value={captured} max={Math.max(views, captured, 1)} />
               <FunnelBar label="Offres débloquées" value={unlocked} max={Math.max(captured, unlocked, 1)} />
             </div>
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              <RateCard label="Vue → lead" value={rate(captured, views)} />
+              <RateCard label="Comparateur → lead" value={rate(captured, views)} />
               <RateCard label="Lead → offres" value={rate(unlocked, captured)} />
             </div>
           </div>
@@ -311,6 +359,80 @@ function CategoryRow({ slug, count, total }: { slug: string; count: number; tota
   );
 }
 
+function TrafficTimeline({ days }: { days: TrafficDay[] }) {
+  const max = Math.max(...days.map((day) => day.pageViews), 1);
+
+  return (
+    <section className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-cyan-400/10 to-blue-500/10 p-6">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Audience</p>
+          <h2 className="mt-3 text-2xl font-semibold">Visiteurs par jour.</h2>
+        </div>
+        <p className="max-w-sm text-sm leading-6 text-slate-400">Le tracking ignore l’admin et compte les visiteurs via un identifiant local pseudonyme.</p>
+      </div>
+
+      <div className="mt-6 flex min-h-56 items-end gap-2 overflow-x-auto pb-2">
+        {days.map((day) => {
+          const height = Math.max(10, Math.round((day.pageViews / max) * 100));
+          return (
+            <div key={day.key} className="flex min-w-14 flex-1 flex-col items-center gap-2">
+              <div className="flex h-36 w-full items-end rounded-2xl bg-white/[0.04] px-2 py-2">
+                <div
+                  className="w-full rounded-xl bg-gradient-to-t from-cyan-500 to-emerald-300 shadow-lg shadow-cyan-500/10"
+                  style={{ height: `${height}%` }}
+                  title={`${day.pageViews} pages vues · ${day.visitors} visiteurs`}
+                />
+              </div>
+              <div className="text-center">
+                <p className="text-xs font-semibold text-white">{day.visitors}</p>
+                <p className="text-[0.65rem] uppercase tracking-[0.12em] text-slate-500">{day.label}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function TopPages({ pages }: { pages: TrafficPage[] }) {
+  const max = Math.max(...pages.map((page) => page.pageViews), 1);
+
+  return (
+    <section className="rounded-[2rem] border border-white/10 bg-slate-950/70 p-6">
+      <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Pages fortes</p>
+      <h2 className="mt-3 text-2xl font-semibold">Ce qui attire le trafic.</h2>
+      <div className="mt-6 space-y-3">
+        {pages.length > 0 ? (
+          pages.map((page) => <TopPageRow key={page.path} page={page} max={max} />)
+        ) : (
+          <p className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-sm text-slate-400">Les visites publiques vont apparaître ici après le prochain passage sur le site.</p>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function TopPageRow({ page, max }: { page: TrafficPage; max: number }) {
+  const width = Math.max(6, Math.round((page.pageViews / max) * 100));
+
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="break-all text-sm font-semibold text-slate-100">{formatPagePath(page.path)}</p>
+          <p className="mt-1 text-xs text-slate-500">{page.visitors} visiteur{page.visitors > 1 ? "s" : ""}</p>
+        </div>
+        <span className="text-sm font-semibold text-emerald-300">{page.pageViews} vue{page.pageViews > 1 ? "s" : ""}</span>
+      </div>
+      <div className="mt-3 overflow-hidden rounded-full bg-white/10">
+        <div className="h-2 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500" style={{ width: `${width}%` }} />
+      </div>
+    </div>
+  );
+}
+
 function RecentEvents({ events }: { events: FunnelEventRow[] }) {
   return (
     <section className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6">
@@ -349,6 +471,77 @@ function RecentClicks({ clicks }: { clicks: AffiliateClickRow[] }) {
       </div>
     </section>
   );
+}
+
+function buildTrafficAnalytics(pageViews: FunnelEventRow[]): TrafficAnalytics {
+  const now = new Date();
+  const todayKey = dateKey(now);
+  const currentMonth = todayKey.slice(0, 7);
+  const dayKeys = lastDayKeys(14, now);
+  const dailyMap = new Map<string, { visitors: Set<string>; pageViews: number }>();
+  const topPageMap = new Map<string, { visitors: Set<string>; pageViews: number }>();
+  const todayVisitors = new Set<string>();
+  const sevenDayVisitors = new Set<string>();
+  const thirtyDayVisitors = new Set<string>();
+  const monthVisitors = new Set<string>();
+  let thirtyDayPageViews = 0;
+
+  for (const key of dayKeys) {
+    dailyMap.set(key, { visitors: new Set(), pageViews: 0 });
+  }
+
+  for (const event of pageViews) {
+    const createdAt = new Date(event.created_at);
+    if (Number.isNaN(createdAt.getTime())) continue;
+
+    const meta = event.meta ?? {};
+    const path = normalizeTrackedPath(getMetaString(meta, "path") || getMetaString(meta, "url") || "/");
+    if (path.startsWith("/admin") || path.startsWith("/api")) continue;
+
+    const visitorId = getMetaString(meta, "visitorId") || getMetaString(meta, "sessionId") || event.id;
+    const key = dateKey(createdAt);
+    const ageMs = now.getTime() - createdAt.getTime();
+
+    if (key === todayKey) todayVisitors.add(visitorId);
+    if (ageMs <= 7 * 24 * 60 * 60 * 1000) sevenDayVisitors.add(visitorId);
+    if (ageMs <= 30 * 24 * 60 * 60 * 1000) {
+      thirtyDayVisitors.add(visitorId);
+      thirtyDayPageViews += 1;
+    }
+    if (key.startsWith(currentMonth)) monthVisitors.add(visitorId);
+
+    const daily = dailyMap.get(key);
+    if (daily) {
+      daily.visitors.add(visitorId);
+      daily.pageViews += 1;
+    }
+
+    const page = topPageMap.get(path) ?? { visitors: new Set<string>(), pageViews: 0 };
+    page.visitors.add(visitorId);
+    page.pageViews += 1;
+    topPageMap.set(path, page);
+  }
+
+  return {
+    todayVisitors: todayVisitors.size,
+    sevenDayVisitors: sevenDayVisitors.size,
+    thirtyDayVisitors: thirtyDayVisitors.size,
+    monthVisitors: monthVisitors.size,
+    thirtyDayPageViews,
+    daily: dayKeys.map((key) => {
+      const item = dailyMap.get(key);
+      return {
+        key,
+        label: formatDayKey(key),
+        visitors: item?.visitors.size ?? 0,
+        pageViews: item?.pageViews ?? 0,
+      };
+    }),
+    topPages: Array.from(topPageMap.entries())
+      .map(([path, item]) => ({ path, visitors: item.visitors.size, pageViews: item.pageViews }))
+      .sort((a, b) => b.pageViews - a.pageViews || b.visitors - a.visitors)
+      .slice(0, 8),
+  };
 }
 
 function buildCategoryStats(leads: LeadRow[]) {
@@ -395,6 +588,56 @@ function formatSlug(slug: string) {
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
+}
+
+function formatPagePath(path: string) {
+  if (path === "/") return "Accueil";
+  if (path === "/comparateurs") return "Tous les comparateurs";
+  if (path.startsWith("/comparateurs/")) return formatSlug(path.replace("/comparateurs/", ""));
+  return path;
+}
+
+function normalizeTrackedPath(value: string) {
+  try {
+    if (value.startsWith("http://") || value.startsWith("https://")) {
+      return new URL(value).pathname || "/";
+    }
+  } catch {
+    return "/";
+  }
+
+  const path = value.split("?")[0]?.split("#")[0] || "/";
+  return path.startsWith("/") ? path : `/${path}`;
+}
+
+function getMetaString(meta: Record<string, unknown>, key: string) {
+  const value = meta[key];
+  return typeof value === "string" && value.length > 0 ? value : null;
+}
+
+function lastDayKeys(count: number, anchor: Date) {
+  return Array.from({ length: count }, (_, index) => {
+    const date = new Date(anchor);
+    date.setDate(anchor.getDate() - (count - 1 - index));
+    return dateKey(date);
+  });
+}
+
+function dateKey(value: Date) {
+  const parts = new Intl.DateTimeFormat("fr-FR", {
+    timeZone: "Europe/Paris",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(value);
+
+  const get = (type: string) => parts.find((part) => part.type === type)?.value ?? "00";
+  return `${get("year")}-${get("month")}-${get("day")}`;
+}
+
+function formatDayKey(key: string) {
+  const [, month, day] = key.split("-");
+  return `${day}/${month}`;
 }
 
 function getParam(value: string | string[] | undefined) {

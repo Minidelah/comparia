@@ -24,7 +24,7 @@ export default function PrivacyPolicyPage() {
       <ul>
         <li>Identité de contact : prénom, email, numéro de téléphone.</li>
         <li>Réponses au comparateur : catégorie, choix sélectionnés, estimation de besoin ou de budget.</li>
-        <li>Données techniques : page consultée, source de trafic, navigateur, horodatage, événements du tunnel.</li>
+        <li>Données techniques : page consultée, source de trafic, navigateur, horodatage, événements du tunnel et identifiant visiteur pseudonyme.</li>
         <li>Données d’affiliation : clics vers une offre partenaire, catégorie concernée, identifiant de lead si disponible.</li>
       </ul>
 

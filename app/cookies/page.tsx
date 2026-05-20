@@ -17,12 +17,12 @@ export default function CookiesPage() {
       <h2>Cookies utilisés par Comparia</h2>
       <p>
         À ce stade, Comparia n’utilise pas de cookie publicitaire tiers sur le site. Le service peut utiliser du stockage local ou des événements serveur pour garder la
-        continuité du parcours, par exemple l’identifiant d’un lead après validation du formulaire.
+        continuité du parcours, par exemple l’identifiant d’un lead après validation du formulaire ou un identifiant visiteur pseudonyme pour la mesure d’audience interne.
       </p>
 
       <h2>Mesure d’audience interne</h2>
       <p>
-        Comparia mesure des événements simples : page comparateur vue, étape répondue, formulaire envoyé, offre débloquée, clic affilié. Cette mesure sert à comprendre
+        Comparia mesure des événements simples : page vue, page comparateur vue, étape répondue, formulaire envoyé, offre débloquée, clic affilié. Cette mesure sert à comprendre
         le tunnel et à améliorer la qualité des comparateurs.
       </p>
 
