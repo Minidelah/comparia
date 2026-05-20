@@ -16,6 +16,10 @@ type IconName =
   | "search"
   | "cashback"
   | "lock"
+  | "unlock"
+  | "clock"
+  | "gift"
+  | "handshake"
   | "sparkles"
   | "check";
 
@@ -42,6 +46,10 @@ const paths: Record<IconName, React.ReactNode> = {
   search: <path d="m21 21-4.3-4.3M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" />,
   cashback: <path d="M12 2v20m5-16H9.5a3.5 3.5 0 1 0 0 7H14a3.5 3.5 0 1 1 0 7H6" />,
   lock: <path d="M7 10V7a5 5 0 0 1 10 0v3m-9 0h8a2 2 0 0 1 2 2v8H6v-8a2 2 0 0 1 2-2Z" />,
+  unlock: <path d="M8 10V7a4 4 0 0 1 7.8-1.3M8 10h8a2 2 0 0 1 2 2v8H6v-8a2 2 0 0 1 2-2Z" />,
+  clock: <path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Zm0-14v5l3 2" />,
+  gift: <path d="M20 12v8H4v-8m16 0H4m16 0V8H4v4m8-4v12M7.5 8C5.6 8 5 6.8 5 5.8S5.8 4 7 4c2 0 3.5 4 5 4m4.5 0C18.4 8 19 6.8 19 5.8S18.2 4 17 4c-2 0-3.5 4-5 4" />,
+  handshake: <path d="M7.5 12.5 4 9l3-3 3 3m6.5 3.5L20 9l-3-3-3 3M8 13l3 3a2 2 0 0 0 2.8 0L17 12.8M10 9l2-2 2 2 3 3m-9 .5 2-2 2 2 2-2" />,
   sparkles: <path d="m12 3 1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6L12 3Zm7 11 .9 2.1L22 17l-2.1.9L19 20l-.9-2.1L16 17l2.1-.9L19 14ZM5 14l1.2 2.8L9 18l-2.8 1.2L5 22l-1.2-2.8L1 18l2.8-1.2L5 14Z" />,
   check: <path d="m5 12 4 4L19 6" />,
 };

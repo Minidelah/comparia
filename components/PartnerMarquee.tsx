@@ -29,8 +29,8 @@ export default function PartnerMarquee() {
 
   return (
     <section className="overflow-hidden border-y border-white/10 bg-white/[0.03] py-4">
-      <div className="px-5 pb-3 text-center text-xs uppercase tracking-[0.34em] text-slate-400">
-        Écosystème de partenaires visés
+      <div className="px-5 pb-3 text-center text-xs font-semibold tracking-[0.22em] text-slate-300">
+        Écosystème partenaires
       </div>
       <div className="overflow-hidden">
         <div className="animate-logo-marquee flex w-max min-w-full gap-3">

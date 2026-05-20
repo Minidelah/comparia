@@ -106,14 +106,17 @@ export default function Home() {
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <span className="inline-flex items-center gap-2 rounded-full border border-cyan-400/40 bg-cyan-400/15 px-4 py-2 text-sm font-semibold text-cyan-200">
-                ✓ Gratuit
+              <span className="inline-flex items-center gap-2 rounded-full border border-cyan-400/40 bg-cyan-400/15 px-4 py-2 text-sm font-semibold text-cyan-100 shadow-lg shadow-cyan-950/20">
+                <CompariaIcon name="gift" className="h-4 w-4" />
+                Gratuit
               </span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-blue-400/40 bg-blue-400/15 px-4 py-2 text-sm font-semibold text-blue-200">
-                ✓ 2 minutes
+              <span className="inline-flex items-center gap-2 rounded-full border border-blue-400/40 bg-blue-400/15 px-4 py-2 text-sm font-semibold text-blue-100 shadow-lg shadow-blue-950/20">
+                <CompariaIcon name="clock" className="h-4 w-4" />
+                2 minutes
               </span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-400/15 px-4 py-2 text-sm font-semibold text-emerald-200">
-                ✓ Sans engagement
+              <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-400/15 px-4 py-2 text-sm font-semibold text-emerald-100 shadow-lg shadow-emerald-950/20">
+                <CompariaIcon name="unlock" className="h-4 w-4" />
+                Sans engagement
               </span>
             </div>
 

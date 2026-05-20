@@ -5,35 +5,45 @@ type Props = {
   compact?: boolean;
 };
 
+const navLinks = [
+  { href: "/comparateurs", label: "Comparateurs" },
+  { href: "/a-propos", label: "À propos" },
+  { href: "/tableau-de-bord", label: "Tableau de bord" },
+];
+
 export default function SiteNav({ compact = false }: Props) {
   return (
-    <nav className="flex items-center justify-between">
-      <Link href="/" className="flex items-center gap-3">
-        <Image src="/comparia-logo.svg" alt="" width={40} height={40} className="h-10 w-10" />
+    <nav className="flex items-center justify-between gap-4">
+      <Link href="/" className="group flex min-w-0 items-center gap-3">
+        <span className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-cyan-300/10 ring-1 ring-inset ring-cyan-300/20 transition group-hover:bg-cyan-300/15">
+          <Image src="/comparia-logo.svg" alt="" width={40} height={40} className="h-8 w-8" />
+        </span>
         <span className="leading-none">
-          <span className="block text-lg font-black uppercase tracking-[0.18em]">Comparia</span>
-          <span className="block text-[10px] uppercase tracking-[0.28em] text-cyan-300/80">Comparateurs intelligents</span>
+          <span className="block text-lg font-black uppercase tracking-[0.2em]">Comparia</span>
+          <span className="hidden text-[10px] uppercase tracking-[0.28em] text-cyan-300/80 sm:block">Comparateurs intelligents</span>
         </span>
       </Link>
-      <div className="flex items-center gap-2">
+
+      <div className="flex shrink-0 items-center gap-2">
         {!compact && (
-          <>
-            <Link href="/comparateurs" className="hidden text-sm text-slate-300 transition hover:text-white sm:block">
-              Comparateurs
-            </Link>
-            <Link href="/a-propos" className="hidden text-sm text-slate-300 transition hover:text-white lg:block">
-              À propos
-            </Link>
-            <Link href="/tableau-de-bord" className="hidden text-sm text-slate-300 transition hover:text-white sm:block">
-              Tableau de bord
-            </Link>
-          </>
+          <div className="hidden items-center rounded-full border border-white/10 bg-slate-950/55 p-1 shadow-inner shadow-black/20 md:flex">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="rounded-full px-3.5 py-2 text-sm font-medium text-slate-300 transition hover:bg-white/[0.08] hover:text-white"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
         )}
         <Link
           href="/onboarding"
-          className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-100"
+          className="rounded-full bg-white px-4 py-2.5 text-sm font-bold text-slate-950 shadow-lg shadow-cyan-950/20 transition hover:-translate-y-0.5 hover:bg-cyan-100 sm:px-5"
         >
-          Diagnostic gratuit
+          <span className="hidden sm:inline">Diagnostic gratuit</span>
+          <span className="sm:hidden">Diagnostic</span>
         </Link>
       </div>
     </nav>

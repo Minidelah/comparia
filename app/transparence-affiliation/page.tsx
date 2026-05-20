@@ -41,7 +41,7 @@ export default function AffiliateTransparencyPage() {
       <h2>Partenaires et annonceurs</h2>
       <p>
         Comparia travaille ou peut candidater auprès de réseaux d’affiliation, comparateurs, assureurs, banques, opérateurs, fournisseurs d’énergie et services utiles au
-        foyer. Les logos et noms de partenaires peuvent être affichés pour indiquer l’écosystème visé ou les offres disponibles.
+        foyer. Les logos et noms de partenaires peuvent être affichés pour indiquer l’écosystème partenaires ou les offres disponibles.
       </p>
 
       <h2>Signalement d’une erreur</h2>
