@@ -108,6 +108,26 @@ type AcquisitionAnalytics = {
   topSource: string | null;
 };
 
+type LiveVisitor = {
+  visitorId: string;
+  path: string;
+  source: string;
+  category: string | null;
+  lastSeen: string;
+};
+
+type LivePage = {
+  path: string;
+  visitors: number;
+};
+
+type LiveAnalytics = {
+  activeNow: number;
+  activeVisible: number;
+  visitors: LiveVisitor[];
+  pages: LivePage[];
+};
+
 type AttributionInfo = {
   source: string;
   medium: string;
@@ -251,6 +271,8 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
   todayStart.setHours(0, 0, 0, 0);
   const ninetyDaysStart = new Date(todayStart);
   ninetyDaysStart.setDate(todayStart.getDate() - 90);
+  const liveWindowStart = new Date();
+  liveWindowStart.setMinutes(liveWindowStart.getMinutes() - 5);
 
   const [
     leadsResult,
@@ -264,6 +286,7 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
     unlockedCountResult,
     clicksCountResult,
     pageViewsResult,
+    presenceEventsResult,
     wizardEventsResult,
     diagnosticEventsResult,
     affiliateEventsResult,
@@ -288,6 +311,13 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
       .gte("created_at", ninetyDaysStart.toISOString())
       .order("created_at", { ascending: false })
       .limit(5000),
+    supabase
+      .from("funnel_events")
+      .select("id,event_name,category_slug,lead_id,meta,created_at")
+      .eq("event_name", "presence_ping")
+      .gte("created_at", liveWindowStart.toISOString())
+      .order("created_at", { ascending: false })
+      .limit(1000),
     supabase
       .from("funnel_events")
       .select("id,event_name,category_slug,lead_id,meta,created_at")
@@ -334,6 +364,7 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
   const events = (eventsResult.data ?? []) as FunnelEventRow[];
   const clicks = (clicksResult.data ?? []) as AffiliateClickRow[];
   const pageViews = (pageViewsResult.data ?? []) as FunnelEventRow[];
+  const presenceEvents = (presenceEventsResult.data ?? []) as FunnelEventRow[];
   const wizardEvents = (wizardEventsResult.data ?? []) as FunnelEventRow[];
   const diagnosticEvents = (diagnosticEventsResult.data ?? []) as FunnelEventRow[];
   const affiliateEvents = (affiliateEventsResult.data ?? []) as FunnelEventRow[];
@@ -349,16 +380,19 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
     eventsResult.error,
     clicksResult.error,
     pageViewsResult.error,
+    presenceEventsResult.error,
     wizardEventsResult.error,
     diagnosticEventsResult.error,
     affiliateEventsResult.error,
     clicksRangeResult.error,
-    conversionsRangeResult.error,
     offersResult.error,
   ]
     .filter(Boolean)
     .map((error) => error?.message)
     .filter(Boolean) as string[];
+  const conversionAccessIssue = conversionsRangeResult.error?.message?.includes("permission denied")
+    ? conversionsRangeResult.error.message
+    : null;
 
   const totalLeads = leadsCountResult.count ?? leads.length;
   const leadsToday = leadsTodayResult.count ?? countToday(leads);
@@ -370,6 +404,7 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
   const categories = buildCategoryStats(leads);
   const averageIntent = calculateAverageIntent(leads);
   const traffic = buildTrafficAnalytics(pageViews);
+  const live = buildLiveAnalytics(presenceEvents);
   const acquisition = buildAcquisitionAnalytics({ pageViews, leads, clicks: clicksRange });
   const diagnosticInsights = buildDiagnosticInsights(diagnosticEvents);
   const categoryPerformance = buildCategoryPerformance({
@@ -397,11 +432,11 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
   const exportableLeads = buildExportableLeads(leads);
 
   return (
-    <main className="min-h-screen bg-[#05070d] px-5 py-6 text-white sm:px-8">
+    <main className="min-h-screen bg-[#05070d] px-3 py-4 text-white sm:px-8 sm:py-6">
       <div className="mx-auto max-w-7xl">
         <SiteNav />
 
-        <section className="mt-8 rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 sm:p-8">
+        <section className="mt-6 rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-4 sm:mt-8 sm:rounded-[2rem] sm:p-8">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Admin Comparia</p>
@@ -416,9 +451,13 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
           </div>
         </section>
 
+        <LiveVisitorsPanel analytics={live} />
+
         <section className="mt-5">
           <AdminAwinImportButton />
         </section>
+
+        {conversionAccessIssue && <SupabasePermissionNotice />}
 
         <RevenueProjectionPanel projection={revenueProjection} />
 
@@ -518,7 +557,13 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
                 </Link>
               </div>
             </div>
-            <div className="mt-5 overflow-x-auto">
+            <div className="mt-5 space-y-3 md:hidden">
+              {leads.slice(0, 18).map((lead) => (
+                <LeadMobileCard key={lead.id} lead={lead} />
+              ))}
+              {leads.length === 0 && <p className="py-8 text-center text-sm text-slate-400">Aucun lead enregistré.</p>}
+            </div>
+            <div className="mt-5 hidden overflow-x-auto md:block">
               <table className="min-w-full text-left text-sm">
                 <thead className="text-xs uppercase tracking-[0.18em] text-slate-500">
                   <tr>
@@ -608,6 +653,93 @@ function AdminMetric({ label, value, tone }: { label: string; value: string; ton
       <p className="text-xs uppercase tracking-[0.22em] opacity-70">{label}</p>
       <p className="mt-3 text-3xl font-black text-white">{value}</p>
     </article>
+  );
+}
+
+function LiveVisitorsPanel({ analytics }: { analytics: LiveAnalytics }) {
+  return (
+    <section className="mt-5 rounded-[1.5rem] border border-emerald-300/15 bg-gradient-to-br from-emerald-400/10 via-cyan-400/10 to-blue-500/10 p-4 sm:rounded-[2rem] sm:p-6">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p className="text-sm uppercase tracking-[0.3em] text-emerald-300">Live analytics</p>
+          <h2 className="mt-3 text-2xl font-semibold text-white sm:text-3xl">En direct sur le site.</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400">
+            Comme Shopify : Comparia compte les visiteurs actifs des 5 dernières minutes via un heartbeat discret.
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-3 sm:min-w-80">
+          <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Actifs</p>
+            <p className="mt-2 text-4xl font-black text-white">{analytics.activeNow}</p>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Onglet visible</p>
+            <p className="mt-2 text-4xl font-black text-emerald-300">{analytics.activeVisible}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="rounded-[1.25rem] border border-white/10 bg-slate-950/70 p-4">
+          <p className="text-xs uppercase tracking-[0.22em] text-slate-500">Visiteurs maintenant</p>
+          <div className="mt-4 space-y-3">
+            {analytics.visitors.length > 0 ? (
+              analytics.visitors.slice(0, 6).map((visitor) => <LiveVisitorRow key={visitor.visitorId} visitor={visitor} />)
+            ) : (
+              <p className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-sm text-slate-400">
+                Personne en live pour l’instant. Ouvre le site sur ton téléphone et attends quelques secondes.
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="rounded-[1.25rem] border border-white/10 bg-slate-950/70 p-4">
+          <p className="text-xs uppercase tracking-[0.22em] text-slate-500">Pages actives</p>
+          <div className="mt-4 space-y-3">
+            {analytics.pages.length > 0 ? (
+              analytics.pages.slice(0, 6).map((page) => (
+                <div key={page.path} className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3">
+                  <span className="break-all text-sm font-semibold text-slate-200">{formatPagePath(page.path)}</span>
+                  <span className="rounded-full bg-emerald-400/10 px-3 py-1 text-xs font-bold text-emerald-200">
+                    {page.visitors}
+                  </span>
+                </div>
+              ))
+            ) : (
+              <p className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-sm text-slate-400">
+                Les pages actives apparaîtront dès les premiers heartbeats.
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function LiveVisitorRow({ visitor }: { visitor: LiveVisitor }) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="font-semibold text-white">{formatPagePath(visitor.path)}</p>
+          <p className="mt-1 text-xs text-slate-500">{visitor.category ? formatSlug(visitor.category) : "Navigation libre"}</p>
+        </div>
+        <span className="rounded-full bg-cyan-400/10 px-3 py-1 text-xs font-bold text-cyan-200">{visitor.source}</span>
+      </div>
+      <p className="mt-3 text-xs text-slate-500">Vu {formatDate(visitor.lastSeen)}</p>
+    </div>
+  );
+}
+
+function SupabasePermissionNotice() {
+  return (
+    <section className="mt-5 rounded-[1.5rem] border border-amber-300/20 bg-amber-300/10 p-4 text-sm leading-6 text-amber-100 sm:p-5">
+      <p className="font-semibold">Correction Supabase à appliquer</p>
+      <p className="mt-2 text-amber-100/80">
+        La table <span className="font-bold">conversions</span> refuse encore l’accès serveur. J’ai préparé le correctif SQL dans le projet : <span className="font-mono">infra/supabase-admin-grants.sql</span>.
+      </p>
+    </section>
   );
 }
 
@@ -1075,6 +1207,30 @@ function InsightLine({ label, value }: { label: string; value: string }) {
   );
 }
 
+function LeadMobileCard({ lead }: { lead: LeadRow }) {
+  return (
+    <article className="rounded-2xl border border-white/10 bg-slate-950/70 p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="font-semibold text-white">{lead.first_name || "Sans prénom"}</p>
+          <a className="mt-1 block truncate text-sm text-slate-400 transition hover:text-cyan-300" href={`mailto:${lead.email}`}>
+            {lead.email}
+          </a>
+        </div>
+        <span className="shrink-0 rounded-full bg-cyan-400/10 px-3 py-1 text-xs font-semibold text-cyan-200">
+          {lead.intent_score ? `${lead.intent_score}/100` : "—"}
+        </span>
+      </div>
+      <div className="mt-4 grid gap-2 text-sm text-slate-300">
+        <a className="transition hover:text-cyan-300" href={`tel:${lead.phone}`}>{lead.phone}</a>
+        <span>{formatSlug(lead.category_slug)}</span>
+        <span className="text-slate-400">{formatAcquisitionLabel(getAttributionInfo(lead.metadata))}</span>
+      </div>
+      <p className="mt-3 text-xs text-slate-500">{formatDate(lead.created_at)}</p>
+    </article>
+  );
+}
+
 function RecentEvents({ events }: { events: FunnelEventRow[] }) {
   return (
     <section className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6">
@@ -1183,6 +1339,52 @@ function buildTrafficAnalytics(pageViews: FunnelEventRow[]): TrafficAnalytics {
       .map(([path, item]) => ({ path, visitors: item.visitors.size, pageViews: item.pageViews }))
       .sort((a, b) => b.pageViews - a.pageViews || b.visitors - a.visitors)
       .slice(0, 8),
+  };
+}
+
+function buildLiveAnalytics(events: FunnelEventRow[]): LiveAnalytics {
+  const visitorMap = new Map<string, LiveVisitor & { visible: boolean }>();
+  const pageMap = new Map<string, Set<string>>();
+
+  for (const event of events) {
+    const meta = event.meta ?? {};
+    const visitorId = getMetaString(meta, "visitorId") || getMetaString(meta, "sessionId") || event.id;
+    if (visitorMap.has(visitorId)) continue;
+
+    const path = normalizeTrackedPath(getMetaString(meta, "path") || getMetaString(meta, "url") || "/");
+    if (path.startsWith("/admin") || path.startsWith("/api")) continue;
+
+    const info = getAttributionInfo(meta);
+    const visitor = {
+      visitorId,
+      path,
+      source: formatAcquisitionLabel(info),
+      category: event.category_slug,
+      lastSeen: event.created_at,
+      visible: getMetaBoolean(meta, "visible"),
+    };
+
+    visitorMap.set(visitorId, visitor);
+    const pageVisitors = pageMap.get(path) ?? new Set<string>();
+    pageVisitors.add(visitorId);
+    pageMap.set(path, pageVisitors);
+  }
+
+  const visitors = Array.from(visitorMap.values()).sort((a, b) => new Date(b.lastSeen).getTime() - new Date(a.lastSeen).getTime());
+
+  return {
+    activeNow: visitors.length,
+    activeVisible: visitors.filter((visitor) => visitor.visible).length,
+    visitors: visitors.map((visitor) => ({
+      visitorId: visitor.visitorId,
+      path: visitor.path,
+      source: visitor.source,
+      category: visitor.category,
+      lastSeen: visitor.lastSeen,
+    })),
+    pages: Array.from(pageMap.entries())
+      .map(([path, pageVisitors]) => ({ path, visitors: pageVisitors.size }))
+      .sort((a, b) => b.visitors - a.visitors),
   };
 }
 
@@ -1916,6 +2118,10 @@ function normalizeTrackedPath(value: string) {
 function getMetaString(meta: Record<string, unknown>, key: string) {
   const value = meta[key];
   return typeof value === "string" && value.length > 0 ? value : null;
+}
+
+function getMetaBoolean(meta: Record<string, unknown>, key: string) {
+  return meta[key] === true;
 }
 
 function getAttributionInfo(meta: Record<string, unknown> | null): AttributionInfo {

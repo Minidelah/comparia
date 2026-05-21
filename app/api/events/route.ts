@@ -3,6 +3,7 @@ import { enforceSameOrigin, isSafeSlug, rateLimit, rejectLargeRequest, sanitizeM
 
 const ALLOWED_EVENTS = new Set([
   "page_view",
+  "presence_ping",
   "wizard_viewed",
   "wizard_step_answered",
   "lead_submit_clicked",

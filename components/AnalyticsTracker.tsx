@@ -7,6 +7,7 @@ import { captureAttribution } from "@/lib/analytics/attribution";
 const VISITOR_KEY = "comparia_visitor_id";
 const SESSION_KEY = "comparia_session_id";
 const LAST_PAGE_VIEW_KEY = "comparia_last_page_view";
+const PRESENCE_INTERVAL_MS = 30_000;
 
 export default function AnalyticsTracker() {
   const pathname = usePathname();
@@ -19,33 +20,46 @@ export default function AnalyticsTracker() {
     if (!visitorId || !sessionId) return;
 
     const now = Date.now();
-    if (isDuplicatePageView(pathname, now)) return;
-
     const categorySlug = inferCategorySlug(pathname);
     const attribution = captureAttribution(pathname);
+    const baseMeta = {
+      visitorId,
+      sessionId,
+      path: pathname,
+      url: window.location.href,
+      title: document.title,
+      referrer: document.referrer || null,
+      attribution,
+      source: "site_tracker",
+    };
 
-    fetch("/api/events", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        eventName: "page_view",
-        categorySlug,
-        meta: {
-          visitorId,
-          sessionId,
-          path: pathname,
-          url: window.location.href,
-          title: document.title,
-          referrer: document.referrer || null,
-          attribution,
-          source: "site_tracker",
-        },
-      }),
-      keepalive: true,
-    }).catch(() => null);
+    if (!isDuplicatePageView(pathname, now)) {
+      trackEvent("page_view", categorySlug, baseMeta);
+    }
+
+    trackEvent("presence_ping", categorySlug, { ...baseMeta, visible: !document.hidden });
+    const intervalId = window.setInterval(() => {
+      trackEvent("presence_ping", categorySlug, {
+        ...baseMeta,
+        visible: !document.hidden,
+        url: window.location.href,
+        title: document.title,
+      });
+    }, PRESENCE_INTERVAL_MS);
+
+    return () => window.clearInterval(intervalId);
   }, [pathname]);
 
   return null;
+}
+
+function trackEvent(eventName: "page_view" | "presence_ping", categorySlug: string | null, meta: Record<string, unknown>) {
+  fetch("/api/events", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ eventName, categorySlug, meta }),
+    keepalive: true,
+  }).catch(() => null);
 }
 
 function shouldIgnorePath(pathname: string) {
