@@ -74,6 +74,7 @@ AWIN_PUBLISHER_ID=
 AWIN_API_TOKEN=
 MISTRAL_API_KEY=
 MISTRAL_MODEL=mistral-small-latest
+CRON_SECRET=
 ```
 
 Variables publiques recommandées pour la production :
@@ -128,9 +129,10 @@ CTRL+C
 npm run dev
 ```
 
-4. Ouvrir `/admin?token=TON_TOKEN_ADMIN`, puis cliquer sur **Importer Awin**.
+4. Ouvrir `/admin?token=TON_TOKEN_ADMIN`, puis cliquer sur **Importer offres**.
+5. Cliquer sur **Sync conversions** pour importer les transactions Awin réelles dans `conversions`.
 
-L’import classe les programmes Awin acceptés par comparateur, génère des liens trackés quand Awin le permet, puis alimente la table Supabase `offers`.
+L’import classe les programmes Awin acceptés par comparateur, génère des liens trackés quand Awin le permet, puis alimente la table Supabase `offers`. La synchronisation conversions rapproche ensuite les transactions Awin des offres locales pour afficher les commissions réelles dans l’admin.
 
 ## Déployer sur Vercel
 
@@ -141,6 +143,7 @@ L’import classe les programmes Awin acceptés par comparateur, génère des li
 5. Déployer.
 6. Copier l’URL publique dans Awin comme site éditeur.
 7. Mettre à jour `NEXT_PUBLIC_SITE_URL` avec le domaine final.
+8. Ajouter `CRON_SECRET` dans Vercel : Vercel l’enverra automatiquement au cron quotidien qui synchronise Awin (`/api/cron/awin-transactions`).
 
 À vérifier après déploiement :
 - `/` affiche la landing Comparia ;
@@ -148,6 +151,16 @@ L’import classe les programmes Awin acceptés par comparateur, génère des li
 - `/mentions-legales`, `/politique-confidentialite`, `/transparence-affiliation`, `/contact` sont accessibles ;
 - `/sitemap.xml` et `/robots.txt` répondent ;
 - `/admin?token=TON_TOKEN_ADMIN` ouvre le dashboard.
+
+## Cron Awin automatique
+
+Le fichier `vercel.json` déclare un cron quotidien :
+
+```json
+{ "path": "/api/cron/awin-transactions", "schedule": "0 5 * * *" }
+```
+
+Sur Vercel Hobby, ce rythme quotidien respecte la limite du plan. Le cron nécessite `CRON_SECRET` en production.
 
 ## Prochaines étapes
 
