@@ -150,7 +150,7 @@ export async function getOfferSlotsForCategory(categorySlug: string): Promise<Of
     const manualExternalOffers = getManualExternalOfferSlotsForCategory(categorySlug);
     const offers = await rankOfferSlotsByPerformance(supabase, categorySlug, [...manualExternalOffers, ...mapped]);
 
-    return offers.length > 0 ? offers : fallback;
+    return offers.length > 0 ? offers : rankOfferSlotsByPerformance(supabase, categorySlug, fallback);
   } catch (error) {
     if (process.env.NODE_ENV !== "production") {
       console.error("Unexpected offer loading failure", error);
