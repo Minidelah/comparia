@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import SiteNav from "@/components/SiteNav";
@@ -10,6 +11,7 @@ import CompariaIcon, { getCategoryIcon } from "@/components/CompariaIcon";
 import SiteFooter from "@/components/SiteFooter";
 import PremiumVisual from "@/components/PremiumVisual";
 import { getCategoryVisual } from "@/lib/visuals";
+import { buildComparatorJsonLd, getComparatorSeo, getComparatorUrl } from "@/lib/seo/comparator-seo";
 
 export const dynamic = "force-dynamic";
 
@@ -17,11 +19,65 @@ export function generateStaticParams() {
   return categories.map((category) => ({ slug: category.slug }));
 }
 
+type ComparatorPageProps = {
+  params: Promise<{ slug: string }>;
+};
+
+export async function generateMetadata({ params }: ComparatorPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const category = categories.find((item) => item.slug === slug);
+
+  if (!category) {
+    return {
+      title: "Comparateur introuvable | Comparia",
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
+  }
+
+  const seo = getComparatorSeo(category);
+  const visual = getCategoryVisual(category.slug);
+  const ogImage = visual.src.endsWith(".svg") ? "/comparia-hero.jpg" : visual.src;
+
+  return {
+    title: seo.title,
+    description: seo.description,
+    alternates: {
+      canonical: getComparatorUrl(category.slug),
+    },
+    openGraph: {
+      title: seo.title,
+      description: seo.description,
+      url: getComparatorUrl(category.slug),
+      type: "website",
+      locale: "fr_FR",
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: visual.alt,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: seo.title,
+      description: seo.description,
+      images: [ogImage],
+    },
+    robots: {
+      index: category.status === "active",
+      follow: true,
+    },
+  };
+}
+
 export default async function ComparatorDetailPage({
   params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+}: ComparatorPageProps) {
   const { slug } = await params;
   const category = categories.find((item) => item.slug === slug);
 
@@ -31,9 +87,12 @@ export default async function ComparatorDetailPage({
 
   const offers = await getOfferSlotsForCategory(category.slug);
   const visual = getCategoryVisual(category.slug);
+  const seo = getComparatorSeo(category);
+  const jsonLd = JSON.stringify(buildComparatorJsonLd(category, seo)).replace(/</g, "\\u003c");
 
   return (
     <main className="min-h-screen bg-[#05070d] px-5 py-5 pb-24 text-white sm:px-8 sm:pb-6">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
       <div className="mx-auto max-w-6xl">
         <SiteNav />
 
@@ -124,6 +183,55 @@ export default async function ComparatorDetailPage({
                     </div>
                   ))}
                 </div>
+              </div>
+            </section>
+
+            <section className="mt-5 rounded-[2rem] border border-white/10 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.16),transparent_34%),rgba(255,255,255,0.045)] p-5 sm:p-7">
+              <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+                <div>
+                  <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Guide comparateur</p>
+                  <h2 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">
+                    Pourquoi comparer {category.title.toLocaleLowerCase("fr-FR")} avec Comparia ?
+                  </h2>
+                  <p className="mt-4 text-sm leading-7 text-slate-300 sm:text-base">{seo.intro}</p>
+
+                  <div className="mt-5">
+                    <p className="text-sm font-semibold text-white">Ce que Comparia analyse</p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {seo.analysisPoints.map((point) => (
+                        <span
+                          key={point}
+                          className="rounded-full border border-cyan-300/15 bg-cyan-300/10 px-3 py-1.5 text-xs font-semibold text-cyan-100"
+                        >
+                          {point}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-[1.5rem] border border-white/10 bg-slate-950/55 p-5">
+                  <p className="text-sm font-semibold text-white">Pourquoi ça convertit mieux</p>
+                  <div className="mt-4 space-y-3">
+                    {seo.benefits.map((benefit) => (
+                      <div key={benefit} className="flex gap-3 rounded-2xl border border-white/10 bg-white/[0.035] p-3">
+                        <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-400/10 text-emerald-300 ring-1 ring-inset ring-emerald-300/20">
+                          <CompariaIcon name="sparkles" className="h-3.5 w-3.5" />
+                        </span>
+                        <p className="text-sm leading-6 text-slate-300">{benefit}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 grid gap-3 lg:grid-cols-3">
+                {seo.faqs.map((faq) => (
+                  <article key={faq.question} className="rounded-[1.35rem] border border-white/10 bg-slate-950/45 p-4">
+                    <h3 className="text-sm font-bold text-white">{faq.question}</h3>
+                    <p className="mt-3 text-sm leading-6 text-slate-400">{faq.answer}</p>
+                  </article>
+                ))}
               </div>
             </section>
 
