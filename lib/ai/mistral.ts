@@ -5,7 +5,7 @@ import type { AiExpenseInsight, AiRecommendation } from "@/lib/ai/types";
 const MISTRAL_ENDPOINT = "https://api.mistral.ai/v1/chat/completions";
 const DEFAULT_MODEL = "mistral-small-latest";
 
-type MistralMessageContent = string | Array<{ type?: string; text?: string }>;
+type MistralMessageContent = unknown;
 
 type MistralResponse = {
   choices?: Array<{
@@ -131,12 +131,25 @@ function extractContent(payload: MistralResponse) {
 
   if (Array.isArray(content)) {
     return content
-      .map((item) => item.text)
-      .filter((item): item is string => Boolean(item))
+      .map((item) => (typeof item === "object" && item !== null && "text" in item ? (item as { text?: unknown }).text : null))
+      .filter((item): item is string => typeof item === "string")
       .join("");
   }
 
+  if (typeof content === "object" && content !== null) {
+    return JSON.stringify(content);
+  }
+
   return "{}";
+}
+
+function hasUsefulAiPayload(raw: Record<string, unknown>) {
+  return (
+    typeof raw.summary === "string" ||
+    typeof raw.explanation === "string" ||
+    (Array.isArray(raw.recommendations) && raw.recommendations.length > 0) ||
+    (Array.isArray(raw.actionPriorities) && raw.actionPriorities.length > 0)
+  );
 }
 
 function parseJsonObject(value: string): Record<string, unknown> {
@@ -157,6 +170,11 @@ function parseJsonObject(value: string): Record<string, unknown> {
 
 function normalizeAiInsight(raw: Record<string, unknown>, ruleAnalysis: DiagnosticResult): AiExpenseInsight {
   const fallback = buildFallbackInsight(ruleAnalysis);
+
+  if (!hasUsefulAiPayload(raw)) {
+    return fallback;
+  }
+
   const allowedSlugs = new Set(ruleAnalysis.recommendations.map((recommendation) => recommendation.slug));
   const recommendations = Array.isArray(raw.recommendations)
     ? raw.recommendations
@@ -170,7 +188,11 @@ function normalizeAiInsight(raw: Record<string, unknown>, ruleAnalysis: Diagnost
     estimatedSavings: normalizeNumber(raw.estimatedSavings, fallback.estimatedSavings, 0, Math.max(fallback.estimatedSavings * 1.25, fallback.estimatedSavings + 120)),
     recommendations: recommendations.length > 0 ? recommendations : fallback.recommendations,
     actionPriorities: normalizeStringArray(raw.actionPriorities, fallback.actionPriorities, 4, 160),
-    explanation: normalizeString(raw.explanation, fallback.explanation, 520),
+    explanation: normalizeString(
+      raw.explanation,
+      "L’assistant IA a priorisé les actions avec le meilleur potentiel selon tes réponses, tout en gardant les économies indicatives.",
+      520,
+    ),
     offerSlugs: normalizeSlugArray(raw.offerSlugs, fallback.offerSlugs, allowedSlugs),
     generatedBy: "mistral",
   };
@@ -201,8 +223,9 @@ function normalizeString(value: unknown, fallback: string, maxLength: number) {
 }
 
 function normalizeNumber(value: unknown, fallback: number, min: number, max: number) {
-  if (typeof value !== "number" || !Number.isFinite(value)) return fallback;
-  return Math.round(Math.max(min, Math.min(max, value)));
+  const number = typeof value === "string" && value.trim() ? Number(value) : value;
+  if (typeof number !== "number" || !Number.isFinite(number)) return fallback;
+  return Math.round(Math.max(min, Math.min(max, number)));
 }
 
 function normalizePriority(value: unknown): AiRecommendation["priority"] {
@@ -214,7 +237,7 @@ function normalizeStringArray(value: unknown, fallback: string[], maxItems: numb
   if (!Array.isArray(value)) return fallback;
   const items = value
     .map((item) => normalizeString(item, "", maxLength))
-    .filter(Boolean)
+      .filter((item): item is string => Boolean(item))
     .slice(0, maxItems);
   return items.length > 0 ? items : fallback;
 }
