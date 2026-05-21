@@ -1,0 +1,20 @@
+<svg width="1200" height="760" viewBox="0 0 1200 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="1200" height="760" rx="56" fill="#050B1A"/>
+<g opacity=".9"><circle cx="930" cy="125" r="220" fill="url(#g1)"/><circle cx="255" cy="645" r="240" fill="url(#g2)"/></g>
+<rect x="94" y="86" width="1012" height="588" rx="38" fill="#0B1224" stroke="#1D3557" stroke-width="2"/>
+<rect x="140" y="134" width="418" height="246" rx="28" fill="#101B33" stroke="#263D66"/>
+<path d="M176 318C232 270 276 296 325 248C386 188 443 218 518 157" stroke="#42D7FF" stroke-width="8" stroke-linecap="round"/>
+<path d="M176 337C241 301 300 325 352 287C411 244 457 273 520 232" stroke="#52F2AE" stroke-width="5" stroke-linecap="round" opacity=".7"/>
+<circle cx="518" cy="157" r="14" fill="#52F2AE"/><circle cx="325" cy="248" r="10" fill="#42D7FF"/>
+<rect x="610" y="134" width="450" height="122" rx="28" fill="#101B33" stroke="#263D66"/>
+<rect x="650" y="170" width="250" height="14" rx="7" fill="#D7F9FF" opacity=".9"/><rect x="650" y="202" width="330" height="12" rx="6" fill="#6E84A9" opacity=".45"/>
+<circle cx="1004" cy="195" r="38" fill="#112C3E" stroke="#3DE2FF"/><text x="1004" y="205" text-anchor="middle" fill="#EFFFFF" font-family="Arial" font-size="28" font-weight="800">91</text>
+<rect x="610" y="286" width="450" height="252" rx="28" fill="#101B33" stroke="#263D66"/>
+<rect x="650" y="326" width="128" height="128" rx="26" fill="url(#card1)"/><rect x="804" y="326" width="216" height="22" rx="11" fill="#E9FBFF" opacity=".95"/><rect x="804" y="366" width="162" height="14" rx="7" fill="#6E84A9" opacity=".45"/><rect x="804" y="408" width="188" height="44" rx="22" fill="#1E8BFF"/>
+<path d="M692 397l26-58h38l-29 48h42l-74 76 18-66h-21Z" fill="#061024" opacity=".72"/><path d="M692 397l26-58h38l-29 48h42l-74 76 18-66h-21Z" fill="#EFFFFF"/>
+<rect x="140" y="420" width="176" height="118" rx="28" fill="#101B33" stroke="#263D66"/><rect x="356" y="420" width="176" height="118" rx="28" fill="#101B33" stroke="#263D66"/>
+<text x="172" y="466" fill="#8FA8CB" font-family="Arial" font-size="22">Économie</text><text x="172" y="510" fill="white" font-family="Arial" font-size="48" font-weight="800">480€</text>
+<text x="388" y="466" fill="#8FA8CB" font-family="Arial" font-size="22">Cashback</text><text x="388" y="510" fill="#52F2AE" font-family="Arial" font-size="48" font-weight="800">35€</text>
+<rect x="140" y="574" width="920" height="42" rx="21" fill="#0E1A30"/><rect x="140" y="574" width="610" height="42" rx="21" fill="url(#bar)"/>
+<defs><radialGradient id="g1"><stop stop-color="#227BFF" stop-opacity=".45"/><stop offset="1" stop-color="#227BFF" stop-opacity="0"/></radialGradient><radialGradient id="g2"><stop stop-color="#48F2C2" stop-opacity=".32"/><stop offset="1" stop-color="#48F2C2" stop-opacity="0"/></radialGradient><linearGradient id="card1" x1="650" y1="326" x2="778" y2="454"><stop stop-color="#55E6FF"/><stop offset="1" stop-color="#247CFF"/></linearGradient><linearGradient id="bar" x1="140" y1="574" x2="750" y2="574"><stop stop-color="#4FE4FF"/><stop offset="1" stop-color="#2F7DFF"/></linearGradient></defs>
+</svg>

@@ -11,6 +11,20 @@ export const metadata: Metadata = {
     description: "Compare assurances, énergie, mobile et services pour trouver les meilleures offres.",
     type: "website",
     locale: "fr_FR",
+    images: [
+      {
+        url: "/comparia-hero.jpg",
+        width: 1100,
+        height: 587,
+        alt: "Comparia — comparateurs intelligents pour économiser sur tes factures",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Comparia — Comparateurs intelligents",
+    description: "Compare assurances, énergie, mobile et services pour trouver les meilleures offres.",
+    images: ["/comparia-hero.jpg"],
   },
   robots: {
     index: true,

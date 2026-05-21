@@ -5,6 +5,8 @@ import SiteNav from "@/components/SiteNav";
 import PartnerMarquee from "@/components/PartnerMarquee";
 import CompariaIcon, { getCategoryIcon } from "@/components/CompariaIcon";
 import SiteFooter from "@/components/SiteFooter";
+import PremiumVisual from "@/components/PremiumVisual";
+import { cashbackVisual, heroVisual, showcaseVisuals } from "@/lib/visuals";
 
 const pillars = categories
   .filter((category) => category.status === "active")
@@ -137,17 +139,19 @@ export default function Home() {
           </div>
 
           <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.05] shadow-2xl shadow-black/30 backdrop-blur">
-            <div className="relative aspect-video bg-slate-950/70">
-              <Image
-                src="/comparia-hero.jpg"
-                alt="Visuel comparatif fintech"
-                fill
-                priority
-                sizes="(min-width: 1024px) 52vw, 100vw"
-                className="object-contain p-2"
-              />
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
-            </div>
+            <PremiumVisual
+              src={heroVisual.src}
+              alt={heroVisual.alt}
+              eyebrow={heroVisual.eyebrow}
+              title={heroVisual.title}
+              metric={heroVisual.metric}
+              tone={heroVisual.tone}
+              fit={heroVisual.fit}
+              icon="sparkles"
+              priority
+              sizes="(min-width: 1024px) 52vw, 100vw"
+              className="rounded-none border-0 shadow-none"
+            />
             <div className="p-5">
               <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Commence ici</p>
               <h2 className="mt-3 text-2xl font-bold">Quel contrat veux-tu comparer ?</h2>
@@ -210,18 +214,64 @@ export default function Home() {
                 Comparia peut l’afficher proprement sans mélanger recommandation objective et rémunération.
               </p>
             </div>
-            <div className="grid gap-3 sm:grid-cols-3">
-              {[
-                ["Cashback", "Montant isolé et lisible avant le clic."],
-                ["Affiliation", "Clics trackés avec catégorie, source et horodatage."],
-                ["Priorité", "Les offres restent classées selon l’intérêt utilisateur."],
-              ].map(([title, body]) => (
-                <article key={title} className="rounded-2xl border border-white/10 bg-slate-950/60 p-5">
-                  <p className="text-lg font-bold text-white">{title}</p>
-                  <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
-                </article>
-              ))}
+            <div className="grid gap-4 xl:grid-cols-[0.9fr_1fr] xl:items-stretch">
+              <PremiumVisual
+                src={cashbackVisual.src}
+                alt={cashbackVisual.alt}
+                eyebrow={cashbackVisual.eyebrow}
+                title={cashbackVisual.title}
+                metric={cashbackVisual.metric}
+                tone={cashbackVisual.tone}
+                fit={cashbackVisual.fit}
+                icon="cashback"
+                sizes="(min-width: 1280px) 30vw, 100vw"
+                className="min-h-full"
+              />
+              <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
+                {[
+                  ["Cashback", "Montant isolé et lisible avant le clic."],
+                  ["Affiliation", "Clics trackés avec catégorie, source et horodatage."],
+                  ["Priorité", "Les offres restent classées selon l’intérêt utilisateur."],
+                ].map(([title, body]) => (
+                  <article key={title} className="rounded-2xl border border-white/10 bg-slate-950/60 p-5">
+                    <p className="text-lg font-bold text-white">{title}</p>
+                    <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
+                  </article>
+                ))}
+              </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="px-5 pb-14 sm:px-8 lg:px-10">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <div>
+              <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Visuels premium</p>
+              <h2 className="mt-3 text-3xl font-bold sm:text-4xl">Chaque univers a maintenant sa propre identité.</h2>
+            </div>
+            <p className="max-w-xl text-sm leading-6 text-slate-400">
+              Illustrations locales, légères et cohérentes : pas de dépendance fragile, un rendu fintech, et des images prêtes pour le SEO.
+            </p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {showcaseVisuals.map((visual) => (
+              <article key={visual.eyebrow} className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-3">
+                <PremiumVisual
+                  src={visual.src}
+                  alt={visual.alt}
+                  eyebrow={visual.eyebrow}
+                  title={visual.title}
+                  metric={visual.metric}
+                  tone={visual.tone}
+                  fit={visual.fit}
+                  sizes="(min-width: 1280px) 25vw, (min-width: 768px) 50vw, 100vw"
+                  className="rounded-[1.5rem]"
+                />
+                <p className="px-2 pb-3 pt-4 text-sm leading-6 text-slate-300">{visual.body}</p>
+              </article>
+            ))}
           </div>
         </div>
       </section>

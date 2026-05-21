@@ -63,3 +63,34 @@
 .animate-logo-marquee {
   animation: logo-marquee 28s linear infinite;
 }
+
+@keyframes premium-visual-sheen {
+  0% {
+    transform: translateX(-30%) skewX(-16deg);
+    opacity: 0;
+  }
+
+  35% {
+    opacity: 0;
+  }
+
+  55% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateX(320%) skewX(-16deg);
+    opacity: 0;
+  }
+}
+
+.premium-visual-card .premium-visual-sheen {
+  animation: premium-visual-sheen 7s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-logo-marquee,
+  .premium-visual-card .premium-visual-sheen {
+    animation: none;
+  }
+}

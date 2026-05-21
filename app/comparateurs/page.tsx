@@ -4,15 +4,10 @@ import { categories, categoryGroups } from "@/lib/categories";
 import SiteNav from "@/components/SiteNav";
 import CompariaIcon, { getCategoryIcon } from "@/components/CompariaIcon";
 import SiteFooter from "@/components/SiteFooter";
+import PremiumVisual from "@/components/PremiumVisual";
+import { getCategoryVisual, groupVisuals } from "@/lib/visuals";
 
 export default function ComparateursPage() {
-  const groupImages = {
-    Maison: "/category-maison.jpg",
-    Assurances: "/category-assurances.jpg",
-    Frontaliers: "/category-frontaliers.jpg",
-    Finances: "/comparia-hero.jpg",
-  } as const;
-
   return (
     <main className="min-h-screen bg-[#05070d] px-5 py-6 text-white sm:px-8">
       <div className="mx-auto max-w-7xl">
@@ -45,15 +40,18 @@ export default function ComparateursPage() {
           {categoryGroups.map((group) => (
             <section key={group} id={group.toLowerCase()}>
               <div className="mb-4 overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/[0.04] md:grid md:grid-cols-[0.34fr_0.66fr]">
-                <div className="relative aspect-video bg-slate-950/70 md:aspect-auto md:min-h-44">
-                  <Image
-                    src={groupImages[group]}
-                    alt=""
-                    fill
-                    sizes="(min-width: 768px) 34vw, 100vw"
-                    className="object-contain p-2"
-                  />
-                </div>
+                <PremiumVisual
+                  src={groupVisuals[group].src}
+                  alt={groupVisuals[group].alt}
+                  eyebrow={groupVisuals[group].eyebrow}
+                  title={groupVisuals[group].title}
+                  metric={groupVisuals[group].metric}
+                  tone={groupVisuals[group].tone}
+                  fit={groupVisuals[group].fit}
+                  icon={getCategoryIcon(categories.find((category) => category.group === group)?.slug ?? "banque")}
+                  sizes="(min-width: 768px) 34vw, 100vw"
+                  className="rounded-none border-0 shadow-none md:min-h-44"
+                />
                 <div className="p-5">
                   <h2 className="text-2xl font-semibold">{group}</h2>
                   <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
@@ -67,13 +65,27 @@ export default function ComparateursPage() {
               <div className="mt-3 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                 {categories
                   .filter((category) => category.group === group)
-                  .map((category) => (
-                    <article key={category.slug} className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5">
+                  .map((category) => {
+                    const visual = getCategoryVisual(category.slug);
+
+                    return (
+                    <article key={category.slug} className="overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/5">
+                      <div className="relative aspect-[16/9] bg-slate-950/70">
+                        <Image
+                          src={visual.src}
+                          alt={visual.alt}
+                          fill
+                          sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw"
+                          className="object-contain p-2"
+                        />
+                        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent" />
+                        <div className="absolute bottom-3 left-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-950/80 text-cyan-300 ring-1 ring-inset ring-cyan-300/20 backdrop-blur">
+                          <CompariaIcon name={getCategoryIcon(category.slug)} className="h-5 w-5" />
+                        </div>
+                      </div>
+                      <div className="p-5">
                       <div className="flex items-start justify-between gap-4">
                         <div>
-                          <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-cyan-400/10 text-cyan-300 ring-1 ring-inset ring-cyan-300/20">
-                            <CompariaIcon name={getCategoryIcon(category.slug)} />
-                          </div>
                           <h3 className="text-lg font-semibold">{category.title}</h3>
                           <p className="mt-3 text-sm leading-6 text-slate-300">{category.description}</p>
                         </div>
@@ -97,8 +109,10 @@ export default function ComparateursPage() {
                       >
                         {category.status === "active" ? "Comparer maintenant" : "Voir l’aperçu"}
                       </Link>
+                      </div>
                     </article>
-                  ))}
+                    );
+                  })}
               </div>
             </section>
           ))}
