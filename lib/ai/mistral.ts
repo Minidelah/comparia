@@ -48,20 +48,20 @@ export async function analyzeUserExpenses(
             content: JSON.stringify({
               expected_schema: {
                 summary: "string courte, naturelle et personnalisée",
-                estimatedSavings: ruleAnalysis.summary.totalSavings,
+                estimatedSavings: `${ruleAnalysis.summary.totalSavings} euros par an`,
                 actionPriorities: ["string", "string", "string"],
                 explanation: "string simple qui explique pourquoi ces leviers ressortent",
                 offerSlugs: ruleAnalysis.recommendations.slice(0, 5).map((recommendation) => recommendation.slug),
               },
               contexte_utilisateur: summarizeAnswersForAi(answers),
               economies_calculees_par_comparia: {
-                totalSavings: ruleAnalysis.summary.totalSavings,
-                monthlyLeak: ruleAnalysis.summary.monthlyLeak,
+                totalSavingsEurPerYear: ruleAnalysis.summary.totalSavings,
+                monthlyLeakEur: ruleAnalysis.summary.monthlyLeak,
                 optimizationScore: ruleAnalysis.summary.optimizationScore,
                 recommendations: ruleAnalysis.recommendations.slice(0, 6).map((recommendation) => ({
                   category: recommendation.category,
                   slug: recommendation.slug,
-                  annualSavings: recommendation.annualSavings,
+                  annualSavingsEur: recommendation.annualSavings,
                   priority: recommendation.priority,
                   reason: recommendation.reason,
                 })),
@@ -71,6 +71,8 @@ export async function analyzeUserExpenses(
                 "Ne promets jamais une économie garantie.",
                 "Ne crée pas de nouvelle catégorie.",
                 "Ne change pas les chiffres calculés par Comparia.",
+                "Toutes les économies sont en euros (€), même si le revenu utilisateur est en CHF.",
+                "Ne parle pas de comparaisons réelles de marché : parle d’estimation indicative basée sur les règles Comparia.",
                 "Si les données sont faibles, explique que l’estimation reste indicative.",
                 "Retourne uniquement un objet JSON valide, sans markdown.",
               ],
