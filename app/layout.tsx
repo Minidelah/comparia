@@ -2,7 +2,16 @@ import type { Metadata } from "next";
 import AnalyticsTracker from "@/components/AnalyticsTracker";
 import "./globals.css";
 
-const googleSiteVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
+function normalizeGoogleSiteVerification(value?: string) {
+  if (!value) return undefined;
+
+  const trimmed = value.trim();
+  const contentMatch = trimmed.match(/content=["']([^"']+)["']/i);
+
+  return (contentMatch?.[1] ?? trimmed).trim();
+}
+
+const googleSiteVerification = normalizeGoogleSiteVerification(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION);
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://www.comparetesfactures.fr"),
