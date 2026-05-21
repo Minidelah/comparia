@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import AdminAwinImportButton from "@/components/AdminAwinImportButton";
+import AdminCampaignLinkBuilder from "@/components/AdminCampaignLinkBuilder";
 import AdminOffersManager, { type AdminOfferRow } from "@/components/AdminOffersManager";
 import SiteNav from "@/components/SiteNav";
 import SiteFooter from "@/components/SiteFooter";
@@ -391,6 +392,7 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
     conversions: conversionsRange,
     traffic,
   });
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.comparetesfactures.fr";
 
   return (
     <main className="min-h-screen bg-[#05070d] px-5 py-6 text-white sm:px-8">
@@ -447,6 +449,8 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
         </section>
 
         <AcquisitionPanel analytics={acquisition} />
+
+        <AdminCampaignLinkBuilder baseUrl={siteUrl} />
 
         <section className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
           <AdminMetric label="Leads total" value={String(totalLeads)} tone="cyan" />
