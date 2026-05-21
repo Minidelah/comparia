@@ -99,3 +99,23 @@ CREATE POLICY "affiliate_clicks_owner_select" ON public.affiliate_clicks
 CREATE POLICY "conversions_owner_select" ON public.conversions
   FOR SELECT
   USING (auth.uid() = user_id);
+
+-- Accès serveur : nécessaire pour les routes API Next.js qui utilisent la clé secrète Supabase.
+-- RLS reste actif pour les utilisateurs ; service_role est uniquement utilisé côté serveur.
+GRANT USAGE ON SCHEMA public TO service_role;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE
+  public.users,
+  public.financial_profiles,
+  public.accounts,
+  public.transactions,
+  public.subscriptions,
+  public.offers,
+  public.diagnostics,
+  public.recommendations,
+  public.alerts,
+  public.affiliate_clicks,
+  public.conversions,
+  public.leads,
+  public.funnel_events
+TO service_role;
+GRANT SELECT ON public.user_export TO service_role;

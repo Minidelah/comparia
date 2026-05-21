@@ -1,5 +1,6 @@
--- Comparia AI, cashback and expense analysis extension
--- Rejouable : ce fichier prépare les tables produit sans casser l'existant.
+-- Comparia production repair — 2026-05-21
+-- À coller dans Supabase SQL Editor, pas le nom du fichier.
+-- Objectif : compléter les colonnes diagnostic et donner aux routes API serveur les droits nécessaires.
 
 ALTER TABLE IF EXISTS public.financial_profiles
   ADD COLUMN IF NOT EXISTS monthly_energy_cost numeric DEFAULT 0,
