@@ -69,6 +69,25 @@ type TrafficAnalytics = {
   topPages: TrafficPage[];
 };
 
+type DiagnosticInsights = {
+  count: number;
+  mistralCount: number;
+  totalSavings: number;
+  averageSavings: number;
+  topCategory: string | null;
+};
+
+type CategoryPerformance = {
+  slug: string;
+  views: number;
+  leads: number;
+  diagnostics: number;
+  clicks: number;
+  savings: number;
+  leadRate: string;
+  clickRate: string;
+};
+
 export default async function AdminPage({ searchParams }: { searchParams: AdminSearchParams }) {
   const params = await searchParams;
   const token = getParam(params.token);
@@ -110,6 +129,10 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
     unlockedCountResult,
     clicksCountResult,
     pageViewsResult,
+    wizardEventsResult,
+    diagnosticEventsResult,
+    affiliateEventsResult,
+    clicksRangeResult,
   ] = await Promise.all([
     supabase.from("leads").select("id,email,phone,first_name,consent_contact,category_slug,answer_snapshot,intent_score,source,created_at").order("created_at", { ascending: false }).limit(80),
     supabase.from("funnel_events").select("id,event_name,category_slug,lead_id,meta,created_at").order("created_at", { ascending: false }).limit(120),
@@ -128,13 +151,53 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
       .gte("created_at", ninetyDaysStart.toISOString())
       .order("created_at", { ascending: false })
       .limit(5000),
+    supabase
+      .from("funnel_events")
+      .select("id,event_name,category_slug,lead_id,meta,created_at")
+      .eq("event_name", "wizard_viewed")
+      .gte("created_at", ninetyDaysStart.toISOString())
+      .order("created_at", { ascending: false })
+      .limit(3000),
+    supabase
+      .from("funnel_events")
+      .select("id,event_name,category_slug,lead_id,meta,created_at")
+      .eq("event_name", "diagnostic_completed")
+      .gte("created_at", ninetyDaysStart.toISOString())
+      .order("created_at", { ascending: false })
+      .limit(3000),
+    supabase
+      .from("funnel_events")
+      .select("id,event_name,category_slug,lead_id,meta,created_at")
+      .eq("event_name", "affiliate_cta_clicked")
+      .gte("created_at", ninetyDaysStart.toISOString())
+      .order("created_at", { ascending: false })
+      .limit(3000),
+    supabase
+      .from("affiliate_clicks")
+      .select("id,source_screen,clicked_at,meta")
+      .gte("clicked_at", ninetyDaysStart.toISOString())
+      .order("clicked_at", { ascending: false })
+      .limit(3000),
   ]);
 
   const leads = (leadsResult.data ?? []) as LeadRow[];
   const events = (eventsResult.data ?? []) as FunnelEventRow[];
   const clicks = (clicksResult.data ?? []) as AffiliateClickRow[];
   const pageViews = (pageViewsResult.data ?? []) as FunnelEventRow[];
-  const errors = [leadsResult.error, eventsResult.error, clicksResult.error, pageViewsResult.error]
+  const wizardEvents = (wizardEventsResult.data ?? []) as FunnelEventRow[];
+  const diagnosticEvents = (diagnosticEventsResult.data ?? []) as FunnelEventRow[];
+  const affiliateEvents = (affiliateEventsResult.data ?? []) as FunnelEventRow[];
+  const clicksRange = (clicksRangeResult.data ?? []) as AffiliateClickRow[];
+  const errors = [
+    leadsResult.error,
+    eventsResult.error,
+    clicksResult.error,
+    pageViewsResult.error,
+    wizardEventsResult.error,
+    diagnosticEventsResult.error,
+    affiliateEventsResult.error,
+    clicksRangeResult.error,
+  ]
     .filter(Boolean)
     .map((error) => error?.message)
     .filter(Boolean) as string[];
@@ -149,6 +212,14 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
   const categories = buildCategoryStats(leads);
   const averageIntent = calculateAverageIntent(leads);
   const traffic = buildTrafficAnalytics(pageViews);
+  const diagnosticInsights = buildDiagnosticInsights(diagnosticEvents);
+  const categoryPerformance = buildCategoryPerformance({
+    leads,
+    wizardEvents,
+    diagnosticEvents,
+    affiliateEvents,
+    clicks: clicksRange,
+  });
 
   return (
     <main className="min-h-screen bg-[#05070d] px-5 py-6 text-white sm:px-8">
@@ -206,6 +277,14 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
           <AdminMetric label="Clics affiliés" value={String(affiliateClicks)} tone="amber" />
         </section>
 
+        <section className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+          <AdminMetric label="Diagnostics IA" value={String(diagnosticInsights.count)} tone="cyan" />
+          <AdminMetric label="IA Mistral" value={String(diagnosticInsights.mistralCount)} tone="emerald" />
+          <AdminMetric label="Économies détectées" value={formatEuro(diagnosticInsights.totalSavings)} tone="blue" />
+          <AdminMetric label="Moyenne / diagnostic" value={diagnosticInsights.averageSavings ? formatEuro(diagnosticInsights.averageSavings) : "—"} tone="purple" />
+          <AdminMetric label="CTR offres" value={rate(affiliateClicks, unlocked)} tone="amber" />
+        </section>
+
         <section className="mt-5 grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="rounded-[2rem] border border-white/10 bg-slate-950/70 p-6">
             <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Tunnel</p>
@@ -233,6 +312,11 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
               )}
             </div>
           </div>
+        </section>
+
+        <section className="mt-5 grid gap-5 xl:grid-cols-[1.25fr_0.75fr]">
+          <CategoryPerformanceTable items={categoryPerformance} />
+          <AiOpportunityPanel insights={diagnosticInsights} />
         </section>
 
         <section className="mt-5 grid gap-5 xl:grid-cols-[1.35fr_0.65fr]">
@@ -450,6 +534,89 @@ function TopPageRow({ page, max }: { page: TrafficPage; max: number }) {
   );
 }
 
+function CategoryPerformanceTable({ items }: { items: CategoryPerformance[] }) {
+  return (
+    <section className="rounded-[2rem] border border-white/10 bg-slate-950/70 p-6">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-sm uppercase tracking-[0.3em] text-emerald-300">Rentabilité tunnel</p>
+          <h2 className="mt-3 text-2xl font-semibold">Comparateurs à pousser.</h2>
+        </div>
+        <p className="max-w-sm text-sm leading-6 text-slate-400">
+          Classement 90 jours : vues, leads, diagnostics IA, clics affiliés et économies détectées.
+        </p>
+      </div>
+
+      <div className="mt-6 overflow-x-auto">
+        <table className="min-w-full text-left text-sm">
+          <thead className="text-xs uppercase tracking-[0.18em] text-slate-500">
+            <tr>
+              <th className="py-3 pr-4">Comparateur</th>
+              <th className="py-3 pr-4">Vues</th>
+              <th className="py-3 pr-4">Leads</th>
+              <th className="py-3 pr-4">Diagnostics</th>
+              <th className="py-3 pr-4">Clics</th>
+              <th className="py-3 pr-4">Lead rate</th>
+              <th className="py-3 pr-4">Clic rate</th>
+              <th className="py-3 pr-4">Économies</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-white/10">
+            {items.slice(0, 10).map((item) => (
+              <tr key={item.slug}>
+                <td className="py-3 pr-4">
+                  <Link href={`/comparateurs/${item.slug}`} className="font-semibold text-white transition hover:text-cyan-300">
+                    {formatSlug(item.slug)}
+                  </Link>
+                </td>
+                <td className="py-3 pr-4 text-slate-300">{item.views}</td>
+                <td className="py-3 pr-4 text-slate-300">{item.leads}</td>
+                <td className="py-3 pr-4 text-slate-300">{item.diagnostics}</td>
+                <td className="py-3 pr-4 text-slate-300">{item.clicks}</td>
+                <td className="py-3 pr-4 text-emerald-300">{item.leadRate}</td>
+                <td className="py-3 pr-4 text-cyan-300">{item.clickRate}</td>
+                <td className="py-3 pr-4 text-slate-300">{formatEuro(item.savings)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {items.length === 0 && (
+          <p className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-sm text-slate-400">
+            Les performances par comparateur apparaîtront après les prochaines vues, leads et clics.
+          </p>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function AiOpportunityPanel({ insights }: { insights: DiagnosticInsights }) {
+  return (
+    <section className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-cyan-400/10 via-blue-500/10 to-purple-500/10 p-6">
+      <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Moteur IA</p>
+      <h2 className="mt-3 text-2xl font-semibold">Ce que Comparia détecte.</h2>
+      <div className="mt-6 space-y-3">
+        <InsightLine label="Diagnostics sauvegardés" value={String(insights.count)} />
+        <InsightLine label="Générés par Mistral" value={String(insights.mistralCount)} />
+        <InsightLine label="Économies détectées" value={formatEuro(insights.totalSavings)} />
+        <InsightLine label="Catégorie prioritaire" value={insights.topCategory ? formatSlug(insights.topCategory) : "—"} />
+      </div>
+      <div className="mt-6 rounded-2xl border border-white/10 bg-slate-950/60 p-4 text-sm leading-6 text-slate-300">
+        Prochaine optimisation : relier ces diagnostics aux offres qui cliquent le mieux pour remonter automatiquement les partenaires les plus rentables.
+      </div>
+    </section>
+  );
+}
+
+function InsightLine({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3">
+      <span className="text-sm text-slate-400">{label}</span>
+      <span className="text-sm font-bold text-white">{value}</span>
+    </div>
+  );
+}
+
 function RecentEvents({ events }: { events: FunnelEventRow[] }) {
   return (
     <section className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6">
@@ -561,6 +728,97 @@ function buildTrafficAnalytics(pageViews: FunnelEventRow[]): TrafficAnalytics {
   };
 }
 
+function buildDiagnosticInsights(events: FunnelEventRow[]): DiagnosticInsights {
+  const categoryStats = new Map<string, number>();
+  let totalSavings = 0;
+  let mistralCount = 0;
+
+  for (const event of events) {
+    totalSavings += getDiagnosticSavings(event.meta);
+    const category = event.category_slug;
+    if (category) categoryStats.set(category, (categoryStats.get(category) ?? 0) + 1);
+    if (getAiProvider(event.meta) === "mistral") mistralCount += 1;
+  }
+
+  const topCategory =
+    Array.from(categoryStats.entries()).sort((a, b) => b[1] - a[1])[0]?.[0] ??
+    events.find((event) => event.category_slug)?.category_slug ??
+    null;
+
+  return {
+    count: events.length,
+    mistralCount,
+    totalSavings: Math.round(totalSavings),
+    averageSavings: events.length > 0 ? Math.round(totalSavings / events.length) : 0,
+    topCategory,
+  };
+}
+
+function buildCategoryPerformance({
+  leads,
+  wizardEvents,
+  diagnosticEvents,
+  affiliateEvents,
+  clicks,
+}: {
+  leads: LeadRow[];
+  wizardEvents: FunnelEventRow[];
+  diagnosticEvents: FunnelEventRow[];
+  affiliateEvents: FunnelEventRow[];
+  clicks: AffiliateClickRow[];
+}): CategoryPerformance[] {
+  const map = new Map<string, Omit<CategoryPerformance, "leadRate" | "clickRate">>();
+
+  const ensure = (slug: string) => {
+    const current = map.get(slug);
+    if (current) return current;
+
+    const next = { slug, views: 0, leads: 0, diagnostics: 0, clicks: 0, savings: 0 };
+    map.set(slug, next);
+    return next;
+  };
+
+  for (const event of wizardEvents) {
+    if (!event.category_slug) continue;
+    ensure(event.category_slug).views += 1;
+  }
+
+  for (const lead of leads) {
+    ensure(lead.category_slug).leads += 1;
+  }
+
+  for (const event of diagnosticEvents) {
+    const slug = event.category_slug ?? getDiagnosticTopSlug(event.meta);
+    if (!slug) continue;
+    const item = ensure(slug);
+    item.diagnostics += 1;
+    item.savings += getDiagnosticSavings(event.meta);
+  }
+
+  if (clicks.length > 0) {
+    for (const click of clicks) {
+      const slug = getMetaString(click.meta ?? {}, "category_slug") ?? getMetaString(click.meta ?? {}, "category");
+      if (!slug) continue;
+      ensure(slug).clicks += 1;
+    }
+  } else {
+    for (const event of affiliateEvents) {
+      const slug = event.category_slug;
+      if (!slug) continue;
+      ensure(slug).clicks += 1;
+    }
+  }
+
+  return Array.from(map.values())
+    .map((item) => ({
+      ...item,
+      savings: Math.round(item.savings),
+      leadRate: rate(item.leads, item.views),
+      clickRate: rate(item.clicks, Math.max(item.leads, item.diagnostics)),
+    }))
+    .sort((a, b) => b.clicks - a.clicks || b.leads - a.leads || b.savings - a.savings || b.views - a.views);
+}
+
 function buildCategoryStats(leads: LeadRow[]) {
   const stats = new Map<string, number>();
   for (const lead of leads) {
@@ -589,6 +847,12 @@ function countEvent(events: FunnelEventRow[], name: string) {
 function rate(part: number, total: number) {
   if (!total) return "—";
   return `${Math.round((part / total) * 100)}%`;
+}
+
+function formatEuro(value: number) {
+  if (!Number.isFinite(value) || value <= 0) return "0€";
+  if (value >= 1000) return `${Math.round(value).toLocaleString("fr-FR")}€`;
+  return `${Math.round(value)}€`;
 }
 
 function formatDate(value: string) {
@@ -629,6 +893,43 @@ function normalizeTrackedPath(value: string) {
 
 function getMetaString(meta: Record<string, unknown>, key: string) {
   const value = meta[key];
+  return typeof value === "string" && value.length > 0 ? value : null;
+}
+
+function getDiagnosticSavings(meta: Record<string, unknown> | null) {
+  const summary = getMetaRecord(meta, "summary");
+  const ai = getMetaRecord(meta, "ai");
+  const summarySavings = getRecordNumber(summary, "totalSavings");
+  const aiSavings = getRecordNumber(ai, "estimatedSavings");
+
+  return Math.max(summarySavings, aiSavings, 0);
+}
+
+function getAiProvider(meta: Record<string, unknown> | null) {
+  const ai = getMetaRecord(meta, "ai");
+  return getRecordString(ai, "generatedBy");
+}
+
+function getDiagnosticTopSlug(meta: Record<string, unknown> | null) {
+  const recommendations = meta?.recommendations;
+  if (!Array.isArray(recommendations)) return null;
+  const first = recommendations[0];
+  if (!first || typeof first !== "object") return null;
+  return getRecordString(first as Record<string, unknown>, "slug");
+}
+
+function getMetaRecord(meta: Record<string, unknown> | null, key: string) {
+  const value = meta?.[key];
+  return value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : null;
+}
+
+function getRecordNumber(record: Record<string, unknown> | null, key: string) {
+  const value = record?.[key];
+  return typeof value === "number" && Number.isFinite(value) ? value : 0;
+}
+
+function getRecordString(record: Record<string, unknown> | null, key: string) {
+  const value = record?.[key];
   return typeof value === "string" && value.length > 0 ? value : null;
 }
 
