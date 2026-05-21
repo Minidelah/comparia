@@ -42,9 +42,21 @@ type FunnelEventRow = {
 
 type AffiliateClickRow = {
   id: string;
+  offer_id: string | null;
   source_screen: string | null;
   clicked_at: string;
   meta: Record<string, unknown> | null;
+};
+
+type ConversionRow = {
+  id: string;
+  offer_id: string | null;
+  commission_value: number | null;
+  conversion_value: number | null;
+  cashback_value: number | null;
+  status: string | null;
+  created_at: string;
+  converted_at: string | null;
 };
 
 type TrafficDay = {
@@ -87,6 +99,85 @@ type CategoryPerformance = {
   savings: number;
   leadRate: string;
   clickRate: string;
+};
+
+type RevenueOfferProjection = {
+  offerId: string;
+  title: string;
+  provider: string;
+  category: string;
+  active: boolean;
+  sponsored: boolean;
+  clicks30d: number;
+  clicks90d: number;
+  projectedMonthlyClicks: number;
+  estimatedCommission: number;
+  estimatedConversionRate: number;
+  estimatedRevenue30d: number;
+  projectedMonthlyRevenue: number;
+  actualCommission30d: number;
+};
+
+type RevenueCategoryProjection = {
+  slug: string;
+  offerCount: number;
+  clicks30d: number;
+  projectedMonthlyClicks: number;
+  estimatedRevenue30d: number;
+  projectedMonthlyRevenue: number;
+  actualCommission30d: number;
+};
+
+type RevenueProjection = {
+  estimatedRevenue30d: number;
+  projectedMonthlyRevenue: number;
+  actualCommission30d: number;
+  monetizableClicks30d: number;
+  projectedMonthlyClicks: number;
+  averageEstimatedCommission: number;
+  blendedConversionRate: number;
+  offerRows: RevenueOfferProjection[];
+  categoryRows: RevenueCategoryProjection[];
+};
+
+const DEFAULT_CATEGORY_COMMISSION: Record<string, number> = {
+  "assurance-emprunteur": 55,
+  "assurance-auto": 38,
+  "assurance-habitation": 28,
+  "mutuelle-sante": 34,
+  "assurance-sante-frontaliers": 42,
+  "assurance-animaux": 18,
+  "assurance-moto": 24,
+  "assurance-velo": 10,
+  "assurance-trottinette": 8,
+  electricite: 22,
+  gaz: 20,
+  "box-internet": 18,
+  "forfait-mobile": 9,
+  banque: 32,
+  "change-chf-eur": 24,
+  abonnements: 10,
+  default: 16,
+};
+
+const DEFAULT_CATEGORY_CONVERSION_RATE: Record<string, number> = {
+  "assurance-emprunteur": 0.045,
+  "assurance-auto": 0.055,
+  "assurance-habitation": 0.065,
+  "mutuelle-sante": 0.05,
+  "assurance-sante-frontaliers": 0.045,
+  "assurance-animaux": 0.07,
+  "assurance-moto": 0.055,
+  "assurance-velo": 0.06,
+  "assurance-trottinette": 0.06,
+  electricite: 0.08,
+  gaz: 0.08,
+  "box-internet": 0.075,
+  "forfait-mobile": 0.085,
+  banque: 0.045,
+  "change-chf-eur": 0.05,
+  abonnements: 0.075,
+  default: 0.06,
 };
 
 export default async function AdminPage({ searchParams }: { searchParams: AdminSearchParams }) {
@@ -134,11 +225,12 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
     diagnosticEventsResult,
     affiliateEventsResult,
     clicksRangeResult,
+    conversionsRangeResult,
     offersResult,
   ] = await Promise.all([
     supabase.from("leads").select("id,email,phone,first_name,consent_contact,category_slug,answer_snapshot,intent_score,source,created_at").order("created_at", { ascending: false }).limit(80),
     supabase.from("funnel_events").select("id,event_name,category_slug,lead_id,meta,created_at").order("created_at", { ascending: false }).limit(120),
-    supabase.from("affiliate_clicks").select("id,source_screen,clicked_at,meta").order("clicked_at", { ascending: false }).limit(40),
+    supabase.from("affiliate_clicks").select("id,offer_id,source_screen,clicked_at,meta").order("clicked_at", { ascending: false }).limit(40),
     supabase.from("leads").select("id", { count: "exact", head: true }),
     supabase.from("leads").select("id", { count: "exact", head: true }).gte("created_at", todayStart.toISOString()),
     supabase.from("funnel_events").select("id", { count: "exact", head: true }).eq("event_name", "wizard_viewed"),
@@ -176,9 +268,15 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
       .limit(3000),
     supabase
       .from("affiliate_clicks")
-      .select("id,source_screen,clicked_at,meta")
+      .select("id,offer_id,source_screen,clicked_at,meta")
       .gte("clicked_at", ninetyDaysStart.toISOString())
       .order("clicked_at", { ascending: false })
+      .limit(3000),
+    supabase
+      .from("conversions")
+      .select("id,offer_id,commission_value,conversion_value,cashback_value,status,created_at,converted_at")
+      .gte("created_at", ninetyDaysStart.toISOString())
+      .order("created_at", { ascending: false })
       .limit(3000),
     supabase
       .from("offers")
@@ -197,6 +295,7 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
   const diagnosticEvents = (diagnosticEventsResult.data ?? []) as FunnelEventRow[];
   const affiliateEvents = (affiliateEventsResult.data ?? []) as FunnelEventRow[];
   const clicksRange = (clicksRangeResult.data ?? []) as AffiliateClickRow[];
+  const conversionsRange = (conversionsRangeResult.data ?? []) as ConversionRow[];
   const offerClickMap = buildOfferClickMap(clicksRange, affiliateEvents);
   const adminOffers = ((offersResult.data ?? []) as Omit<AdminOfferRow, "click_count">[]).map((offer) => ({
     ...offer,
@@ -211,6 +310,7 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
     diagnosticEventsResult.error,
     affiliateEventsResult.error,
     clicksRangeResult.error,
+    conversionsRangeResult.error,
     offersResult.error,
   ]
     .filter(Boolean)
@@ -234,6 +334,12 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
     diagnosticEvents,
     affiliateEvents,
     clicks: clicksRange,
+  });
+  const revenueProjection = buildRevenueProjection({
+    offers: adminOffers,
+    clicks: clicksRange,
+    affiliateEvents,
+    conversions: conversionsRange,
   });
 
   return (
@@ -259,6 +365,8 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
         <section className="mt-5">
           <AdminAwinImportButton />
         </section>
+
+        <RevenueProjectionPanel projection={revenueProjection} />
 
         <AdminOffersManager offers={adminOffers} />
 
@@ -435,6 +543,119 @@ function AdminMetric({ label, value, tone }: { label: string; value: string; ton
       <p className="text-xs uppercase tracking-[0.22em] opacity-70">{label}</p>
       <p className="mt-3 text-3xl font-black text-white">{value}</p>
     </article>
+  );
+}
+
+function RevenueProjectionPanel({ projection }: { projection: RevenueProjection }) {
+  const bestOffer = projection.offerRows[0];
+
+  return (
+    <section className="mt-5 overflow-hidden rounded-[2rem] border border-emerald-300/15 bg-gradient-to-br from-emerald-400/10 via-cyan-400/10 to-blue-500/10 p-5 sm:p-6">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p className="text-sm uppercase tracking-[0.3em] text-emerald-300">Projection revenu</p>
+          <h2 className="mt-3 text-2xl font-semibold text-white">Combien les clics peuvent rapporter.</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400">
+            Estimation basée sur les clics 30/90 jours, les commissions probables par catégorie et les conversions Awin futures. Les montants confirmés restent séparés.
+          </p>
+        </div>
+        <div className="rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-slate-300">
+          Offre à pousser : <span className="font-bold text-white">{bestOffer ? bestOffer.provider : "—"}</span>
+        </div>
+      </div>
+
+      <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+        <AdminMetric label="Revenu estimé 30j" value={formatRevenueEuro(projection.estimatedRevenue30d)} tone="emerald" />
+        <AdminMetric label="Projection / mois" value={formatRevenueEuro(projection.projectedMonthlyRevenue)} tone="cyan" />
+        <AdminMetric label="Commission confirmée" value={formatRevenueEuro(projection.actualCommission30d)} tone="amber" />
+        <AdminMetric label="Clics monétisables" value={String(projection.monetizableClicks30d)} tone="blue" />
+        <AdminMetric label="Commission moyenne" value={formatRevenueEuro(projection.averageEstimatedCommission)} tone="purple" />
+      </div>
+
+      <div className="mt-6 grid gap-5 xl:grid-cols-[1.2fr_0.8fr]">
+        <div className="rounded-[1.5rem] border border-white/10 bg-slate-950/70 p-4 sm:p-5">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-xs uppercase tracking-[0.24em] text-slate-500">Top offres</p>
+              <h3 className="mt-2 text-lg font-semibold text-white">Priorité business automatique.</h3>
+            </div>
+            <span className="rounded-full bg-emerald-400/10 px-3 py-1 text-xs font-bold text-emerald-200">
+              Conv. estimée {formatPercentNumber(projection.blendedConversionRate)}
+            </span>
+          </div>
+
+          <div className="mt-5 overflow-x-auto">
+            <table className="min-w-full text-left text-sm">
+              <thead className="text-xs uppercase tracking-[0.16em] text-slate-500">
+                <tr>
+                  <th className="py-3 pr-4">Offre</th>
+                  <th className="py-3 pr-4">Clics 30j</th>
+                  <th className="py-3 pr-4">Commission</th>
+                  <th className="py-3 pr-4">Conv.</th>
+                  <th className="py-3 pr-4">€/mois</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/10">
+                {projection.offerRows.slice(0, 8).map((offer) => (
+                  <tr key={offer.offerId}>
+                    <td className="py-3 pr-4">
+                      <p className="font-semibold text-white">{offer.provider}</p>
+                      <p className="mt-1 text-xs text-slate-500">{formatSlug(offer.category)} · {offer.active ? "actif" : "inactif"}{offer.sponsored ? " · sponsorisé" : ""}</p>
+                    </td>
+                    <td className="py-3 pr-4 text-slate-300">{offer.clicks30d}</td>
+                    <td className="py-3 pr-4 text-slate-300">{formatRevenueEuro(offer.estimatedCommission)}</td>
+                    <td className="py-3 pr-4 text-cyan-300">{formatPercentNumber(offer.estimatedConversionRate)}</td>
+                    <td className="py-3 pr-4 font-bold text-emerald-300">{formatRevenueEuro(offer.projectedMonthlyRevenue)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {projection.offerRows.length === 0 && (
+              <p className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-sm text-slate-400">
+                Importe des offres Awin pour activer la projection de revenu.
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="rounded-[1.5rem] border border-white/10 bg-slate-950/70 p-4 sm:p-5">
+          <p className="text-xs uppercase tracking-[0.24em] text-slate-500">Catégories rentables</p>
+          <h3 className="mt-2 text-lg font-semibold text-white">Où concentrer le trafic.</h3>
+          <div className="mt-5 space-y-3">
+            {projection.categoryRows.slice(0, 6).map((category) => (
+              <RevenueCategoryRow key={category.slug} category={category} max={projection.categoryRows[0]?.projectedMonthlyRevenue ?? 1} />
+            ))}
+            {projection.categoryRows.length === 0 && (
+              <p className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-sm text-slate-400">
+                Les catégories apparaîtront dès que les offres auront des clics ou une estimation.
+              </p>
+            )}
+          </div>
+          <div className="mt-5 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4 text-xs leading-5 text-amber-100/90">
+            Lecture saine : ce bloc estime le potentiel. Le vrai revenu viendra des validations Awin / annonceurs et doit ensuite être rapproché des conversions confirmées.
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function RevenueCategoryRow({ category, max }: { category: RevenueCategoryProjection; max: number }) {
+  const width = Math.max(6, Math.round((category.projectedMonthlyRevenue / Math.max(max, 1)) * 100));
+
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="font-semibold text-white">{formatSlug(category.slug)}</p>
+          <p className="mt-1 text-xs text-slate-500">{category.offerCount} offre{category.offerCount > 1 ? "s" : ""} · {category.clicks30d} clics 30j</p>
+        </div>
+        <span className="font-bold text-emerald-300">{formatRevenueEuro(category.projectedMonthlyRevenue)}</span>
+      </div>
+      <div className="mt-3 overflow-hidden rounded-full bg-white/10">
+        <div className="h-2 rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400" style={{ width: `${width}%` }} />
+      </div>
+    </div>
   );
 }
 
@@ -662,7 +883,7 @@ function RecentClicks({ clicks }: { clicks: AffiliateClickRow[] }) {
         {clicks.slice(0, 6).map((click) => (
           <div key={click.id} className="rounded-2xl border border-white/10 bg-slate-950/70 p-4">
             <div className="flex items-center justify-between gap-3">
-              <span className="text-sm font-semibold text-white">{getOfferId(click.meta)}</span>
+              <span className="text-sm font-semibold text-white">{getClickOfferId(click) ?? getOfferId(click.meta)}</span>
               <span className="text-xs text-slate-500">{formatDate(click.clicked_at)}</span>
             </div>
             <p className="mt-2 text-xs text-slate-400">{click.source_screen ?? "source inconnue"}</p>
@@ -775,16 +996,259 @@ function buildOfferClickMap(clicks: AffiliateClickRow[], affiliateEvents: Funnel
   const map = new Map<string, number>();
 
   for (const click of clicks) {
-    const offerId = getMetaString(click.meta ?? {}, "offer_slot_id") ?? getMetaString(click.meta ?? {}, "offerId");
+    const offerId = getClickOfferId(click);
     if (offerId) map.set(offerId, (map.get(offerId) ?? 0) + 1);
   }
 
   for (const event of affiliateEvents) {
-    const offerId = getMetaString(event.meta ?? {}, "offerId") ?? getMetaString(event.meta ?? {}, "offer_slot_id");
+    const offerId = getEventOfferId(event);
     if (offerId) map.set(offerId, (map.get(offerId) ?? 0) + 1);
   }
 
   return map;
+}
+
+function buildRevenueProjection({
+  offers,
+  clicks,
+  affiliateEvents,
+  conversions,
+}: {
+  offers: AdminOfferRow[];
+  clicks: AffiliateClickRow[];
+  affiliateEvents: FunnelEventRow[];
+  conversions: ConversionRow[];
+}): RevenueProjection {
+  const now = Date.now();
+  const thirtyDaysAgo = now - 30 * 24 * 60 * 60 * 1000;
+  const conversionCommissionMap = new Map<string, number>();
+
+  for (const conversion of conversions) {
+    const date = new Date(conversion.converted_at ?? conversion.created_at).getTime();
+    if (!conversion.offer_id || Number.isNaN(date) || date < thirtyDaysAgo || isRejectedConversion(conversion.status)) continue;
+
+    const commission = getPositiveNumber(conversion.commission_value) || getPositiveNumber(conversion.conversion_value) || 0;
+    conversionCommissionMap.set(conversion.offer_id, (conversionCommissionMap.get(conversion.offer_id) ?? 0) + commission);
+  }
+
+  const clickStats = buildRevenueClickStats({ clicks, affiliateEvents, now, thirtyDaysAgo });
+  const categoryMap = new Map<string, RevenueCategoryProjection>();
+  const activeOfferCountByCategory = offers.reduce<Map<string, number>>((map, offer) => {
+    if (offer.active !== false) map.set(offer.category, (map.get(offer.category) ?? 0) + 1);
+    return map;
+  }, new Map());
+
+  const offerRows = offers
+    .map((offer) => {
+      const stats = clickStats.byOffer.get(offer.id) ?? { clicks30d: 0, clicks90d: 0 };
+      const categoryFallback = clickStats.byCategory.get(offer.category) ?? { clicks30d: 0, clicks90d: 0 };
+      const activeOfferCount = Math.max(1, activeOfferCountByCategory.get(offer.category) ?? 1);
+      const clicks30d = stats.clicks30d || (offer.active !== false ? Math.floor(categoryFallback.clicks30d / activeOfferCount) : 0);
+      const clicks90d = stats.clicks90d || (offer.active !== false ? Math.floor(categoryFallback.clicks90d / activeOfferCount) : 0);
+      const projectedMonthlyClicks = Math.max(clicks30d, Math.round((clicks90d / 90) * 30));
+      const estimatedCommission = getEstimatedCommission(offer);
+      const estimatedConversionRate = getEstimatedConversionRate(offer.category);
+      const estimatedRevenue30d = clicks30d * estimatedCommission * estimatedConversionRate;
+      const projectedMonthlyRevenue = projectedMonthlyClicks * estimatedCommission * estimatedConversionRate;
+      const actualCommission30d = conversionCommissionMap.get(offer.id) ?? 0;
+
+      return {
+        offerId: offer.id,
+        title: offer.title,
+        provider: offer.provider,
+        category: offer.category,
+        active: offer.active !== false,
+        sponsored: Boolean(offer.sponsored),
+        clicks30d,
+        clicks90d,
+        projectedMonthlyClicks,
+        estimatedCommission,
+        estimatedConversionRate,
+        estimatedRevenue30d,
+        projectedMonthlyRevenue,
+        actualCommission30d,
+      } satisfies RevenueOfferProjection;
+    })
+    .sort((a, b) => {
+      const activeDelta = Number(b.active) - Number(a.active);
+      if (activeDelta !== 0) return activeDelta;
+      return b.projectedMonthlyRevenue - a.projectedMonthlyRevenue || b.clicks30d - a.clicks30d || b.estimatedCommission - a.estimatedCommission;
+    });
+
+  for (const offer of offerRows) {
+    const current = categoryMap.get(offer.category) ?? {
+      slug: offer.category,
+      offerCount: 0,
+      clicks30d: 0,
+      projectedMonthlyClicks: 0,
+      estimatedRevenue30d: 0,
+      projectedMonthlyRevenue: 0,
+      actualCommission30d: 0,
+    };
+
+    current.offerCount += 1;
+    current.clicks30d += offer.clicks30d;
+    current.projectedMonthlyClicks += offer.projectedMonthlyClicks;
+    current.estimatedRevenue30d += offer.estimatedRevenue30d;
+    current.projectedMonthlyRevenue += offer.projectedMonthlyRevenue;
+    current.actualCommission30d += offer.actualCommission30d;
+    categoryMap.set(offer.category, current);
+  }
+
+  const categoryRows = Array.from(categoryMap.values()).sort(
+    (a, b) => b.projectedMonthlyRevenue - a.projectedMonthlyRevenue || b.clicks30d - a.clicks30d,
+  );
+  const projectedMonthlyClicks = offerRows.reduce((total, offer) => total + offer.projectedMonthlyClicks, 0);
+  const weightedConversion = offerRows.reduce((total, offer) => total + offer.estimatedConversionRate * Math.max(offer.projectedMonthlyClicks, 1), 0);
+  const weightedBase = offerRows.reduce((total, offer) => total + Math.max(offer.projectedMonthlyClicks, 1), 0);
+
+  return {
+    estimatedRevenue30d: roundMoney(offerRows.reduce((total, offer) => total + offer.estimatedRevenue30d, 0)),
+    projectedMonthlyRevenue: roundMoney(offerRows.reduce((total, offer) => total + offer.projectedMonthlyRevenue, 0)),
+    actualCommission30d: roundMoney(offerRows.reduce((total, offer) => total + offer.actualCommission30d, 0)),
+    monetizableClicks30d: offerRows.reduce((total, offer) => total + offer.clicks30d, 0),
+    projectedMonthlyClicks,
+    averageEstimatedCommission: roundMoney(offerRows.length > 0 ? offerRows.reduce((total, offer) => total + offer.estimatedCommission, 0) / offerRows.length : 0),
+    blendedConversionRate: weightedBase > 0 ? weightedConversion / weightedBase : 0,
+    offerRows,
+    categoryRows: categoryRows.map((category) => ({
+      ...category,
+      estimatedRevenue30d: roundMoney(category.estimatedRevenue30d),
+      projectedMonthlyRevenue: roundMoney(category.projectedMonthlyRevenue),
+      actualCommission30d: roundMoney(category.actualCommission30d),
+    })),
+  };
+}
+
+function buildRevenueClickStats({
+  clicks,
+  affiliateEvents,
+  now,
+  thirtyDaysAgo,
+}: {
+  clicks: AffiliateClickRow[];
+  affiliateEvents: FunnelEventRow[];
+  now: number;
+  thirtyDaysAgo: number;
+}) {
+  const byOffer = new Map<string, { clicks30d: number; clicks90d: number }>();
+  const byCategory = new Map<string, { clicks30d: number; clicks90d: number }>();
+
+  if (clicks.length > 0) {
+    for (const click of clicks) {
+      const createdAt = new Date(click.clicked_at).getTime();
+      if (Number.isNaN(createdAt) || createdAt > now) continue;
+      registerRevenueClick({
+        byOffer,
+        byCategory,
+        offerId: getClickOfferId(click),
+        category: getClickCategory(click),
+        createdAt,
+        thirtyDaysAgo,
+      });
+    }
+  } else {
+    for (const event of affiliateEvents) {
+      const createdAt = new Date(event.created_at).getTime();
+      if (Number.isNaN(createdAt) || createdAt > now) continue;
+      registerRevenueClick({
+        byOffer,
+        byCategory,
+        offerId: getEventOfferId(event),
+        category: event.category_slug ?? getMetaString(event.meta ?? {}, "category_slug") ?? getMetaString(event.meta ?? {}, "category"),
+        createdAt,
+        thirtyDaysAgo,
+      });
+    }
+  }
+
+  return { byOffer, byCategory };
+}
+
+function registerRevenueClick({
+  byOffer,
+  byCategory,
+  offerId,
+  category,
+  createdAt,
+  thirtyDaysAgo,
+}: {
+  byOffer: Map<string, { clicks30d: number; clicks90d: number }>;
+  byCategory: Map<string, { clicks30d: number; clicks90d: number }>;
+  offerId: string | null;
+  category: string | null;
+  createdAt: number;
+  thirtyDaysAgo: number;
+}) {
+  const isThirtyDays = createdAt >= thirtyDaysAgo;
+
+  if (offerId) {
+    const stats = byOffer.get(offerId) ?? { clicks30d: 0, clicks90d: 0 };
+    stats.clicks90d += 1;
+    if (isThirtyDays) stats.clicks30d += 1;
+    byOffer.set(offerId, stats);
+  }
+
+  if (category) {
+    const stats = byCategory.get(category) ?? { clicks30d: 0, clicks90d: 0 };
+    stats.clicks90d += 1;
+    if (isThirtyDays) stats.clicks30d += 1;
+    byCategory.set(category, stats);
+  }
+}
+
+function getEstimatedCommission(offer: AdminOfferRow) {
+  const metadata = offer.metadata ?? {};
+  const explicit =
+    getRecordNumber(metadata, "estimatedCommission") ||
+    getRecordNumber(metadata, "estimated_commission") ||
+    getRecordNumber(metadata, "commissionAmount") ||
+    getRecordNumber(metadata, "awinCommissionValue");
+
+  if (explicit > 0) return explicit;
+
+  const parsed = parseCommissionRange(getRecordString(metadata, "awinCommissionRange"));
+  if (parsed > 0) return parsed;
+
+  return DEFAULT_CATEGORY_COMMISSION[offer.category] ?? DEFAULT_CATEGORY_COMMISSION.default;
+}
+
+function parseCommissionRange(value: string | null) {
+  if (!value) return 0;
+  const normalized = value.replaceAll(",", ".");
+  if (normalized.includes("%")) return 0;
+  const numbers = [...normalized.matchAll(/(\d+(?:\.\d+)?)/g)].map((match) => Number(match[1])).filter((number) => Number.isFinite(number) && number > 0);
+  if (numbers.length === 0) return 0;
+  return numbers.reduce((total, number) => total + number, 0) / numbers.length;
+}
+
+function getEstimatedConversionRate(category: string) {
+  return DEFAULT_CATEGORY_CONVERSION_RATE[category] ?? DEFAULT_CATEGORY_CONVERSION_RATE.default;
+}
+
+function getClickOfferId(click: AffiliateClickRow) {
+  return click.offer_id ?? getMetaString(click.meta ?? {}, "offer_slot_id") ?? getMetaString(click.meta ?? {}, "offerId");
+}
+
+function getEventOfferId(event: FunnelEventRow) {
+  return getMetaString(event.meta ?? {}, "offerId") ?? getMetaString(event.meta ?? {}, "offer_slot_id");
+}
+
+function getClickCategory(click: AffiliateClickRow) {
+  return getMetaString(click.meta ?? {}, "category_slug") ?? getMetaString(click.meta ?? {}, "category");
+}
+
+function isRejectedConversion(status: string | null) {
+  if (!status) return false;
+  return ["rejected", "declined", "cancelled", "canceled", "refused"].includes(status.toLowerCase());
+}
+
+function getPositiveNumber(value: number | null) {
+  return typeof value === "number" && Number.isFinite(value) && value > 0 ? value : 0;
+}
+
+function roundMoney(value: number) {
+  return Number.isFinite(value) ? Math.round(value * 100) / 100 : 0;
 }
 
 function buildCategoryPerformance({
@@ -886,6 +1350,17 @@ function formatEuro(value: number) {
   if (!Number.isFinite(value) || value <= 0) return "0€";
   if (value >= 1000) return `${Math.round(value).toLocaleString("fr-FR")}€`;
   return `${Math.round(value)}€`;
+}
+
+function formatRevenueEuro(value: number) {
+  if (!Number.isFinite(value) || value <= 0) return "0€";
+  if (value < 10) return `${value.toLocaleString("fr-FR", { maximumFractionDigits: 1 })}€`;
+  return `${Math.round(value).toLocaleString("fr-FR")}€`;
+}
+
+function formatPercentNumber(value: number) {
+  if (!Number.isFinite(value) || value <= 0) return "0%";
+  return `${(value * 100).toLocaleString("fr-FR", { maximumFractionDigits: 1 })}%`;
 }
 
 function formatDate(value: string) {
