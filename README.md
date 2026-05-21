@@ -72,6 +72,8 @@ SUPABASE_SERVICE_ROLE_KEY=
 ADMIN_DASHBOARD_TOKEN=
 AWIN_PUBLISHER_ID=
 AWIN_API_TOKEN=
+MISTRAL_API_KEY=
+MISTRAL_MODEL=mistral-small-latest
 ```
 
 Variables publiques recommandées pour la production :
@@ -91,6 +93,23 @@ Ensuite, appliquer les fichiers SQL présents dans `infra/` sur ton projet Supab
 
 Quand Supabase est configuré, le diagnostic est sauvegardé via `POST /api/diagnostics`.  
 Sans configuration, l’expérience reste fonctionnelle et affiche simplement un mode local.
+
+## Configurer l’assistant IA Mistral
+
+L’IA est appelée uniquement côté serveur : aucune clé Mistral n’est exposée dans le frontend.
+
+Variables à ajouter dans `.env.local` et dans Vercel :
+
+```bash
+MISTRAL_API_KEY=...
+MISTRAL_MODEL=mistral-small-latest
+```
+
+Routes disponibles :
+- `POST /api/diagnostics` : diagnostic + sauvegarde + résumé IA.
+- `POST /api/ai/analyze` : analyse IA seule, utile pour tester le moteur.
+
+Sans `MISTRAL_API_KEY`, Comparia utilise un fallback explicable basé sur les règles internes.
 
 ## Importer les offres Awin
 
@@ -136,4 +155,4 @@ L’import classe les programmes Awin acceptés par comparateur, génère des li
 2. persister profils, diagnostics, recommandations et alertes ;
 3. créer les pages dédiées de comparateurs ;
 4. brancher les offres partenaires et le tracking d’affiliation ;
-5. ajouter Mistral pour expliquer les recommandations, pas pour inventer les chiffres.
+5. enrichir le dashboard avec historique économies, cashback et recommandations IA sauvegardées.

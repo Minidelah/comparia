@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import type { DiagnosticAnswers } from "@/lib/diagnostic";
+import type { AiExpenseInsight } from "@/lib/ai/types";
 import { analyzeDiagnostic } from "@/lib/services/diagnostics";
 import SiteNav from "@/components/SiteNav";
 import MetricCard from "@/components/MetricCard";
@@ -40,6 +41,7 @@ export default function OnboardingPage() {
   const [goal, setGoal] = useState("");
   const [showResults, setShowResults] = useState(false);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "not-configured" | "saved-locally">("idle");
+  const [aiInsight, setAiInsight] = useState<AiExpenseInsight | null>(null);
 
   const answers: DiagnosticAnswers | null = useMemo(() => {
     if (isCrossBorderWorker === null) {
@@ -101,6 +103,7 @@ export default function OnboardingPage() {
     }
 
     setShowResults(true);
+    setAiInsight(null);
 
     if (!answers) {
       return;
@@ -116,8 +119,13 @@ export default function OnboardingPage() {
         body: JSON.stringify({ anonymousId, answers }),
       });
       const payload = (await response.json()) as {
+        ai?: AiExpenseInsight;
         persistence?: { persisted?: boolean; reason?: string };
       };
+
+      if (payload.ai) {
+        setAiInsight(payload.ai);
+      }
 
       if (payload.persistence?.persisted) {
         setSaveState("saved");
@@ -173,6 +181,39 @@ export default function OnboardingPage() {
                 <Link href={`/comparateurs/${topRecommendation.slug}`} className="rounded-2xl bg-white px-5 py-3 text-center font-semibold text-slate-950 transition hover:bg-cyan-100">
                   {topRecommendation.cta}
                 </Link>
+              </div>
+            </section>
+          )}
+
+          {aiInsight && (
+            <section className="mt-6 rounded-[2rem] border border-violet-300/20 bg-gradient-to-br from-violet-400/10 via-cyan-400/10 to-blue-500/10 p-6">
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                <div>
+                  <p className="text-sm uppercase tracking-[0.3em] text-violet-200">
+                    Assistant IA {aiInsight.generatedBy === "mistral" ? "Mistral" : "Comparia"}
+                  </p>
+                  <h2 className="mt-3 text-2xl font-semibold">Lecture personnalisée de ton profil</h2>
+                  <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-200">{aiInsight.summary}</p>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-slate-950/60 px-5 py-4 text-right">
+                  <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Économie IA estimée</p>
+                  <p className="mt-2 text-3xl font-bold text-emerald-300">{aiInsight.estimatedSavings}€/an</p>
+                </div>
+              </div>
+
+              <div className="mt-5 grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+                <div className="rounded-2xl border border-white/10 bg-slate-950/60 p-5">
+                  <p className="text-sm font-semibold text-white">Priorités d’action</p>
+                  <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-300">
+                    {aiInsight.actionPriorities.map((priority) => (
+                      <li key={priority}>• {priority}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-slate-950/60 p-5">
+                  <p className="text-sm font-semibold text-white">Explication simple</p>
+                  <p className="mt-3 text-sm leading-7 text-slate-300">{aiInsight.explanation}</p>
+                </div>
               </div>
             </section>
           )}

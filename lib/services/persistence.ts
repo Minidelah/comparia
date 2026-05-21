@@ -1,4 +1,5 @@
 import type { DiagnosticAnswers } from "@/lib/diagnostic";
+import type { AiExpenseInsight } from "@/lib/ai/types";
 import type { DiagnosticResult } from "@/lib/services/diagnostics";
 import { createSupabaseAdminClient, isSupabaseConfigured } from "@/lib/supabase/server";
 
@@ -6,6 +7,7 @@ export type PersistDiagnosticInput = {
   anonymousId: string;
   answers: DiagnosticAnswers;
   analysis: DiagnosticResult;
+  ai?: AiExpenseInsight;
 };
 
 export async function persistDiagnostic(input: PersistDiagnosticInput) {
@@ -93,6 +95,25 @@ export async function persistDiagnostic(input: PersistDiagnosticInput) {
 
     if (recommendationsError) {
       throw recommendationsError;
+    }
+  }
+
+  if (input.ai) {
+    const { error: aiError } = await supabase.from("ai_recommendations").insert({
+      user_id: user.id,
+      diagnostic_id: diagnostic.id,
+      provider: input.ai.generatedBy,
+      summary: input.ai.summary,
+      estimated_savings: input.ai.estimatedSavings,
+      action_priorities: input.ai.actionPriorities,
+      explanation: input.ai.explanation,
+      offer_slugs: input.ai.offerSlugs,
+      recommendations: input.ai.recommendations,
+      created_at: new Date().toISOString(),
+    });
+
+    if (aiError && process.env.NODE_ENV !== "production") {
+      console.warn("AI recommendation persistence skipped", aiError.message);
     }
   }
 
