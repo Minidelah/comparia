@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import AdminAwinImportButton from "@/components/AdminAwinImportButton";
+import AdminOffersManager, { type AdminOfferRow } from "@/components/AdminOffersManager";
 import SiteNav from "@/components/SiteNav";
 import SiteFooter from "@/components/SiteFooter";
 import { createSupabaseAdminClient, isSupabaseConfigured } from "@/lib/supabase/server";
@@ -133,6 +134,7 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
     diagnosticEventsResult,
     affiliateEventsResult,
     clicksRangeResult,
+    offersResult,
   ] = await Promise.all([
     supabase.from("leads").select("id,email,phone,first_name,consent_contact,category_slug,answer_snapshot,intent_score,source,created_at").order("created_at", { ascending: false }).limit(80),
     supabase.from("funnel_events").select("id,event_name,category_slug,lead_id,meta,created_at").order("created_at", { ascending: false }).limit(120),
@@ -178,6 +180,13 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
       .gte("clicked_at", ninetyDaysStart.toISOString())
       .order("clicked_at", { ascending: false })
       .limit(3000),
+    supabase
+      .from("offers")
+      .select("id,category,provider,title,monthly_cost,annual_savings_estimate,affiliate_url,cashback_amount,sponsored,active,metadata,created_at")
+      .order("category", { ascending: true })
+      .order("active", { ascending: false })
+      .order("annual_savings_estimate", { ascending: false, nullsFirst: false })
+      .limit(200),
   ]);
 
   const leads = (leadsResult.data ?? []) as LeadRow[];
@@ -188,6 +197,11 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
   const diagnosticEvents = (diagnosticEventsResult.data ?? []) as FunnelEventRow[];
   const affiliateEvents = (affiliateEventsResult.data ?? []) as FunnelEventRow[];
   const clicksRange = (clicksRangeResult.data ?? []) as AffiliateClickRow[];
+  const offerClickMap = buildOfferClickMap(clicksRange, affiliateEvents);
+  const adminOffers = ((offersResult.data ?? []) as Omit<AdminOfferRow, "click_count">[]).map((offer) => ({
+    ...offer,
+    click_count: offerClickMap.get(offer.id) ?? 0,
+  }));
   const errors = [
     leadsResult.error,
     eventsResult.error,
@@ -197,6 +211,7 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
     diagnosticEventsResult.error,
     affiliateEventsResult.error,
     clicksRangeResult.error,
+    offersResult.error,
   ]
     .filter(Boolean)
     .map((error) => error?.message)
@@ -244,6 +259,8 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
         <section className="mt-5">
           <AdminAwinImportButton />
         </section>
+
+        <AdminOffersManager offers={adminOffers} />
 
         {errors.length > 0 && (
           <section className="mt-5 rounded-[1.5rem] border border-rose-300/20 bg-rose-300/10 p-5 text-sm leading-6 text-rose-100">
@@ -752,6 +769,22 @@ function buildDiagnosticInsights(events: FunnelEventRow[]): DiagnosticInsights {
     averageSavings: events.length > 0 ? Math.round(totalSavings / events.length) : 0,
     topCategory,
   };
+}
+
+function buildOfferClickMap(clicks: AffiliateClickRow[], affiliateEvents: FunnelEventRow[]) {
+  const map = new Map<string, number>();
+
+  for (const click of clicks) {
+    const offerId = getMetaString(click.meta ?? {}, "offer_slot_id") ?? getMetaString(click.meta ?? {}, "offerId");
+    if (offerId) map.set(offerId, (map.get(offerId) ?? 0) + 1);
+  }
+
+  for (const event of affiliateEvents) {
+    const offerId = getMetaString(event.meta ?? {}, "offerId") ?? getMetaString(event.meta ?? {}, "offer_slot_id");
+    if (offerId) map.set(offerId, (map.get(offerId) ?? 0) + 1);
+  }
+
+  return map;
 }
 
 function buildCategoryPerformance({
