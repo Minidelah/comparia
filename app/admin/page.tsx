@@ -4,6 +4,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import AdminAwinImportButton from "@/components/AdminAwinImportButton";
 import AdminCampaignLinkBuilder from "@/components/AdminCampaignLinkBuilder";
+import AdminLeadExportButton, { type ExportableLead } from "@/components/AdminLeadExportButton";
 import AdminOffersManager, { type AdminOfferRow } from "@/components/AdminOffersManager";
 import SiteNav from "@/components/SiteNav";
 import SiteFooter from "@/components/SiteFooter";
@@ -393,6 +394,7 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
     traffic,
   });
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.comparetesfactures.fr";
+  const exportableLeads = buildExportableLeads(leads);
 
   return (
     <main className="min-h-screen bg-[#05070d] px-5 py-6 text-white sm:px-8">
@@ -509,9 +511,12 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
                 <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Leads récents</p>
                 <h2 className="mt-3 text-2xl font-semibold">Contacts à traiter.</h2>
               </div>
-              <Link href="/comparateurs" className="rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-2 text-sm font-semibold text-slate-200 transition hover:bg-white/10">
-                Tester un comparateur
-              </Link>
+              <div className="flex flex-wrap gap-2">
+                <AdminLeadExportButton leads={exportableLeads} />
+                <Link href="/comparateurs" className="rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-2 text-sm font-semibold text-slate-200 transition hover:bg-white/10">
+                  Tester un comparateur
+                </Link>
+              </div>
             </div>
             <div className="mt-5 overflow-x-auto">
               <table className="min-w-full text-left text-sm">
@@ -1279,6 +1284,20 @@ function buildAcquisitionAnalytics({
   };
 }
 
+function buildExportableLeads(leads: LeadRow[]): ExportableLead[] {
+  return leads.map((lead) => ({
+    createdAt: lead.created_at,
+    firstName: lead.first_name || "",
+    email: lead.email,
+    phone: lead.phone,
+    category: formatSlug(lead.category_slug),
+    source: formatAcquisitionLabel(getAttributionInfo(lead.metadata)),
+    score: lead.intent_score ? `${lead.intent_score}/100` : "",
+    consent: lead.consent_contact ? "oui" : "non",
+    answers: formatAnswerSnapshot(lead.answer_snapshot),
+  }));
+}
+
 function buildDiagnosticInsights(events: FunnelEventRow[]): DiagnosticInsights {
   const categoryStats = new Map<string, number>();
   let totalSavings = 0;
@@ -1827,6 +1846,11 @@ function formatDate(value: string) {
     hour: "2-digit",
     minute: "2-digit",
   }).format(new Date(value));
+}
+
+function formatAnswerSnapshot(value: string[] | null) {
+  if (!Array.isArray(value) || value.length === 0) return "";
+  return value.filter(Boolean).join(" | ");
 }
 
 function formatSlug(slug: string) {
