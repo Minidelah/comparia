@@ -9,6 +9,7 @@ const partners = [
   { name: "April", domain: "april.fr" },
   { name: "EDF", domain: "edf.fr" },
   { name: "Engie", domain: "engie.fr" },
+  { name: "OHM Énergie", domain: "ohm-energie.com" },
   { name: "TotalEnergies", domain: "totalenergies.fr" },
   { name: "Octopus Energy", domain: "octopusenergy.fr" },
   { name: "Sosh", domain: "sosh.fr" },

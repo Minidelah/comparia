@@ -123,7 +123,10 @@ export async function getOfferSlotsForCategory(categorySlug: string): Promise<Of
     }
 
     const mapped = ((data ?? []) as OfferRow[]).filter(isPlausibleOfferRow).map(mapOfferRow).filter(Boolean) as OfferSlot[];
-    return mapped.length > 0 ? mapped : fallback;
+    const manualExternalOffers = getManualExternalOfferSlotsForCategory(categorySlug);
+    const offers = [...manualExternalOffers, ...mapped].sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+
+    return offers.length > 0 ? offers : fallback;
   } catch (error) {
     if (process.env.NODE_ENV !== "production") {
       console.error("Unexpected offer loading failure", error);
@@ -136,6 +139,12 @@ function getFallbackOfferSlotsForCategory(categorySlug: string) {
   const structured = getStructuredOffersForCategory(categorySlug).map(mapStructuredOffer);
   const legacy = offerSlots.filter((offer) => offer.categorySlug === categorySlug);
   return [...structured, ...legacy].sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+}
+
+function getManualExternalOfferSlotsForCategory(categorySlug: string) {
+  return getStructuredOffersForCategory(categorySlug)
+    .filter((offer) => offer.affiliateLink.startsWith("https://"))
+    .map(mapStructuredOffer);
 }
 
 function mapOfferRow(row: OfferRow): OfferSlot | null {
