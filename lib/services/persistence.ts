@@ -110,9 +110,7 @@ async function persistDiagnosticEventFallback(
   input: PersistDiagnosticInput,
   originalError: unknown,
 ) {
-  const { data, error } = await supabase
-    .from("funnel_events")
-    .insert({
+  const { error } = await supabase.from("funnel_events").insert({
       event_name: "diagnostic_completed",
       category_slug: input.analysis.recommendations[0]?.slug ?? null,
       meta: {
@@ -136,9 +134,7 @@ async function persistDiagnosticEventFallback(
           : null,
         fallbackReason: getSafePersistenceError(originalError),
       },
-    })
-    .select("id")
-    .single();
+    });
 
   if (error) {
     throw error;
@@ -148,7 +144,6 @@ async function persistDiagnosticEventFallback(
     persisted: true as const,
     diagnosticId: null,
     fallback: "funnel_events" as const,
-    eventId: data?.id ?? null,
   };
 }
 
