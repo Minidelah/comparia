@@ -27,6 +27,7 @@ type LeadRow = {
   category_slug: string;
   answer_snapshot: string[] | null;
   intent_score: number | null;
+  metadata: Record<string, unknown> | null;
   source: string | null;
   created_at: string;
 };
@@ -80,6 +81,36 @@ type TrafficAnalytics = {
   thirtyDayPageViews: number;
   daily: TrafficDay[];
   topPages: TrafficPage[];
+};
+
+type AcquisitionSource = {
+  source: string;
+  medium: string;
+  visitors: number;
+  pageViews: number;
+  leads: number;
+  clicks: number;
+  leadRate: string;
+};
+
+type AcquisitionCampaign = {
+  campaign: string;
+  source: string;
+  visitors: number;
+  leads: number;
+};
+
+type AcquisitionAnalytics = {
+  sources: AcquisitionSource[];
+  campaigns: AcquisitionCampaign[];
+  topSource: string | null;
+};
+
+type AttributionInfo = {
+  source: string;
+  medium: string;
+  campaign: string | null;
+  landingPage: string | null;
 };
 
 type DiagnosticInsights = {
@@ -238,7 +269,7 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
     conversionsRangeResult,
     offersResult,
   ] = await Promise.all([
-    supabase.from("leads").select("id,email,phone,first_name,consent_contact,category_slug,answer_snapshot,intent_score,source,created_at").order("created_at", { ascending: false }).limit(80),
+    supabase.from("leads").select("id,email,phone,first_name,consent_contact,category_slug,answer_snapshot,intent_score,metadata,source,created_at").order("created_at", { ascending: false }).limit(80),
     supabase.from("funnel_events").select("id,event_name,category_slug,lead_id,meta,created_at").order("created_at", { ascending: false }).limit(120),
     supabase.from("affiliate_clicks").select("id,offer_id,source_screen,clicked_at,meta").order("clicked_at", { ascending: false }).limit(40),
     supabase.from("leads").select("id", { count: "exact", head: true }),
@@ -337,6 +368,7 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
   const categories = buildCategoryStats(leads);
   const averageIntent = calculateAverageIntent(leads);
   const traffic = buildTrafficAnalytics(pageViews);
+  const acquisition = buildAcquisitionAnalytics({ pageViews, leads, clicks: clicksRange });
   const diagnosticInsights = buildDiagnosticInsights(diagnosticEvents);
   const categoryPerformance = buildCategoryPerformance({
     leads,
@@ -414,6 +446,8 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
           <TopPages pages={traffic.topPages} />
         </section>
 
+        <AcquisitionPanel analytics={acquisition} />
+
         <section className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
           <AdminMetric label="Leads total" value={String(totalLeads)} tone="cyan" />
           <AdminMetric label="Leads aujourd’hui" value={String(leadsToday)} tone="emerald" />
@@ -482,6 +516,7 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
                     <th className="py-3 pr-4">Contact</th>
                     <th className="py-3 pr-4">Téléphone</th>
                     <th className="py-3 pr-4">Catégorie</th>
+                    <th className="py-3 pr-4">Source</th>
                     <th className="py-3 pr-4">Score</th>
                     <th className="py-3 pr-4">Date</th>
                   </tr>
@@ -495,6 +530,7 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
                       </td>
                       <td className="py-3 pr-4"><a className="text-slate-300 transition hover:text-cyan-300" href={`tel:${lead.phone}`}>{lead.phone}</a></td>
                       <td className="py-3 pr-4"><span className="rounded-full bg-cyan-400/10 px-3 py-1 text-xs font-semibold text-cyan-200">{formatSlug(lead.category_slug)}</span></td>
+                      <td className="py-3 pr-4 text-slate-300">{formatAcquisitionLabel(getAttributionInfo(lead.metadata))}</td>
                       <td className="py-3 pr-4 text-slate-300">{lead.intent_score ? `${lead.intent_score}/100` : "—"}</td>
                       <td className="py-3 pr-4 text-slate-400">{formatDate(lead.created_at)}</td>
                     </tr>
@@ -840,6 +876,113 @@ function TopPageRow({ page, max }: { page: TrafficPage; max: number }) {
   );
 }
 
+function AcquisitionPanel({ analytics }: { analytics: AcquisitionAnalytics }) {
+  const maxVisitors = Math.max(...analytics.sources.map((source) => source.visitors), 1);
+
+  return (
+    <section className="mt-5 rounded-[2rem] border border-emerald-300/15 bg-gradient-to-br from-slate-950 via-emerald-950/20 to-cyan-950/20 p-6">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p className="text-sm uppercase tracking-[0.3em] text-emerald-300">Acquisition</p>
+          <h2 className="mt-3 text-2xl font-semibold">D’où viennent les visiteurs qui convertissent.</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400">
+            UTM, referrer, campagnes Google/Social et clics affiliés sont regroupés pour savoir où concentrer le budget et le contenu.
+          </p>
+        </div>
+        <span className="rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-sm font-semibold text-slate-200">
+          Top canal : {analytics.topSource ? formatSourceName(analytics.topSource) : "en attente"}
+        </span>
+      </div>
+
+      <div className="mt-6 grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
+        <div className="rounded-[1.5rem] border border-white/10 bg-slate-950/70 p-5">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-xs uppercase tracking-[0.24em] text-slate-500">Sources</p>
+              <h3 className="mt-2 text-lg font-semibold text-white">Canaux par performance.</h3>
+            </div>
+            <span className="rounded-full bg-emerald-400/10 px-3 py-1 text-xs font-bold text-emerald-200">
+              Leads + clics
+            </span>
+          </div>
+
+          <div className="mt-5 space-y-3">
+            {analytics.sources.length > 0 ? (
+              analytics.sources.slice(0, 8).map((source) => <AcquisitionSourceRow key={`${source.source}-${source.medium}`} item={source} max={maxVisitors} />)
+            ) : (
+              <p className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-sm text-slate-400">
+                Les sources apparaîtront après les prochaines visites publiques.
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="rounded-[1.5rem] border border-white/10 bg-slate-950/70 p-5">
+          <p className="text-xs uppercase tracking-[0.24em] text-slate-500">Campagnes</p>
+          <h3 className="mt-2 text-lg font-semibold text-white">UTM à garder ou couper.</h3>
+          <div className="mt-5 space-y-3">
+            {analytics.campaigns.length > 0 ? (
+              analytics.campaigns.slice(0, 7).map((campaign) => <CampaignRow key={`${campaign.source}-${campaign.campaign}`} campaign={campaign} />)
+            ) : (
+              <p className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-sm leading-6 text-slate-400">
+                Ajoute des liens avec <span className="font-semibold text-slate-200">utm_source</span> et <span className="font-semibold text-slate-200">utm_campaign</span> pour piloter TikTok, Google, Instagram ou emailing.
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function AcquisitionSourceRow({ item, max }: { item: AcquisitionSource; max: number }) {
+  const width = Math.max(6, Math.round((item.visitors / Math.max(max, 1)) * 100));
+
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <p className="font-semibold text-white">{formatSourceName(item.source)}</p>
+          <p className="mt-1 text-xs uppercase tracking-[0.16em] text-slate-500">{formatSourceName(item.medium)}</p>
+        </div>
+        <div className="grid grid-cols-3 gap-2 text-right text-xs sm:min-w-64">
+          <div>
+            <p className="font-bold text-white">{item.visitors}</p>
+            <p className="text-slate-500">visiteurs</p>
+          </div>
+          <div>
+            <p className="font-bold text-emerald-300">{item.leads}</p>
+            <p className="text-slate-500">leads</p>
+          </div>
+          <div>
+            <p className="font-bold text-cyan-300">{item.clicks}</p>
+            <p className="text-slate-500">clics</p>
+          </div>
+        </div>
+      </div>
+      <div className="mt-3 overflow-hidden rounded-full bg-white/10">
+        <div className="h-2 rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400" style={{ width: `${width}%` }} />
+      </div>
+      <p className="mt-2 text-xs text-slate-500">{item.pageViews} page{item.pageViews > 1 ? "s" : ""} vue{item.pageViews > 1 ? "s" : ""} · taux lead {item.leadRate}</p>
+    </div>
+  );
+}
+
+function CampaignRow({ campaign }: { campaign: AcquisitionCampaign }) {
+  return (
+    <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3">
+      <div>
+        <p className="text-sm font-semibold text-white">{campaign.campaign}</p>
+        <p className="mt-1 text-xs text-slate-500">{formatSourceName(campaign.source)}</p>
+      </div>
+      <div className="text-right text-xs">
+        <p className="font-bold text-emerald-300">{campaign.leads} lead{campaign.leads > 1 ? "s" : ""}</p>
+        <p className="text-slate-500">{campaign.visitors} visiteur{campaign.visitors > 1 ? "s" : ""}</p>
+      </div>
+    </div>
+  );
+}
+
 function CategoryPerformanceTable({ items }: { items: CategoryPerformance[] }) {
   return (
     <section className="rounded-[2rem] border border-white/10 bg-slate-950/70 p-6">
@@ -1031,6 +1174,104 @@ function buildTrafficAnalytics(pageViews: FunnelEventRow[]): TrafficAnalytics {
       .map(([path, item]) => ({ path, visitors: item.visitors.size, pageViews: item.pageViews }))
       .sort((a, b) => b.pageViews - a.pageViews || b.visitors - a.visitors)
       .slice(0, 8),
+  };
+}
+
+function buildAcquisitionAnalytics({
+  pageViews,
+  leads,
+  clicks,
+}: {
+  pageViews: FunnelEventRow[];
+  leads: LeadRow[];
+  clicks: AffiliateClickRow[];
+}): AcquisitionAnalytics {
+  const sourceMap = new Map<
+    string,
+    {
+      source: string;
+      medium: string;
+      visitors: Set<string>;
+      pageViews: number;
+      leads: number;
+      clicks: number;
+    }
+  >();
+  const campaignMap = new Map<string, { campaign: string; source: string; visitors: Set<string>; leads: number }>();
+
+  const ensureSource = (info: AttributionInfo) => {
+    const key = `${info.source}:${info.medium}`;
+    const current = sourceMap.get(key);
+    if (current) return current;
+    const next = {
+      source: info.source,
+      medium: info.medium,
+      visitors: new Set<string>(),
+      pageViews: 0,
+      leads: 0,
+      clicks: 0,
+    };
+    sourceMap.set(key, next);
+    return next;
+  };
+
+  const ensureCampaign = (info: AttributionInfo) => {
+    if (!info.campaign) return null;
+    const key = `${info.source}:${info.campaign}`;
+    const current = campaignMap.get(key);
+    if (current) return current;
+    const next = { campaign: info.campaign, source: info.source, visitors: new Set<string>(), leads: 0 };
+    campaignMap.set(key, next);
+    return next;
+  };
+
+  for (const event of pageViews) {
+    const meta = event.meta ?? {};
+    const path = normalizeTrackedPath(getMetaString(meta, "path") || getMetaString(meta, "url") || "/");
+    if (path.startsWith("/admin") || path.startsWith("/api")) continue;
+
+    const info = getAttributionInfo(meta);
+    const visitorId = getMetaString(meta, "visitorId") || getMetaString(meta, "sessionId") || event.id;
+    const source = ensureSource(info);
+    source.visitors.add(visitorId);
+    source.pageViews += 1;
+
+    const campaign = ensureCampaign(info);
+    if (campaign) campaign.visitors.add(visitorId);
+  }
+
+  for (const lead of leads) {
+    const info = getAttributionInfo(lead.metadata);
+    ensureSource(info).leads += 1;
+    const campaign = ensureCampaign(info);
+    if (campaign) campaign.leads += 1;
+  }
+
+  for (const click of clicks) {
+    const info = getAttributionInfo(click.meta);
+    ensureSource(info).clicks += 1;
+  }
+
+  const sources = Array.from(sourceMap.values())
+    .map((item) => ({
+      source: item.source,
+      medium: item.medium,
+      visitors: item.visitors.size,
+      pageViews: item.pageViews,
+      leads: item.leads,
+      clicks: item.clicks,
+      leadRate: rate(item.leads, item.visitors.size),
+    }))
+    .sort((a, b) => b.leads - a.leads || b.clicks - a.clicks || b.visitors - a.visitors || b.pageViews - a.pageViews);
+
+  const campaigns = Array.from(campaignMap.values())
+    .map((item) => ({ campaign: item.campaign, source: item.source, visitors: item.visitors.size, leads: item.leads }))
+    .sort((a, b) => b.leads - a.leads || b.visitors - a.visitors);
+
+  return {
+    sources,
+    campaigns,
+    topSource: sources[0]?.source ?? null,
   };
 }
 
@@ -1598,6 +1839,39 @@ function formatPagePath(path: string) {
   return path;
 }
 
+function formatAcquisitionLabel(info: AttributionInfo) {
+  const source = formatSourceName(info.source);
+  if (info.campaign) return `${source} · ${info.campaign}`;
+  if (info.medium && info.medium !== "none") return `${source} · ${formatSourceName(info.medium)}`;
+  return source;
+}
+
+function formatSourceName(value: string) {
+  const clean = value.replace(/^www\./, "").replace(/\.(com|fr|net|io|co|org)$/i, "");
+  const labels: Record<string, string> = {
+    direct: "Direct",
+    none: "Sans source",
+    google: "Google",
+    bing: "Bing",
+    yahoo: "Yahoo",
+    duckduckgo: "DuckDuckGo",
+    meta: "Meta",
+    facebook: "Facebook",
+    instagram: "Instagram",
+    tiktok: "TikTok",
+    linkedin: "LinkedIn",
+    paid: "Payant",
+    paid_social: "Social Ads",
+    organic: "SEO",
+    referral: "Référent",
+    social: "Social",
+    campaign: "Campagne",
+    email: "Email",
+  };
+
+  return labels[clean.toLowerCase()] ?? clean.charAt(0).toUpperCase() + clean.slice(1);
+}
+
 function normalizeTrackedPath(value: string) {
   try {
     if (value.startsWith("http://") || value.startsWith("https://")) {
@@ -1614,6 +1888,37 @@ function normalizeTrackedPath(value: string) {
 function getMetaString(meta: Record<string, unknown>, key: string) {
   const value = meta[key];
   return typeof value === "string" && value.length > 0 ? value : null;
+}
+
+function getAttributionInfo(meta: Record<string, unknown> | null): AttributionInfo {
+  const attribution = getMetaRecord(meta, "attribution");
+  const firstTouch = getMetaRecord(attribution, "firstTouch");
+  const lastTouch = getMetaRecord(attribution, "lastTouch");
+  const source =
+    normalizeAttributionValue(getRecordString(attribution, "source")) ||
+    normalizeAttributionValue(getRecordString(lastTouch, "source")) ||
+    normalizeAttributionValue(getRecordString(firstTouch, "source")) ||
+    "direct";
+  const medium =
+    normalizeAttributionValue(getRecordString(attribution, "medium")) ||
+    normalizeAttributionValue(getRecordString(lastTouch, "medium")) ||
+    normalizeAttributionValue(getRecordString(firstTouch, "medium")) ||
+    "none";
+  const campaign =
+    normalizeAttributionValue(getRecordString(attribution, "campaign")) ||
+    normalizeAttributionValue(getRecordString(lastTouch, "campaign")) ||
+    normalizeAttributionValue(getRecordString(firstTouch, "campaign"));
+  const landingPage =
+    getRecordString(attribution, "landingPage") ||
+    getRecordString(firstTouch, "landingPage") ||
+    getRecordString(lastTouch, "landingPage");
+
+  return { source, medium, campaign, landingPage };
+}
+
+function normalizeAttributionValue(value: string | null) {
+  const clean = value?.trim().toLowerCase();
+  return clean ? clean.slice(0, 120) : null;
 }
 
 function getDiagnosticSavings(meta: Record<string, unknown> | null) {

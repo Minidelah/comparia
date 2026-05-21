@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import OfferCard from "@/components/OfferCard";
 import type { OfferSlot } from "@/lib/offers";
+import { getAttributionMeta } from "@/lib/analytics/attribution";
 
 type Props = {
   categorySlug: string;
@@ -127,7 +128,7 @@ function trackFunnelEvent(eventName: string, categorySlug: string, meta: Record<
   fetch("/api/events", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ eventName, categorySlug, meta }),
+    body: JSON.stringify({ eventName, categorySlug, meta: { ...meta, attribution: getAttributionMeta() } }),
     keepalive: true,
   }).catch(() => null);
 }

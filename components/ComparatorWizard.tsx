@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Category } from "@/lib/categories";
 import CompariaIcon, { getCategoryIcon } from "@/components/CompariaIcon";
+import { getAttributionMeta } from "@/lib/analytics/attribution";
 
 type LeadState = "idle" | "saving" | "saved" | "local";
 type LeadResponse = { persisted?: boolean; leadId?: string; reason?: string; details?: { message?: string; code?: string } };
@@ -98,7 +99,8 @@ export default function ComparatorWizard({ category }: { category: Category }) {
 
     setLeadState("saving");
     setLeadError(null);
-    trackFunnelEvent("lead_submit_clicked", category.slug, { intentScore, answerCount: summary.length });
+    const attribution = getAttributionMeta();
+    trackFunnelEvent("lead_submit_clicked", category.slug, { intentScore, answerCount: summary.length, attribution });
 
     try {
       const response = await fetch("/api/leads", {
@@ -117,6 +119,7 @@ export default function ComparatorWizard({ category }: { category: Category }) {
             categoryGroup: category.group,
             saving: category.saving,
             path: window.location.pathname,
+            attribution,
           },
         }),
       });
@@ -142,6 +145,7 @@ export default function ComparatorWizard({ category }: { category: Category }) {
         persisted: Boolean(payload.persisted),
         leadId: payload.leadId,
         intentScore,
+        attribution,
       });
     } catch {
       setLeadState("local");
@@ -449,7 +453,7 @@ function trackFunnelEvent(eventName: string, categorySlug: string, meta: Record<
   fetch("/api/events", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ eventName, categorySlug, meta }),
+    body: JSON.stringify({ eventName, categorySlug, meta: { ...meta, attribution: getAttributionMeta() } }),
     keepalive: true,
   }).catch(() => null);
 }

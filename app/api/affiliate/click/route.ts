@@ -1,5 +1,5 @@
 import { createSupabaseAdminClient, isSupabaseConfigured } from "@/lib/supabase/server";
-import { enforceSameOrigin, isSafeSlug, rateLimit, rejectLargeRequest, sanitizeText, secureJson } from "@/lib/security/request";
+import { enforceSameOrigin, isSafeSlug, rateLimit, rejectLargeRequest, sanitizeMetadata, sanitizeText, secureJson } from "@/lib/security/request";
 
 export async function POST(request: Request) {
   const blockedOrigin = enforceSameOrigin(request);
@@ -24,6 +24,9 @@ export async function POST(request: Request) {
   const affiliateLink = getString(body, "affiliateLink", 1000);
   const timestamp = getString(body, "timestamp", 80);
   const userId = getString(body, "userId", 80);
+  const attribution = isRecord((body as Record<string, unknown>).attribution)
+    ? sanitizeMetadata((body as Record<string, unknown>).attribution as Record<string, unknown>, 2500)
+    : null;
 
   if (!offerId || !sourceScreen || (categorySlug && !isSafeSlug(categorySlug))) {
     return secureJson({ error: "invalid_payload" }, { status: 400 });
@@ -46,6 +49,7 @@ export async function POST(request: Request) {
       affiliate_link: isSafeAffiliateLink(affiliateLink) ? affiliateLink : null,
       affiliate_domain: getDomain(affiliateLink),
       client_timestamp: isSafeTimestamp(timestamp) ? timestamp : null,
+      attribution,
     },
   });
 
@@ -59,6 +63,10 @@ export async function POST(request: Request) {
 
 function getString(body: object, key: string, maxLength: number) {
   return key in body && typeof (body as Record<string, unknown>)[key] === "string" ? sanitizeText(String((body as Record<string, unknown>)[key]), maxLength) : "";
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
 }
 
 function isUuidLike(value: string) {

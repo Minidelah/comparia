@@ -1,3 +1,5 @@
+import { getAttributionMeta } from "@/lib/analytics/attribution";
+
 export type AffiliateClickPayload = {
   offerId: string;
   category?: string;
@@ -6,6 +8,7 @@ export type AffiliateClickPayload = {
   timestamp: string;
   userId?: string;
   leadId?: string;
+  attribution?: ReturnType<typeof getAttributionMeta>;
 };
 
 type TrackAffiliateClickInput = {
@@ -18,6 +21,7 @@ type TrackAffiliateClickInput = {
 };
 
 export async function trackAffiliateClick(input: TrackAffiliateClickInput) {
+  const attribution = getAttributionMeta();
   const payload: AffiliateClickPayload = {
     offerId: input.offerId,
     category: input.category,
@@ -26,6 +30,7 @@ export async function trackAffiliateClick(input: TrackAffiliateClickInput) {
     timestamp: new Date().toISOString(),
     userId: input.userId,
     leadId: input.leadId,
+    attribution,
   };
 
   await Promise.allSettled([
@@ -46,6 +51,7 @@ export async function trackAffiliateClick(input: TrackAffiliateClickInput) {
           offerId: input.offerId,
           source: payload.source,
           affiliateDomain: safeDomain(input.affiliateLink),
+          attribution,
         },
       }),
       keepalive: true,

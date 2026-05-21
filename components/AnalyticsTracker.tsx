@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { captureAttribution } from "@/lib/analytics/attribution";
 
 const VISITOR_KEY = "comparia_visitor_id";
 const SESSION_KEY = "comparia_session_id";
@@ -21,6 +22,7 @@ export default function AnalyticsTracker() {
     if (isDuplicatePageView(pathname, now)) return;
 
     const categorySlug = inferCategorySlug(pathname);
+    const attribution = captureAttribution(pathname);
 
     fetch("/api/events", {
       method: "POST",
@@ -35,6 +37,7 @@ export default function AnalyticsTracker() {
           url: window.location.href,
           title: document.title,
           referrer: document.referrer || null,
+          attribution,
           source: "site_tracker",
         },
       }),
