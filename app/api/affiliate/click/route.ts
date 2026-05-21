@@ -35,6 +35,8 @@ export async function POST(request: Request) {
 
   const supabase = createSupabaseAdminClient();
   const { error } = await supabase.from("affiliate_clicks").insert({
+    offer_id: isUuidLike(offerId) ? offerId : null,
+    user_id: isUuidLike(userId) ? userId : null,
     source_screen: sourceScreen,
     meta: {
       offer_slot_id: offerId,

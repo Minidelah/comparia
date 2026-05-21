@@ -140,6 +140,16 @@ type RevenueProjection = {
   categoryRows: RevenueCategoryProjection[];
 };
 
+type AdminActionItem = {
+  id: string;
+  title: string;
+  body: string;
+  impact: string;
+  tone: "cyan" | "emerald" | "amber" | "rose" | "purple";
+  href?: string;
+  actionLabel?: string;
+};
+
 const DEFAULT_CATEGORY_COMMISSION: Record<string, number> = {
   "assurance-emprunteur": 55,
   "assurance-auto": 38,
@@ -341,6 +351,14 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
     affiliateEvents,
     conversions: conversionsRange,
   });
+  const actionItems = buildAdminActionItems({
+    leads,
+    categoryPerformance,
+    revenueProjection,
+    offers: adminOffers,
+    conversions: conversionsRange,
+    traffic,
+  });
 
   return (
     <main className="min-h-screen bg-[#05070d] px-5 py-6 text-white sm:px-8">
@@ -367,6 +385,8 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
         </section>
 
         <RevenueProjectionPanel projection={revenueProjection} />
+
+        <AdminActionCenter items={actionItems} />
 
         <AdminOffersManager offers={adminOffers} />
 
@@ -657,6 +677,54 @@ function RevenueCategoryRow({ category, max }: { category: RevenueCategoryProjec
       </div>
     </div>
   );
+}
+
+function AdminActionCenter({ items }: { items: AdminActionItem[] }) {
+  return (
+    <section className="mt-5 rounded-[2rem] border border-white/10 bg-slate-950/70 p-5 sm:p-6">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Action center</p>
+          <h2 className="mt-3 text-2xl font-semibold text-white">Ce qu’il faut faire maintenant.</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400">
+            Comparia transforme les signaux en priorités : trafic, leads, clics affiliés, offres Awin et commissions.
+          </p>
+        </div>
+        <span className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-semibold text-slate-200">
+          {items.length} action{items.length > 1 ? "s" : ""} priorisée{items.length > 1 ? "s" : ""}
+        </span>
+      </div>
+
+      <div className="mt-6 grid gap-4 lg:grid-cols-3">
+        {items.slice(0, 6).map((item) => (
+          <AdminActionCard key={item.id} item={item} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function AdminActionCard({ item }: { item: AdminActionItem }) {
+  const tones = {
+    cyan: "border-cyan-300/20 bg-cyan-400/10 text-cyan-100",
+    emerald: "border-emerald-300/20 bg-emerald-400/10 text-emerald-100",
+    amber: "border-amber-300/20 bg-amber-400/10 text-amber-100",
+    rose: "border-rose-300/20 bg-rose-400/10 text-rose-100",
+    purple: "border-purple-300/20 bg-purple-400/10 text-purple-100",
+  };
+  const content = (
+    <article className={`h-full rounded-[1.5rem] border p-5 transition hover:-translate-y-0.5 ${tones[item.tone]}`}>
+      <div className="flex items-start justify-between gap-3">
+        <p className="text-xs font-black uppercase tracking-[0.22em] opacity-80">{item.impact}</p>
+        <span className="h-2.5 w-2.5 rounded-full bg-current opacity-70" />
+      </div>
+      <h3 className="mt-4 text-lg font-bold text-white">{item.title}</h3>
+      <p className="mt-3 text-sm leading-6 text-slate-300">{item.body}</p>
+      {item.actionLabel && <p className="mt-4 text-sm font-bold text-white">{item.actionLabel} →</p>}
+    </article>
+  );
+
+  return item.href ? <Link href={item.href}>{content}</Link> : content;
 }
 
 function FunnelBar({ label, value, max }: { label: string; value: number; max: number }) {
@@ -1006,6 +1074,150 @@ function buildOfferClickMap(clicks: AffiliateClickRow[], affiliateEvents: Funnel
   }
 
   return map;
+}
+
+function buildAdminActionItems({
+  leads,
+  categoryPerformance,
+  revenueProjection,
+  offers,
+  conversions,
+  traffic,
+}: {
+  leads: LeadRow[];
+  categoryPerformance: CategoryPerformance[];
+  revenueProjection: RevenueProjection;
+  offers: AdminOfferRow[];
+  conversions: ConversionRow[];
+  traffic: TrafficAnalytics;
+}): AdminActionItem[] {
+  const actions: AdminActionItem[] = [];
+  const hotLead = leads.find((lead) => (lead.intent_score ?? 0) >= 70);
+  const leadWithoutClick = categoryPerformance.find((item) => item.leads > 0 && item.clicks === 0);
+  const clickWithoutRevenue = revenueProjection.offerRows.find((offer) => offer.clicks30d >= 2 && offer.actualCommission30d === 0);
+  const bestRevenueCategory = revenueProjection.categoryRows[0];
+  const highTrafficNoLead = categoryPerformance.find((item) => item.views >= 8 && item.leads === 0);
+  const inactiveOffers = offers.filter((offer) => offer.active === false);
+  const unmatchedConversions = conversions.filter((conversion) => !conversion.offer_id).length;
+
+  if (hotLead) {
+    actions.push({
+      id: "hot-lead",
+      title: "Traiter le lead le plus chaud",
+      body: `${hotLead.first_name || "Un contact"} a un score de ${hotLead.intent_score}/100 sur ${formatSlug(hotLead.category_slug)}. Réponds vite : les leads refroidissent très vite.`,
+      impact: "Impact immédiat",
+      tone: "emerald",
+      href: `mailto:${hotLead.email}`,
+      actionLabel: "Contacter maintenant",
+    });
+  }
+
+  if (leadWithoutClick) {
+    actions.push({
+      id: "lead-no-click",
+      title: "Des leads ne cliquent pas encore",
+      body: `${formatSlug(leadWithoutClick.slug)} génère ${leadWithoutClick.leads} lead${leadWithoutClick.leads > 1 ? "s" : ""}, mais aucun clic affilié. Renforce les CTA et mets l’offre la plus claire en premier.`,
+      impact: "Conversion",
+      tone: "amber",
+      href: `/comparateurs/${leadWithoutClick.slug}`,
+      actionLabel: "Tester le tunnel",
+    });
+  }
+
+  if (clickWithoutRevenue) {
+    actions.push({
+      id: "click-no-revenue",
+      title: "Clics sans commission confirmée",
+      body: `${clickWithoutRevenue.provider} reçoit ${clickWithoutRevenue.clicks30d} clics sur 30 jours sans commission confirmée. Vérifie le programme Awin, la page d’arrivée et le délai de validation.`,
+      impact: "Revenu",
+      tone: "rose",
+      href: `/comparateurs/${clickWithoutRevenue.category}`,
+      actionLabel: "Contrôler l’offre",
+    });
+  }
+
+  if (bestRevenueCategory) {
+    actions.push({
+      id: "best-category",
+      title: "Pousser la catégorie la plus rentable",
+      body: `${formatSlug(bestRevenueCategory.slug)} projette ${formatRevenueEuro(bestRevenueCategory.projectedMonthlyRevenue)}/mois avec les signaux actuels. C’est une candidate prioritaire pour SEO, posts courts et partenariats.`,
+      impact: "Croissance",
+      tone: "cyan",
+      href: `/comparateurs/${bestRevenueCategory.slug}`,
+      actionLabel: "Voir la page",
+    });
+  }
+
+  if (highTrafficNoLead) {
+    actions.push({
+      id: "traffic-no-lead",
+      title: "Trafic sans capture",
+      body: `${formatSlug(highTrafficNoLead.slug)} attire ${highTrafficNoLead.views} vues mais ne capture pas encore. Raccourcis le formulaire, ajoute une preuve sociale et remonte le gain estimé.`,
+      impact: "UX",
+      tone: "purple",
+      href: `/comparateurs/${highTrafficNoLead.slug}`,
+      actionLabel: "Optimiser la page",
+    });
+  }
+
+  if (inactiveOffers.length > 0) {
+    actions.push({
+      id: "inactive-offers",
+      title: "Offres inactives à arbitrer",
+      body: `${inactiveOffers.length} offre${inactiveOffers.length > 1 ? "s" : ""} sont inactives. Supprime le bruit ou réactive celles qui ont un meilleur potentiel de commission.`,
+      impact: "Qualité offre",
+      tone: "amber",
+      actionLabel: "Voir pilotage offres",
+    });
+  }
+
+  if (unmatchedConversions > 0) {
+    actions.push({
+      id: "unmatched-conversions",
+      title: "Conversions non rapprochées",
+      body: `${unmatchedConversions} transaction${unmatchedConversions > 1 ? "s" : ""} Awin ne sont pas liées à une offre locale. Il faut enrichir les IDs annonceurs pour fiabiliser le reporting.`,
+      impact: "Tracking",
+      tone: "rose",
+    });
+  }
+
+  if (revenueProjection.monetizableClicks30d === 0) {
+    actions.push({
+      id: "first-affiliate-clicks",
+      title: "Créer les premiers clics affiliés",
+      body: "Les offres sont en place, mais le compteur de clics monétisables est encore à zéro. Fais un test complet depuis une page comparateur, puis pousse la catégorie la plus simple à comprendre.",
+      impact: "Démarrage",
+      tone: "cyan",
+      href: "/comparateurs",
+      actionLabel: "Tester les comparateurs",
+    });
+  }
+
+  if (traffic.thirtyDayVisitors === 0) {
+    actions.push({
+      id: "traffic-foundation",
+      title: "Installer le socle acquisition",
+      body: "Le trafic 30 jours est encore vide côté analytics interne. La priorité devient : indexation Google, contenus SEO par catégorie et posts courts avec promesse d’économie.",
+      impact: "Acquisition",
+      tone: "purple",
+      href: "/sitemap.xml",
+      actionLabel: "Vérifier sitemap",
+    });
+  }
+
+  if (actions.length === 0) {
+    actions.push({
+      id: "healthy",
+      title: "Système propre, prochaine marche : acquisition",
+      body: "Le tunnel est sain. La suite la plus rentable est de produire du trafic qualifié sur 2 catégories fortes au lieu de disperser les efforts.",
+      impact: "Focus",
+      tone: "emerald",
+      href: "/comparateurs",
+      actionLabel: "Voir les catégories",
+    });
+  }
+
+  return actions.slice(0, 6);
 }
 
 function buildRevenueProjection({
