@@ -3,6 +3,22 @@ import { googleLogo } from "./types";
 
 export const frontierOffers: AffiliateOffer[] = [
   {
+    id: "frontier-revolut-chf-eur",
+    name: "Compte multi-devises pour frontaliers",
+    category: "frontier",
+    provider: "Revolut",
+    monthlyPrice: 0,
+    estimatedSaving: 310,
+    cashback: 0,
+    affiliateLink: "https://revolut.com/referral/?referral-code=aelghemary!MAY2-26-AR&geo-redirect",
+    logo: googleLogo("revolut.com"),
+    rating: 4.7,
+    tags: ["CHF/EUR", "Carte", "Frontaliers", "Lien referral"],
+    priority: 92,
+    comparatorSlug: "change-chf-eur",
+    description: "Une piste pertinente pour les profils qui veulent gérer paiements, devises et dépenses France‑Suisse depuis une app moderne.",
+  },
+  {
     id: "frontier-wise-chf-eur",
     name: "Change CHF/EUR optimisé",
     category: "frontier",

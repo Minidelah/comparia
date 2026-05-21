@@ -3,6 +3,22 @@ import { googleLogo } from "./types";
 
 export const bankOffers: AffiliateOffer[] = [
   {
+    id: "bank-revolut-referral",
+    name: "Compte fintech international",
+    category: "bank",
+    provider: "Revolut",
+    monthlyPrice: 0,
+    estimatedSaving: 140,
+    cashback: 0,
+    affiliateLink: "https://revolut.com/referral/?referral-code=aelghemary!MAY2-26-AR&geo-redirect",
+    logo: googleLogo("revolut.com"),
+    rating: 4.7,
+    tags: ["Carte", "Voyage", "Change", "Lien referral"],
+    priority: 91,
+    comparatorSlug: "banque",
+    description: "Une option fintech utile pour réduire les frais bancaires et gérer les paiements du quotidien.",
+  },
+  {
     id: "bank-boursobank-card",
     name: "Compte bancaire moderne",
     category: "bank",
