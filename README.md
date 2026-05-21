@@ -81,6 +81,7 @@ Variables publiques recommandées pour la production :
 
 ```bash
 NEXT_PUBLIC_SITE_URL=https://ton-domaine.fr
+NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=
 NEXT_PUBLIC_CONTACT_EMAIL=contact@ton-domaine.fr
 NEXT_PUBLIC_PRIVACY_EMAIL=privacy@ton-domaine.fr
 NEXT_PUBLIC_LEGAL_EDITOR_NAME=
@@ -144,6 +145,38 @@ L’import classe les programmes Awin acceptés par comparateur, génère des li
 6. Copier l’URL publique dans Awin comme site éditeur.
 7. Mettre à jour `NEXT_PUBLIC_SITE_URL` avec le domaine final.
 8. Ajouter `CRON_SECRET` dans Vercel : Vercel l’enverra automatiquement au cron quotidien qui synchronise Awin (`/api/cron/awin-transactions`).
+
+## Connecter Google Search Console
+
+Méthode recommandée : propriété **Préfixe de l’URL** sur `https://www.comparetesfactures.fr`.
+
+1. Ouvrir Google Search Console.
+2. Ajouter la propriété `https://www.comparetesfactures.fr`.
+3. Choisir la méthode **Balise HTML**.
+4. Copier uniquement le contenu de la balise, par exemple dans :
+
+```html
+<meta name="google-site-verification" content="CODE_GOOGLE_ICI" />
+```
+
+il faut garder seulement :
+
+```bash
+CODE_GOOGLE_ICI
+```
+
+5. Dans Vercel, ajouter :
+
+```bash
+NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=CODE_GOOGLE_ICI
+```
+
+6. Redéployer, puis cliquer sur **Valider** dans Search Console.
+7. Soumettre le sitemap :
+
+```text
+https://www.comparetesfactures.fr/sitemap.xml
+```
 
 À vérifier après déploiement :
 - `/` affiche la landing Comparia ;

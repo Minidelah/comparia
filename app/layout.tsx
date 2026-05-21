@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import AnalyticsTracker from "@/components/AnalyticsTracker";
 import "./globals.css";
 
+const googleSiteVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
+
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://www.comparetesfactures.fr"),
   title: "Comparia — Comparateurs intelligents",
@@ -30,6 +32,13 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  ...(googleSiteVerification
+    ? {
+        verification: {
+          google: googleSiteVerification,
+        },
+      }
+    : {}),
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
