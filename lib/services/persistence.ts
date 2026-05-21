@@ -19,6 +19,15 @@ export async function persistDiagnostic(input: PersistDiagnosticInput) {
 
   const supabase = createSupabaseAdminClient();
 
+  try {
+    return await persistDiagnosticStrict(supabase, input);
+  } catch (error) {
+    console.error("Primary diagnostic persistence failed, using funnel fallback", getSafePersistenceError(error));
+    return persistDiagnosticEventFallback(supabase, input, error);
+  }
+}
+
+async function persistDiagnosticStrict(supabase: SupabaseAdminClient, input: PersistDiagnosticInput) {
   const { data: user, error: userError } = await supabase
     .from("users")
     .upsert(
@@ -94,6 +103,53 @@ export async function persistDiagnostic(input: PersistDiagnosticInput) {
   }
 
   return { persisted: true as const, diagnosticId: diagnostic.id };
+}
+
+async function persistDiagnosticEventFallback(
+  supabase: SupabaseAdminClient,
+  input: PersistDiagnosticInput,
+  originalError: unknown,
+) {
+  const { data, error } = await supabase
+    .from("funnel_events")
+    .insert({
+      event_name: "diagnostic_completed",
+      category_slug: input.analysis.recommendations[0]?.slug ?? null,
+      meta: {
+        anonymousId: input.anonymousId,
+        answers: input.answers,
+        summary: input.analysis.summary,
+        recommendations: input.analysis.recommendations.map((recommendation) => ({
+          category: recommendation.category,
+          annualSavings: recommendation.annualSavings,
+          priority: recommendation.priority,
+          slug: recommendation.slug,
+        })),
+        ai: input.ai
+          ? {
+              generatedBy: input.ai.generatedBy,
+              summary: input.ai.summary,
+              estimatedSavings: input.ai.estimatedSavings,
+              actionPriorities: input.ai.actionPriorities,
+              offerSlugs: input.ai.offerSlugs,
+            }
+          : null,
+        fallbackReason: getSafePersistenceError(originalError),
+      },
+    })
+    .select("id")
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return {
+    persisted: true as const,
+    diagnosticId: null,
+    fallback: "funnel_events" as const,
+    eventId: data?.id ?? null,
+  };
 }
 
 async function upsertFinancialProfile(supabase: SupabaseAdminClient, userId: string, answers: DiagnosticAnswers) {
@@ -177,4 +233,18 @@ function isMissingColumnError(error: unknown) {
   const message = record?.message?.toLowerCase() ?? "";
 
   return record?.code === "42703" || record?.code === "PGRST204" || message.includes("could not find") || message.includes("column");
+}
+
+function getSafePersistenceError(error: unknown) {
+  if (!error || typeof error !== "object") {
+    return { message: String(error).slice(0, 180) };
+  }
+
+  const record = error as { code?: unknown; message?: unknown; name?: unknown };
+
+  return {
+    code: typeof record.code === "string" ? record.code.slice(0, 40) : undefined,
+    name: typeof record.name === "string" ? record.name.slice(0, 80) : undefined,
+    message: typeof record.message === "string" ? record.message.slice(0, 220) : "unknown_error",
+  };
 }
