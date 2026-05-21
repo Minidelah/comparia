@@ -7,6 +7,7 @@ type Props = {
 
 const navLinks = [
   { href: "/comparateurs", label: "Comparateurs" },
+  { href: "/guides", label: "Guides" },
   { href: "/a-propos", label: "À propos" },
   { href: "/tableau-de-bord", label: "Tableau de bord" },
 ];

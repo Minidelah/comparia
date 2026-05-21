@@ -12,6 +12,7 @@ export default function SiteFooter() {
         </div>
         <div className="flex flex-wrap gap-4">
           <Link href="/comparateurs" className="transition hover:text-white">Comparateurs</Link>
+          <Link href="/guides" className="transition hover:text-white">Guides économies</Link>
           <Link href="/onboarding" className="transition hover:text-white">Diagnostic</Link>
           <Link href="/a-propos" className="transition hover:text-white">À propos</Link>
           <Link href="/contact" className="transition hover:text-white">Contact</Link>

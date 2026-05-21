@@ -1,10 +1,12 @@
 import type { MetadataRoute } from "next";
 import { categories } from "@/lib/categories";
+import { seoGuides } from "@/lib/seo/guides";
 import { siteConfig } from "@/lib/site";
 
 const staticRoutes = [
   "",
   "/comparateurs",
+  "/guides",
   "/onboarding",
   "/tableau-de-bord",
   "/a-propos",
@@ -30,6 +32,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "weekly" as const,
       priority: category.status === "active" ? 0.8 : 0.4,
+    })),
+    ...seoGuides.map((guide) => ({
+      url: `${siteConfig.url}/guides/${guide.slug}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.72,
     })),
   ];
 }
