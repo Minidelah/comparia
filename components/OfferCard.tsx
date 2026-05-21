@@ -51,6 +51,11 @@ export default function OfferCard({ offer }: Props) {
       </div>
       <h3 className="relative mt-4 text-xl font-semibold">{offer.title}</h3>
       <p className="mt-3 text-sm leading-6 text-slate-300">{offer.description}</p>
+      {offer.rankReason && (
+        <p className="mt-3 rounded-2xl border border-cyan-300/15 bg-cyan-400/10 px-3 py-2 text-xs font-semibold text-cyan-100">
+          {offer.rankReason}
+        </p>
+      )}
       <div className="mt-4 flex flex-wrap gap-2">
         {(offer.tags ?? ["Profil compatible", "Souscription rapide", "Vérifiable"]).slice(0, 4).map((tag) => (
           <span key={tag} className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs font-semibold text-slate-300">

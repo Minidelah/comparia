@@ -21,6 +21,9 @@ export type OfferSlot = {
   rating?: number;
   tags?: string[];
   priority?: number;
+  performanceScore?: number;
+  clickCount?: number;
+  rankReason?: string;
 };
 
 type OfferRow = {
@@ -35,6 +38,27 @@ type OfferRow = {
   sponsored: boolean | null;
   active: boolean | null;
   metadata: Record<string, unknown> | null;
+};
+
+type FunnelEventRow = {
+  event_name: string;
+  category_slug: string | null;
+  meta: Record<string, unknown> | null;
+  created_at: string;
+};
+
+type AffiliateClickRow = {
+  meta: Record<string, unknown> | null;
+  clicked_at: string;
+};
+
+type CategoryPerformanceSignal = {
+  views: number;
+  leads: number;
+  unlocks: number;
+  diagnostics: number;
+  affiliateEvents: number;
+  diagnosticSavings: number;
 };
 
 export const offerSlots: OfferSlot[] = [
@@ -124,7 +148,7 @@ export async function getOfferSlotsForCategory(categorySlug: string): Promise<Of
 
     const mapped = ((data ?? []) as OfferRow[]).filter(isPlausibleOfferRow).map(mapOfferRow).filter(Boolean) as OfferSlot[];
     const manualExternalOffers = getManualExternalOfferSlotsForCategory(categorySlug);
-    const offers = [...manualExternalOffers, ...mapped].sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+    const offers = await rankOfferSlotsByPerformance(supabase, categorySlug, [...manualExternalOffers, ...mapped]);
 
     return offers.length > 0 ? offers : fallback;
   } catch (error) {
@@ -206,6 +230,168 @@ function mapStructuredOffer(offer: AffiliateOffer): OfferSlot {
   };
 }
 
+async function rankOfferSlotsByPerformance(
+  supabase: ReturnType<typeof createSupabaseAdminClient>,
+  categorySlug: string,
+  offers: OfferSlot[],
+) {
+  const deduped = dedupeOfferSlots(offers);
+  if (deduped.length <= 1) return deduped;
+
+  try {
+    const since = new Date();
+    since.setDate(since.getDate() - 90);
+
+    const [clicksResult, eventsResult] = await Promise.all([
+      supabase
+        .from("affiliate_clicks")
+        .select("meta,clicked_at")
+        .gte("clicked_at", since.toISOString())
+        .limit(3000),
+      supabase
+        .from("funnel_events")
+        .select("event_name,category_slug,meta,created_at")
+        .in("event_name", ["wizard_viewed", "lead_captured", "offers_unlocked", "affiliate_cta_clicked", "diagnostic_completed"])
+        .gte("created_at", since.toISOString())
+        .limit(5000),
+    ]);
+
+    if (clicksResult.error || eventsResult.error) {
+      return deduped.sort(defaultOfferSort);
+    }
+
+    const clicks = (clicksResult.data ?? []) as AffiliateClickRow[];
+    const events = (eventsResult.data ?? []) as FunnelEventRow[];
+    const clickCountByOffer = buildOfferClickMap(clicks, events);
+    const categorySignal = buildCategorySignal(categorySlug, events);
+    const highestCashback = Math.max(...deduped.map((offer) => offer.cashbackAmount ?? 0), 0);
+
+    return deduped
+      .map((offer) => scoreOffer(offer, categorySignal, clickCountByOffer.get(offer.id) ?? 0, highestCashback))
+      .sort((a, b) => (b.performanceScore ?? 0) - (a.performanceScore ?? 0) || defaultOfferSort(a, b))
+      .map((offer, index) => decorateRankedOffer(offer, index));
+  } catch {
+    return deduped.sort(defaultOfferSort);
+  }
+}
+
+function dedupeOfferSlots(offers: OfferSlot[]) {
+  const seen = new Set<string>();
+  const result: OfferSlot[] = [];
+
+  for (const offer of offers) {
+    const key = normalizeText(`${offer.provider ?? ""}:${offer.title}:${offer.affiliateUrl ?? offer.id}`);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    result.push(offer);
+  }
+
+  return result;
+}
+
+function defaultOfferSort(a: OfferSlot, b: OfferSlot) {
+  return (b.priority ?? 0) - (a.priority ?? 0) || (b.estimatedSaving ?? 0) - (a.estimatedSaving ?? 0);
+}
+
+function buildOfferClickMap(clicks: AffiliateClickRow[], events: FunnelEventRow[]) {
+  const map = new Map<string, number>();
+
+  for (const click of clicks) {
+    const offerId = getMetaString(click.meta, "offer_slot_id") ?? getMetaString(click.meta, "offerId");
+    if (offerId) map.set(offerId, (map.get(offerId) ?? 0) + 1);
+  }
+
+  for (const event of events) {
+    if (event.event_name !== "affiliate_cta_clicked") continue;
+    const offerId = getMetaString(event.meta, "offerId") ?? getMetaString(event.meta, "offer_slot_id");
+    if (offerId) map.set(offerId, (map.get(offerId) ?? 0) + 1);
+  }
+
+  return map;
+}
+
+function buildCategorySignal(categorySlug: string, events: FunnelEventRow[]): CategoryPerformanceSignal {
+  const signal: CategoryPerformanceSignal = {
+    views: 0,
+    leads: 0,
+    unlocks: 0,
+    diagnostics: 0,
+    affiliateEvents: 0,
+    diagnosticSavings: 0,
+  };
+
+  for (const event of events) {
+    const eventCategory = event.category_slug ?? getDiagnosticTopSlug(event.meta);
+    if (eventCategory !== categorySlug) continue;
+
+    if (event.event_name === "wizard_viewed") signal.views += 1;
+    if (event.event_name === "lead_captured") signal.leads += 1;
+    if (event.event_name === "offers_unlocked") signal.unlocks += 1;
+    if (event.event_name === "affiliate_cta_clicked") signal.affiliateEvents += 1;
+    if (event.event_name === "diagnostic_completed") {
+      signal.diagnostics += 1;
+      signal.diagnosticSavings += getDiagnosticSavings(event.meta);
+    }
+  }
+
+  return signal;
+}
+
+function scoreOffer(
+  offer: OfferSlot,
+  signal: CategoryPerformanceSignal,
+  clickCount: number,
+  highestCashback: number,
+): OfferSlot {
+  const leadRate = signal.views > 0 ? signal.leads / signal.views : 0;
+  const unlockRate = signal.leads > 0 ? signal.unlocks / signal.leads : 0;
+  const categoryClickRate = signal.unlocks > 0 ? signal.affiliateEvents / signal.unlocks : 0;
+  const averageDiagnosticSaving = signal.diagnostics > 0 ? signal.diagnosticSavings / signal.diagnostics : 0;
+  const savings = offer.estimatedSaving ?? 0;
+  const cashback = offer.cashbackAmount ?? 0;
+  const base = offer.priority ?? savings * 0.75;
+  const performanceScore =
+    base +
+    savings * 0.24 +
+    cashback * 1.35 +
+    clickCount * 34 +
+    Math.min(24, leadRate * 45) +
+    Math.min(18, unlockRate * 22) +
+    Math.min(26, categoryClickRate * 55) +
+    Math.min(18, averageDiagnosticSaving / 120) -
+    (offer.sponsored ? 6 : 0);
+
+  return {
+    ...offer,
+    clickCount,
+    performanceScore: Math.round(performanceScore),
+    badge: cashback > 0 && cashback === highestCashback ? "Meilleur cashback" : offer.badge,
+  };
+}
+
+function decorateRankedOffer(offer: OfferSlot, index: number): OfferSlot {
+  const clickSignal = offer.clickCount && offer.clickCount > 0 ? `${offer.clickCount} clic${offer.clickCount > 1 ? "s" : ""} récent${offer.clickCount > 1 ? "s" : ""}` : null;
+  const rankReason =
+    index === 0
+      ? clickSignal
+        ? `Classée #1 par performance · ${clickSignal}`
+        : "Classée #1 par potentiel d’économie"
+      : clickSignal
+        ? `Remonte grâce aux données · ${clickSignal}`
+        : "Classée selon économie, cashback et pertinence";
+
+  return {
+    ...offer,
+    badge: index === 0 && !offer.sponsored && offer.badge !== "Meilleur cashback" ? "Meilleur choix" : offer.badge,
+    rankReason,
+    tags: mergeTags(offer.tags, index === 0 ? ["Top performance"] : offer.clickCount ? ["Données réelles"] : ["Pertinence"]),
+  };
+}
+
+function mergeTags(tags: string[] | undefined, additions: string[]) {
+  return Array.from(new Set([...(tags ?? []), ...additions])).slice(0, 4);
+}
+
 function normalizeBadge(value?: string): OfferBadge {
   if (value === "Meilleur prix") return "Meilleur prix";
   if (value === "Meilleur cashback") return "Meilleur cashback";
@@ -273,6 +459,35 @@ function normalizeText(value: string) {
     .normalize("NFD")
     .replace(/\p{Diacritic}/gu, "")
     .toLowerCase();
+}
+
+function getMetaString(meta: Record<string, unknown> | null, key: string) {
+  const value = meta?.[key];
+  return typeof value === "string" && value.length > 0 ? value : null;
+}
+
+function getMetaRecord(meta: Record<string, unknown> | null, key: string) {
+  const value = meta?.[key];
+  return value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : null;
+}
+
+function getRecordNumber(record: Record<string, unknown> | null, key: string) {
+  const value = record?.[key];
+  return typeof value === "number" && Number.isFinite(value) ? value : 0;
+}
+
+function getDiagnosticSavings(meta: Record<string, unknown> | null) {
+  const summary = getMetaRecord(meta, "summary");
+  const ai = getMetaRecord(meta, "ai");
+  return Math.max(getRecordNumber(summary, "totalSavings"), getRecordNumber(ai, "estimatedSavings"), 0);
+}
+
+function getDiagnosticTopSlug(meta: Record<string, unknown> | null) {
+  const recommendations = meta?.recommendations;
+  if (!Array.isArray(recommendations)) return null;
+  const first = recommendations[0];
+  if (!first || typeof first !== "object") return null;
+  return getMetaString(first as Record<string, unknown>, "slug");
 }
 
 const providerDomains: Record<string, string> = {

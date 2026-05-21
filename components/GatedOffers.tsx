@@ -111,7 +111,7 @@ export default function GatedOffers({ categorySlug, categoryTitle, categorySavin
           <h2 className="mt-3 text-3xl font-semibold">Choisis avec le moins de friction possible.</h2>
         </div>
         <p className="max-w-xl text-sm leading-6 text-slate-400">
-          Les offres sont classées pour t’aider à comparer vite : économies estimées, profil compatible et activation simple.
+          Les offres sont classées automatiquement avec tes signaux réels : économies estimées, cashback, clics affiliés et performance du comparateur.
         </p>
       </div>
       <div className="mt-5 grid gap-4 lg:grid-cols-3">
