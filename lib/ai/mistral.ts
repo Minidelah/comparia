@@ -47,30 +47,32 @@ export async function analyzeUserExpenses(
             role: "user",
             content: JSON.stringify({
               expected_schema: {
-                summary: "string courte",
-                estimatedSavings: "number en euros par an",
-                recommendations: [
-                  {
-                    title: "string",
-                    categorySlug: "string",
-                    annualSavings: "number",
-                    priority: "Très élevée | Élevée | Moyenne",
-                    reason: "string",
-                    actionLabel: "string",
-                  },
-                ],
+                summary: "string courte, naturelle et personnalisée",
+                estimatedSavings: ruleAnalysis.summary.totalSavings,
                 actionPriorities: ["string", "string", "string"],
-                explanation: "string",
-                offerSlugs: ["string"],
+                explanation: "string simple qui explique pourquoi ces leviers ressortent",
+                offerSlugs: ruleAnalysis.recommendations.slice(0, 5).map((recommendation) => recommendation.slug),
               },
-              answers,
-              ruleAnalysis,
+              contexte_utilisateur: summarizeAnswersForAi(answers),
+              economies_calculees_par_comparia: {
+                totalSavings: ruleAnalysis.summary.totalSavings,
+                monthlyLeak: ruleAnalysis.summary.monthlyLeak,
+                optimizationScore: ruleAnalysis.summary.optimizationScore,
+                recommendations: ruleAnalysis.recommendations.slice(0, 6).map((recommendation) => ({
+                  category: recommendation.category,
+                  slug: recommendation.slug,
+                  annualSavings: recommendation.annualSavings,
+                  priority: recommendation.priority,
+                  reason: recommendation.reason,
+                })),
+              },
               allowedCategorySlugs: ruleAnalysis.recommendations.map((recommendation) => recommendation.slug),
               constraints: [
                 "Ne promets jamais une économie garantie.",
-                "Ne recommande que des catégories présentes dans allowedCategorySlugs.",
+                "Ne crée pas de nouvelle catégorie.",
+                "Ne change pas les chiffres calculés par Comparia.",
                 "Si les données sont faibles, explique que l’estimation reste indicative.",
-                "Garde les recommandations triées par impact utilisateur.",
+                "Retourne uniquement un objet JSON valide, sans markdown.",
               ],
             }),
           },
@@ -119,6 +121,29 @@ function buildFallbackInsight(ruleAnalysis: DiagnosticResult): AiExpenseInsight 
       "Cette analyse utilise le moteur Comparia actuel. Une fois la clé Mistral configurée, l’assistant affinera le résumé avec un langage plus personnalisé.",
     offerSlugs: top.map((recommendation) => recommendation.slug),
     generatedBy: "rules",
+  };
+}
+
+function summarizeAnswersForAi(answers: DiagnosticAnswers) {
+  return {
+    profil: answers.isCrossBorderWorker ? "frontalier Suisse-France" : "résident/travailleur France",
+    revenu: `${answers.monthlyIncome} ${answers.incomeCurrency}/mois`,
+    changeMensuelChf: answers.monthlyFxVolumeChf,
+    santé: answers.healthInsurance,
+    coutsMensuels: {
+      electricite: answers.monthlyElectricityCost,
+      gaz: answers.monthlyGasCost,
+      mobile: answers.mobilePlanCost,
+      auto: answers.monthlyAutoInsuranceCost,
+      moto: answers.monthlyMotoInsuranceCost,
+      velo: answers.monthlyBikeInsuranceCost,
+      trottinette: answers.monthlyScooterInsuranceCost,
+      animaux: answers.monthlyPetInsuranceCost,
+      habitation: answers.monthlyHomeInsuranceCost,
+      mutuelle: answers.monthlyMutuelleCost,
+      abonnements: answers.monthlySubscriptionsCost,
+    },
+    objectif: answers.goal,
   };
 }
 
