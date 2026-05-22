@@ -19,6 +19,29 @@ type AwinProgramme = {
   logoUrl?: string;
 };
 
+type AwinPromotion = Record<string, unknown> & {
+  id?: number | string;
+  promotionId?: number | string;
+  advertiserId?: number | string;
+  advertiser?: { id?: number | string; advertiserId?: number | string; name?: string; joined?: boolean };
+  advertiserName?: string;
+  title?: string;
+  description?: string;
+  terms?: string;
+  type?: string;
+  status?: string;
+  code?: string;
+  voucherCode?: string;
+  voucher?: { code?: string | null; exclusive?: boolean; attributable?: boolean };
+  startsAt?: string;
+  startDate?: string;
+  endsAt?: string;
+  endDate?: string;
+  url?: string;
+  trackingUrl?: string;
+  urlTracking?: string;
+};
+
 type CategoryRule = {
   slug: string;
   keywords: string[];
@@ -33,6 +56,21 @@ type ClassifiedProgramme = {
   matchedTerms: string[];
 };
 
+type OfferUpsertRow = {
+  id: string;
+  category: string;
+  provider: string;
+  title: string;
+  country_scope: string;
+  monthly_cost: number | null;
+  annual_savings_estimate: number | null;
+  affiliate_url: string | null;
+  cashback_amount: number;
+  sponsored: boolean;
+  active: boolean;
+  metadata: Record<string, unknown>;
+};
+
 export type AwinImportSummary = {
   ok: true;
   dryRun: boolean;
@@ -41,6 +79,10 @@ export type AwinImportSummary = {
   matchedProgrammes: number;
   offersPrepared: number;
   offersImported: number;
+  couponsFetched: number;
+  couponsPrepared: number;
+  couponsImported: number;
+  couponsExpired: number;
   skippedProgrammes: number;
   categories: Record<string, number>;
   sample: {
@@ -172,22 +214,33 @@ export async function importAwinOffers({ dryRun = false } = {}): Promise<AwinImp
     warnings.push("Programmes Awin trouvés, mais aucun ne correspond encore clairement aux comparateurs Comparia.");
   }
   const preparedOffers = await buildOfferRows({ token, publisherId, classified, warnings });
-  const categoryCounts = countByCategory(preparedOffers);
+  const couponImport = await buildCouponRows({ token, publisherId, classified, warnings });
+  const categoryCounts = countByCategory([...preparedOffers, ...couponImport.rows]);
 
   let imported = 0;
+  let importedCoupons = 0;
+  let expiredCoupons = 0;
 
-  if (!dryRun && preparedOffers.length > 0) {
+  if (!dryRun && (preparedOffers.length > 0 || couponImport.rows.length > 0)) {
     const supabase = createSupabaseAdminClient();
-    const { data, error } = await supabase
-      .from("offers")
-      .upsert(preparedOffers, { onConflict: "id" })
-      .select("id");
+    if (preparedOffers.length > 0) {
+      const { data, error } = await supabase
+        .from("offers")
+        .upsert(preparedOffers, { onConflict: "id" })
+        .select("id");
 
-    if (error) {
-      throw new Error(`SUPABASE_OFFERS_IMPORT_FAILED:${error.code ?? "unknown"}:${error.message}`);
+      if (error) {
+        throw new Error(`SUPABASE_OFFERS_IMPORT_FAILED:${error.code ?? "unknown"}:${error.message}`);
+      }
+
+      imported = data?.length ?? preparedOffers.length;
     }
 
-    imported = data?.length ?? preparedOffers.length;
+    if (couponImport.ok) {
+      const couponResult = await syncCouponRows({ supabase, rows: couponImport.rows, activeIds: couponImport.activeIds, warnings });
+      importedCoupons = couponResult.imported;
+      expiredCoupons = couponResult.expired;
+    }
   }
 
   return {
@@ -198,6 +251,10 @@ export async function importAwinOffers({ dryRun = false } = {}): Promise<AwinImp
     matchedProgrammes: classified.length,
     offersPrepared: preparedOffers.length,
     offersImported: imported,
+    couponsFetched: couponImport.fetched,
+    couponsPrepared: couponImport.rows.length,
+    couponsImported: importedCoupons,
+    couponsExpired: expiredCoupons,
     skippedProgrammes: Math.max(0, programmes.length - new Set(classified.map((item) => item.programme.id)).size),
     categories: categoryCounts,
     sample: preparedOffers.slice(0, 10).map((offer) => ({
@@ -246,7 +303,7 @@ async function buildOfferRows({
   publisherId: string;
   classified: ClassifiedProgramme[];
   warnings: string[];
-}) {
+}): Promise<OfferUpsertRow[]> {
   const linkMap = await generateAwinLinks({ token, publisherId, classified, warnings });
   const categoryTitles = new Map(categories.map((category) => [category.slug, category.title]));
   const now = new Date().toISOString();
@@ -288,6 +345,222 @@ async function buildOfferRows({
       },
     };
   });
+}
+
+async function buildCouponRows({
+  token,
+  publisherId,
+  classified,
+  warnings,
+}: {
+  token: string;
+  publisherId: string;
+  classified: ClassifiedProgramme[];
+  warnings: string[];
+}): Promise<{ fetched: number; ok: boolean; rows: OfferUpsertRow[]; activeIds: Set<string> }> {
+  if (classified.length === 0) {
+    return { fetched: 0, ok: true, rows: [], activeIds: new Set() };
+  }
+
+  const promotionResult = await fetchAwinPromotions({ token, publisherId, classified, warnings });
+  const programmeCategories = buildProgrammeCategoryMap(classified);
+  const categoryTitles = new Map(categories.map((category) => [category.slug, category.title]));
+  const rows: OfferUpsertRow[] = [];
+  const now = new Date().toISOString();
+
+  for (const promotion of promotionResult.items) {
+    const promotionId = getPromotionId(promotion);
+    if (!promotionId) continue;
+
+    const advertiserId = getPromotionAdvertiserId(promotion);
+    const programme = advertiserId ? getProgrammeForId(classified, advertiserId) : null;
+    const provider = getPromotionAdvertiserName(promotion) ?? programme?.name ?? null;
+    if (!provider) continue;
+
+    const affiliateUrl = appendAwinClickref(getPromotionUrl(promotion), "coupon");
+    if (!affiliateUrl) continue;
+
+    const title = getPromotionTitle(promotion);
+    const description = getPromotionDescription(promotion);
+    const code = getPromotionCode(promotion);
+    const endDate = getPromotionEndDate(promotion);
+    const categoriesForPromotion = classifyPromotionCategories(promotion, programmeCategories.get(String(advertiserId)) ?? []);
+    const active = isPromotionActive(promotion);
+
+    for (const categorySlug of categoriesForPromotion.slice(0, 3)) {
+      const categoryTitle = categoryTitles.get(categorySlug) ?? "Offre";
+      const normalizedTitle = title || (code ? `Code promo ${provider}` : `Offre spéciale ${provider}`);
+      const rowId = deterministicUuid(`awin-promotion:${publisherId}:${promotionId}:${categorySlug}`);
+
+      rows.push({
+        id: rowId,
+        category: categorySlug,
+        provider,
+        title: code ? `${normalizedTitle} · code ${code}` : normalizedTitle,
+        country_scope: "FR",
+        monthly_cost: null,
+        annual_savings_estimate: CATEGORY_SAVINGS[categorySlug] ?? null,
+        affiliate_url: affiliateUrl,
+        cashback_amount: 0,
+        sponsored: false,
+        active,
+        metadata: {
+          source: "awin_promotion",
+          badge: code ? "Code promo" : "Offre spéciale",
+          description: buildCouponDescription({
+            categoryTitle,
+            provider,
+            title: normalizedTitle,
+            description,
+            code,
+            endDate,
+          }),
+          tags: buildCouponTags({ code, endDate }),
+          couponCode: code,
+          couponTitle: normalizedTitle,
+          couponDescription: description,
+          couponEndsAt: endDate,
+          couponStartsAt: getPromotionStartDate(promotion),
+          couponTerms: getPromotionTerms(promotion),
+          awinPromotionId: promotionId,
+          awinAdvertiserId: advertiserId,
+          awinAdvertiserName: provider,
+          awinDisplayUrl: programme?.displayUrl ?? null,
+          awinLogoUrl: programme?.logoUrl ?? null,
+          awinPublisherId: publisherId,
+          awinPromotionStatus: promotion.status ?? null,
+          awinPromotionType: promotion.type ?? null,
+          importedAt: now,
+        },
+      });
+    }
+  }
+
+  return {
+    fetched: promotionResult.items.length,
+    ok: promotionResult.ok,
+    rows,
+    activeIds: new Set(rows.filter((row) => row.active).map((row) => row.id)),
+  };
+}
+
+async function fetchAwinPromotions({
+  token,
+  publisherId,
+  classified,
+  warnings,
+}: {
+  token: string;
+  publisherId: string;
+  classified: ClassifiedProgramme[];
+  warnings: string[];
+}): Promise<{ ok: boolean; items: AwinPromotion[] }> {
+  const advertiserIds = Array.from(new Set(classified.map(({ programme }) => programme.id))).slice(0, 100);
+  const items: AwinPromotion[] = [];
+
+  for (let page = 1; page <= 8; page += 1) {
+    const filters = {
+      ...(advertiserIds.length > 0 ? { advertiserIds } : {}),
+      membership: "joined",
+      status: "active",
+    };
+    const response = await fetch(buildAwinUrl(`/publisher/${publisherId}/promotions`, token), {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        filters,
+        pagination: {
+          page,
+          pageSize: 100,
+        },
+      }),
+      cache: "no-store",
+    }).catch((error: unknown) => {
+      warnings.push(`Awin coupons indisponible : ${error instanceof Error ? error.message : "erreur inconnue"}`);
+      return null;
+    });
+
+    if (!response) return { ok: false, items };
+
+    if (!response.ok) {
+      const text = await response.text().catch(() => "");
+      if (advertiserIds.length > 0 && page === 1) {
+        warnings.push(`Awin promotions a refusé le filtre annonceurs (${response.status}). Nouvel essai sans filtre annonceur.`);
+        return fetchAwinPromotions({ token, publisherId, classified: [], warnings });
+      }
+      warnings.push(`Awin promotions a répondu ${response.status}. Coupons ignorés pour cet import. ${redactToken(text, token).slice(0, 180)}`);
+      return { ok: false, items };
+    }
+
+    const payload = await response.json().catch(() => null);
+    const pageItems = extractPromotionList(payload);
+    items.push(...pageItems);
+
+    if (pageItems.length < 100 || isLastPromotionPage(payload, page)) break;
+  }
+
+  return { ok: true, items: dedupePromotions(items) };
+}
+
+async function syncCouponRows({
+  supabase,
+  rows,
+  activeIds,
+  warnings,
+}: {
+  supabase: ReturnType<typeof createSupabaseAdminClient>;
+  rows: OfferUpsertRow[];
+  activeIds: Set<string>;
+  warnings: string[];
+}) {
+  let imported = 0;
+  let expired = 0;
+
+  if (rows.length > 0) {
+    const { data, error } = await supabase.from("offers").upsert(rows, { onConflict: "id" }).select("id");
+
+    if (error) {
+      throw new Error(`SUPABASE_COUPONS_IMPORT_FAILED:${error.code ?? "unknown"}:${error.message}`);
+    }
+
+    imported = data?.length ?? rows.length;
+  }
+
+  const { data: existing, error: lookupError } = await supabase
+    .from("offers")
+    .select("id,active,metadata")
+    .eq("metadata->>source", "awin_promotion")
+    .limit(1000);
+
+  if (lookupError) {
+    warnings.push(`Impossible de nettoyer les anciens coupons Awin : ${lookupError.message}`);
+    return { imported, expired };
+  }
+
+  const idsToDeactivate = ((existing ?? []) as { id: string; active: boolean | null; metadata: Record<string, unknown> | null }[])
+    .filter((row) => row.active !== false)
+    .filter((row) => row.metadata?.source === "awin_promotion")
+    .map((row) => row.id)
+    .filter((id) => !activeIds.has(id));
+
+  if (idsToDeactivate.length > 0) {
+    const { error: updateError } = await supabase
+      .from("offers")
+      .update({ active: false })
+      .in("id", idsToDeactivate);
+
+    if (updateError) {
+      warnings.push(`Coupons expirés non désactivés : ${updateError.message}`);
+    } else {
+      expired = idsToDeactivate.length;
+    }
+  }
+
+  return { imported, expired };
 }
 
 async function generateAwinLinks({
@@ -393,6 +666,165 @@ function classifyProgrammes(programmes: AwinProgramme[]) {
   return matches.sort((a, b) => b.score - a.score || a.programme.name.localeCompare(b.programme.name));
 }
 
+function buildProgrammeCategoryMap(classified: ClassifiedProgramme[]) {
+  const map = new Map<string, string[]>();
+
+  for (const item of classified) {
+    const id = String(item.programme.id);
+    const current = map.get(id) ?? [];
+    if (!current.includes(item.categorySlug)) current.push(item.categorySlug);
+    map.set(id, current);
+  }
+
+  return map;
+}
+
+function getProgrammeForId(classified: ClassifiedProgramme[], advertiserId: string) {
+  return classified.find(({ programme }) => String(programme.id) === advertiserId)?.programme ?? null;
+}
+
+function classifyPromotionCategories(promotion: AwinPromotion, advertiserCategories: string[]) {
+  const text = normalizeSearchText([
+    getPromotionAdvertiserName(promotion),
+    getPromotionTitle(promotion),
+    getPromotionDescription(promotion),
+    getPromotionTerms(promotion),
+    getPromotionCode(promotion),
+    promotion.type,
+  ].join(" "));
+  const matches: { slug: string; score: number }[] = [];
+
+  for (const rule of CATEGORY_RULES) {
+    const negativeHit = rule.negativeKeywords?.some((keyword) => text.includes(normalizeSearchText(keyword))) ?? false;
+    if (negativeHit) continue;
+
+    const score = rule.keywords
+      .filter((keyword) => text.includes(normalizeSearchText(keyword)))
+      .reduce((total, term) => total + keywordWeight(term), 0);
+
+    if (score >= (rule.minimumScore ?? 1)) matches.push({ slug: rule.slug, score });
+  }
+
+  const sortedMatches = matches.sort((a, b) => b.score - a.score).map((match) => match.slug);
+  return Array.from(new Set([...sortedMatches, ...advertiserCategories])).slice(0, 4);
+}
+
+function extractPromotionList(payload: unknown): AwinPromotion[] {
+  if (Array.isArray(payload)) return payload.filter(isAwinPromotionLike);
+  if (!isRecord(payload)) return [];
+
+  const candidates = [payload.promotions, payload.data, payload.results, payload.items, payload.content].filter(Array.isArray);
+  if (candidates.length === 0) return [];
+
+  return candidates[0].filter(isAwinPromotionLike);
+}
+
+function isLastPromotionPage(payload: unknown, currentPage: number) {
+  if (!isRecord(payload)) return false;
+
+  const pagination = isRecord(payload.pagination) ? payload.pagination : payload;
+  const totalPages = getNumber(pagination, "totalPages") ?? getNumber(pagination, "pages") ?? getNumber(pagination, "pageCount");
+  const nextPage = pagination.nextPage ?? pagination.next;
+
+  if (typeof totalPages === "number") return currentPage >= totalPages;
+  return nextPage === null || nextPage === false;
+}
+
+function dedupePromotions(promotions: AwinPromotion[]) {
+  const seen = new Set<string>();
+  const result: AwinPromotion[] = [];
+
+  for (const promotion of promotions) {
+    const id = getPromotionId(promotion) ?? JSON.stringify([getPromotionAdvertiserId(promotion), getPromotionTitle(promotion), getPromotionCode(promotion)]);
+    if (seen.has(id)) continue;
+    seen.add(id);
+    result.push(promotion);
+  }
+
+  return result;
+}
+
+function getPromotionId(promotion: AwinPromotion) {
+  return toIdString(promotion.promotionId ?? promotion.id ?? promotion.promoId ?? promotion.offerId);
+}
+
+function getPromotionAdvertiserId(promotion: AwinPromotion) {
+  const advertiser = isRecord(promotion.advertiser) ? promotion.advertiser : null;
+  return toIdString(promotion.advertiserId ?? advertiser?.id ?? advertiser?.advertiserId ?? promotion.programmeId ?? promotion.programId);
+}
+
+function getPromotionAdvertiserName(promotion: AwinPromotion) {
+  const advertiser = isRecord(promotion.advertiser) ? promotion.advertiser : null;
+  return firstString(promotion.advertiserName, advertiser?.name, promotion.programmeName, promotion.programName, promotion.brandName, promotion.merchantName);
+}
+
+function getPromotionTitle(promotion: AwinPromotion) {
+  return firstString(promotion.title, promotion.name, promotion.label, promotion.heading, promotion.shortDescription) ?? "Offre partenaire";
+}
+
+function getPromotionDescription(promotion: AwinPromotion) {
+  return firstString(promotion.description, promotion.longDescription, promotion.summary, promotion.details);
+}
+
+function getPromotionTerms(promotion: AwinPromotion) {
+  return firstString(promotion.terms, promotion.termsAndConditions, promotion.conditions, promotion.restrictions);
+}
+
+function getPromotionCode(promotion: AwinPromotion) {
+  const voucher = isRecord(promotion.voucher) ? promotion.voucher : null;
+  return firstString(promotion.code, promotion.voucherCode, promotion.promoCode, promotion.couponCode, promotion.discountCode, voucher?.code)?.trim();
+}
+
+function getPromotionUrl(promotion: AwinPromotion) {
+  return firstString(promotion.urlTracking, promotion.trackingUrl, promotion.url, promotion.clickThroughUrl, promotion.deeplink, promotion.landingPageUrl);
+}
+
+function getPromotionStartDate(promotion: AwinPromotion) {
+  return normalizeIsoDate(firstString(promotion.startsAt, promotion.startDate, promotion.validFrom, promotion.dateStart, promotion.start));
+}
+
+function getPromotionEndDate(promotion: AwinPromotion) {
+  return normalizeIsoDate(firstString(promotion.endsAt, promotion.endDate, promotion.validTo, promotion.dateEnd, promotion.expiresAt, promotion.expiryDate, promotion.end));
+}
+
+function isPromotionActive(promotion: AwinPromotion) {
+  const status = normalizeSearchText(promotion.status);
+  if (/(expired|inactive|deleted|cancelled|rejected|paused|closed)/.test(status)) return false;
+
+  const startDate = getPromotionStartDate(promotion);
+  const endDate = getPromotionEndDate(promotion);
+  const now = Date.now();
+
+  if (startDate && Date.parse(startDate) > now) return false;
+  if (endDate && Date.parse(endDate) < now) return false;
+
+  return Boolean(getPromotionUrl(promotion));
+}
+
+function buildCouponDescription({
+  categoryTitle,
+  provider,
+  title,
+  description,
+  code,
+  endDate,
+}: {
+  categoryTitle: string;
+  provider: string;
+  title: string;
+  description?: string | null;
+  code?: string;
+  endDate?: string | null;
+}) {
+  const deadline = endDate ? ` Offre valable jusqu’au ${formatDateFr(endDate)}.` : "";
+  const codeText = code ? ` Code promo ${code} disponible.` : "";
+  return `${title} chez ${provider} pour ton comparateur ${categoryTitle.toLowerCase()}.${codeText}${deadline} ${description ?? "Vérifie les conditions avant activation."}`.trim();
+}
+
+function buildCouponTags({ code, endDate }: { code?: string; endDate?: string | null }) {
+  return [code ? "Code promo" : "Offre spéciale", endDate ? "Durée limitée" : "Awin", "Partenaire vérifié", "Activation rapide"];
+}
+
 function extractGeneratedLinks(payload: unknown): string[] {
   if (Array.isArray(payload)) {
     return payload.map(extractUrlFromUnknown).filter(Boolean) as string[];
@@ -475,7 +907,7 @@ function normalizeDestinationUrl(value?: string) {
   return `https://${value.replace(/^\/+/, "")}`;
 }
 
-function appendAwinClickref(value: string | undefined, categorySlug: string) {
+function appendAwinClickref(value: string | null | undefined, categorySlug: string) {
   if (!value || !isSafeUrl(value)) return null;
   try {
     const url = new URL(value);
@@ -495,12 +927,48 @@ function isAwinProgramme(value: unknown): value is AwinProgramme {
   return isRecord(value) && typeof value.id === "number" && typeof value.name === "string";
 }
 
+function isAwinPromotionLike(value: unknown): value is AwinPromotion {
+  return isRecord(value);
+}
+
 function isSafeUrl(value: string) {
   return value.startsWith("https://");
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
+}
+
+function firstString(...values: unknown[]) {
+  for (const value of values) {
+    if (typeof value === "string" && value.trim().length > 0) return value.trim();
+    if (typeof value === "number" && Number.isFinite(value)) return String(value);
+  }
+
+  return null;
+}
+
+function toIdString(value: unknown) {
+  if (typeof value === "string" && value.trim().length > 0) return value.trim();
+  if (typeof value === "number" && Number.isFinite(value)) return String(value);
+  return null;
+}
+
+function getNumber(record: Record<string, unknown>, key: string) {
+  const value = record[key];
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+function normalizeIsoDate(value: string | null) {
+  if (!value) return null;
+  const timestamp = Date.parse(value);
+  return Number.isNaN(timestamp) ? null : new Date(timestamp).toISOString();
+}
+
+function formatDateFr(value: string) {
+  const timestamp = Date.parse(value);
+  if (Number.isNaN(timestamp)) return value;
+  return new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(timestamp));
 }
 
 function chunkArray<T>(items: T[], size: number) {

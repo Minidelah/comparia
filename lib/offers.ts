@@ -1,7 +1,7 @@
 import { createSupabaseAdminClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { getStructuredOffersForCategory, type AffiliateOffer } from "@/data/offers";
 
-export type OfferBadge = "Meilleur choix" | "Meilleur prix" | "Meilleur cashback" | "Sponsorisé";
+export type OfferBadge = "Meilleur choix" | "Meilleur prix" | "Meilleur cashback" | "Sponsorisé" | "Code promo" | "Offre spéciale";
 
 export type OfferSlot = {
   id: string;
@@ -24,6 +24,10 @@ export type OfferSlot = {
   performanceScore?: number;
   clickCount?: number;
   rankReason?: string;
+  couponCode?: string;
+  couponTitle?: string;
+  couponEndsAt?: string;
+  couponTerms?: string;
 };
 
 type OfferRow = {
@@ -182,7 +186,11 @@ function mapOfferRow(row: OfferRow): OfferSlot | null {
   const metadataPriority = typeof metadata.priority === "number" ? metadata.priority : undefined;
   const metadataRating = typeof metadata.rating === "number" ? metadata.rating : undefined;
   const metadataTags = Array.isArray(metadata.tags) ? metadata.tags.filter((tag): tag is string => typeof tag === "string").slice(0, 4) : undefined;
-  const badge = row.sponsored ? "Sponsorisé" : normalizeBadge(metadataBadge);
+  const couponCode = typeof metadata.couponCode === "string" && metadata.couponCode.trim().length > 0 ? metadata.couponCode.trim() : undefined;
+  const couponTitle = typeof metadata.couponTitle === "string" ? metadata.couponTitle : undefined;
+  const couponEndsAt = typeof metadata.couponEndsAt === "string" ? metadata.couponEndsAt : undefined;
+  const couponTerms = typeof metadata.couponTerms === "string" ? metadata.couponTerms : undefined;
+  const badge = row.sponsored ? "Sponsorisé" : couponCode ? "Code promo" : normalizeBadge(metadataBadge);
   const annualSavings = row.annual_savings_estimate
     ? `jusqu’à ${Math.round(row.annual_savings_estimate)}€/an`
     : metadataAnnualSavings || "selon ton profil";
@@ -206,6 +214,10 @@ function mapOfferRow(row: OfferRow): OfferSlot | null {
     rating: metadataRating ?? 4.4,
     tags: metadataTags ?? buildDefaultTags(row.category),
     priority: metadataPriority ?? Math.round(row.annual_savings_estimate ?? 50),
+    couponCode,
+    couponTitle,
+    couponEndsAt,
+    couponTerms,
   };
 }
 
@@ -371,6 +383,7 @@ function scoreOffer(
 
 function decorateRankedOffer(offer: OfferSlot, index: number): OfferSlot {
   const clickSignal = offer.clickCount && offer.clickCount > 0 ? `${offer.clickCount} clic${offer.clickCount > 1 ? "s" : ""} récent${offer.clickCount > 1 ? "s" : ""}` : null;
+  const keepCurrentBadge = offer.badge === "Meilleur cashback" || offer.badge === "Code promo" || offer.badge === "Offre spéciale";
   const rankReason =
     index === 0
       ? clickSignal
@@ -382,7 +395,7 @@ function decorateRankedOffer(offer: OfferSlot, index: number): OfferSlot {
 
   return {
     ...offer,
-    badge: index === 0 && !offer.sponsored && offer.badge !== "Meilleur cashback" ? "Meilleur choix" : offer.badge,
+    badge: index === 0 && !offer.sponsored && !keepCurrentBadge ? "Meilleur choix" : offer.badge,
     rankReason,
     tags: mergeTags(offer.tags, index === 0 ? ["Top performance"] : offer.clickCount ? ["Données réelles"] : ["Pertinence"]),
   };
@@ -396,6 +409,8 @@ function normalizeBadge(value?: string): OfferBadge {
   if (value === "Meilleur prix") return "Meilleur prix";
   if (value === "Meilleur cashback") return "Meilleur cashback";
   if (value === "Sponsorisé") return "Sponsorisé";
+  if (value === "Code promo") return "Code promo";
+  if (value === "Offre spéciale") return "Offre spéciale";
   return "Meilleur choix";
 }
 
@@ -429,6 +444,9 @@ function isPlausibleOfferRow(row: OfferRow) {
 
 function buildLogoUrl(row: OfferRow) {
   const metadata = row.metadata ?? {};
+  const logoUrl = typeof metadata.awinLogoUrl === "string" ? metadata.awinLogoUrl : undefined;
+  if (logoUrl?.startsWith("https://")) return logoUrl;
+
   const displayUrl = typeof metadata.awinDisplayUrl === "string" ? metadata.awinDisplayUrl : undefined;
   const domain = getDomain(displayUrl) ?? providerDomains[row.provider.toLowerCase()] ?? null;
   if (!domain) return undefined;

@@ -4,6 +4,10 @@
     {
       "path": "/api/cron/awin-transactions",
       "schedule": "0 5 * * *"
+    },
+    {
+      "path": "/api/cron/awin-refresh",
+      "schedule": "30 4 * * *"
     }
   ]
 }

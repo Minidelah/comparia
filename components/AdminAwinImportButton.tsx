@@ -7,6 +7,10 @@ type ImportSummary = {
   matchedProgrammes: number;
   offersPrepared: number;
   offersImported: number;
+  couponsFetched: number;
+  couponsPrepared: number;
+  couponsImported: number;
+  couponsExpired: number;
   categories: Record<string, number>;
   warnings: string[];
   sample: {
@@ -108,7 +112,7 @@ export default function AdminAwinImportButton() {
             disabled={loading || syncingTransactions}
             className="rounded-2xl bg-white px-4 py-2 font-semibold text-slate-950 transition hover:bg-cyan-100 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {loading ? "Import en cours…" : "Importer offres"}
+            {loading ? "Import en cours…" : "Importer offres + coupons"}
           </button>
           <button
             type="button"
@@ -124,10 +128,13 @@ export default function AdminAwinImportButton() {
       {summary && (
         <div className="mt-4 rounded-2xl border border-white/10 bg-slate-950/50 p-4 text-cyan-50">
           <p className="font-semibold">
-            {summary.offersImported} offres importées sur {summary.programmesFetched} programmes analysés.
+            {summary.offersImported} offres + {summary.couponsImported} coupon{summary.couponsImported > 1 ? "s" : ""} importé
+            {summary.couponsImported > 1 ? "s" : ""} sur {summary.programmesFetched} programmes analysés.
           </p>
           <p className="mt-1 text-cyan-100/70">
-            {summary.matchedProgrammes} correspondances détectées · {summary.offersPrepared} offres préparées.
+            {summary.matchedProgrammes} correspondances détectées · {summary.offersPrepared} offres préparées · {summary.couponsPrepared} coupon
+            {summary.couponsPrepared > 1 ? "s" : ""} préparé{summary.couponsPrepared > 1 ? "s" : ""}.
+            {summary.couponsExpired > 0 ? ` ${summary.couponsExpired} ancien${summary.couponsExpired > 1 ? "s" : ""} coupon${summary.couponsExpired > 1 ? "s" : ""} désactivé${summary.couponsExpired > 1 ? "s" : ""}.` : ""}
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
             {Object.entries(summary.categories).map(([category, count]) => (
