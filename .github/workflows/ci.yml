@@ -1,0 +1,84 @@
+name: "CI — Build & Lint"
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  NODE_VERSION: "20"
+
+jobs:
+  build-and-lint:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+
+      - name: "Setup Node.js ${{ env.NODE_VERSION }}"
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: "Install dependencies"
+        run: npm ci
+
+      - name: "ESLint"
+        run: npm run lint
+
+      - name: "TypeScript Check"
+        run: npx tsc --noEmit
+
+      - name: "Build"
+        run: npm run build
+        env:
+          # Test vars (non-production)
+          NEXT_PUBLIC_SUPABASE_URL: https://test.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: test-key
+          SUPABASE_SERVICE_ROLE_KEY: test-role-key
+          ADMIN_DASHBOARD_TOKEN: test-token
+          CRON_SECRET: test-secret
+          # Optional (Mistral can be empty in dev)
+          MISTRAL_API_KEY: ""
+          MISTRAL_MODEL: mistral-small-latest
+          AWIN_PUBLISHER_ID: ""
+          AWIN_API_TOKEN: ""
+
+  env-validation:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+
+      - name: "Check .env.example exists"
+        run: test -f .env.example || (echo ".env.example missing" && exit 1)
+
+      - name: "Validate Mistral vars documented"
+        run: |
+          grep -q "MISTRAL_API_KEY" .env.example || (echo "MISTRAL_API_KEY not documented" && exit 1)
+          grep -q "MISTRAL_MODEL" .env.example || (echo "MISTRAL_MODEL not documented" && exit 1)
+
+      - name: "Validate Supabase vars documented"
+        run: |
+          grep -q "NEXT_PUBLIC_SUPABASE_URL" .env.example || exit 1
+          grep -q "SUPABASE_SERVICE_ROLE_KEY" .env.example || exit 1
+
+  security-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+
+      - name: "Check no secrets in code"
+        run: |
+          ! grep -r "pk_\|sk_\|MISTRAL_API_KEY=" . --include="*.ts" --include="*.tsx" --exclude-dir=node_modules || (echo "Secrets found in code!" && exit 1)
+          ! grep -r "supabase.*key\|SUPABASE_SERVICE_ROLE_KEY=" . --include="*.ts" --include="*.tsx" --exclude-dir=node_modules || (echo "Secrets found in code!" && exit 1)
+
+      - name: "Check no API keys in comments"
+        run: |
+          ! grep -r "// MISTRAL_API_KEY\|# MISTRAL_API_KEY" . --include="*.ts" --include="*.tsx" || (echo "API key patterns in comments!" && exit 1)

@@ -3,7 +3,7 @@ import type { DiagnosticResult } from "@/lib/services/diagnostics";
 import type { AiExpenseInsight, AiRecommendation } from "@/lib/ai/types";
 
 const MISTRAL_ENDPOINT = "https://api.mistral.ai/v1/chat/completions";
-const DEFAULT_MODEL = "mistral-small-latest";
+const DEFAULT_MODEL = "codestral-latest";
 
 type MistralMessageContent = unknown;
 
