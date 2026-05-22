@@ -4,6 +4,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import AdminAwinImportButton from "@/components/AdminAwinImportButton";
 import AdminCampaignLinkBuilder from "@/components/AdminCampaignLinkBuilder";
+import AdminCompliancePanel from "@/components/AdminCompliancePanel";
 import AdminLeadExportButton, { type ExportableLead } from "@/components/AdminLeadExportButton";
 import AdminOffersManager, { type AdminOfferRow } from "@/components/AdminOffersManager";
 import SiteNav from "@/components/SiteNav";
@@ -458,6 +459,8 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
         </section>
 
         {conversionAccessIssue && <SupabasePermissionNotice />}
+
+        <AdminCompliancePanel offers={adminOffers} />
 
         <RevenueProjectionPanel projection={revenueProjection} />
 

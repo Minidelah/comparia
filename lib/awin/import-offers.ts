@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
 import { categories } from "@/lib/categories";
+import { getComplianceMetadataForPartner } from "@/lib/affiliate/compliance";
 import { createSupabaseAdminClient, isSupabaseConfigured } from "@/lib/supabase/server";
 
 const AWIN_BASE_URL = "https://api.awin.com";
@@ -339,6 +340,7 @@ async function buildOfferRows({
         awinPrimarySector: sector ?? null,
         awinPrimaryRegion: programme.primaryRegion ?? null,
         awinCommissionRange: programme.commissionRange ?? null,
+        compliance: getComplianceMetadataForPartner(programme.name, categoryTitle),
         matchScore: score,
         matchedTerms,
         importedAt: now,
@@ -430,6 +432,7 @@ async function buildCouponRows({
           awinPublisherId: publisherId,
           awinPromotionStatus: promotion.status ?? null,
           awinPromotionType: promotion.type ?? null,
+          compliance: getComplianceMetadataForPartner(provider, normalizedTitle),
           importedAt: now,
         },
       });
