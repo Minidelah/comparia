@@ -363,13 +363,13 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
 
   const leads = (leadsResult.data ?? []) as LeadRow[];
   const events = (eventsResult.data ?? []) as FunnelEventRow[];
-  const clicks = (clicksResult.data ?? []) as AffiliateClickRow[];
+  const clicks = ((clicksResult.data ?? []) as AffiliateClickRow[]).filter((click) => !isTestAffiliateClick(click));
   const pageViews = (pageViewsResult.data ?? []) as FunnelEventRow[];
   const presenceEvents = (presenceEventsResult.data ?? []) as FunnelEventRow[];
   const wizardEvents = (wizardEventsResult.data ?? []) as FunnelEventRow[];
   const diagnosticEvents = (diagnosticEventsResult.data ?? []) as FunnelEventRow[];
   const affiliateEvents = (affiliateEventsResult.data ?? []) as FunnelEventRow[];
-  const clicksRange = (clicksRangeResult.data ?? []) as AffiliateClickRow[];
+  const clicksRange = ((clicksRangeResult.data ?? []) as AffiliateClickRow[]).filter((click) => !isTestAffiliateClick(click));
   const conversionsRange = (conversionsRangeResult.data ?? []) as ConversionRow[];
   const offerClickMap = buildOfferClickMap(clicksRange, affiliateEvents);
   const adminOffers = ((offersResult.data ?? []) as Omit<AdminOfferRow, "click_count">[]).map((offer) => ({
@@ -491,6 +491,8 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
           <TrafficTimeline days={traffic.daily} />
           <TopPages pages={traffic.topPages} />
         </section>
+
+        <GuideTrafficPanel pages={traffic.topPages} />
 
         <AcquisitionPanel analytics={acquisition} />
 
@@ -1001,6 +1003,38 @@ function TopPages({ pages }: { pages: TrafficPage[] }) {
   );
 }
 
+function GuideTrafficPanel({ pages }: { pages: TrafficPage[] }) {
+  const guidePages = pages.filter((page) => page.path.startsWith("/guides/"));
+  const max = Math.max(...guidePages.map((page) => page.pageViews), 1);
+
+  return (
+    <section className="mt-5 rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-slate-950 via-cyan-950/20 to-blue-950/20 p-6">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Guides SEO</p>
+          <h2 className="mt-3 text-2xl font-semibold">Pages éditoriales qui attirent du trafic.</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400">
+            Surveille ici les guides à transformer en clics : ajoute des liens internes, remonte les CTA et pousse les catégories qui commencent à prendre.
+          </p>
+        </div>
+        <span className="rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-sm font-semibold text-slate-200">
+          {guidePages.length} guide{guidePages.length > 1 ? "s" : ""} visible{guidePages.length > 1 ? "s" : ""}
+        </span>
+      </div>
+
+      <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        {guidePages.length > 0 ? (
+          guidePages.slice(0, 8).map((page) => <TopPageRow key={page.path} page={page} max={max} />)
+        ) : (
+          <p className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-sm text-slate-400 md:col-span-2 xl:col-span-4">
+            Les guides apparaîtront ici dès que Google ou tes campagnes envoient les premières visites.
+          </p>
+        )}
+      </div>
+    </section>
+  );
+}
+
 function TopPageRow({ page, max }: { page: TrafficPage; max: number }) {
   const width = Math.max(6, Math.round((page.pageViews / max) * 100));
 
@@ -1341,7 +1375,7 @@ function buildTrafficAnalytics(pageViews: FunnelEventRow[]): TrafficAnalytics {
     topPages: Array.from(topPageMap.entries())
       .map(([path, item]) => ({ path, visitors: item.visitors.size, pageViews: item.pageViews }))
       .sort((a, b) => b.pageViews - a.pageViews || b.visitors - a.visitors)
-      .slice(0, 8),
+      .slice(0, 20),
   };
 }
 
@@ -1389,6 +1423,10 @@ function buildLiveAnalytics(events: FunnelEventRow[]): LiveAnalytics {
       .map(([path, pageVisitors]) => ({ path, visitors: pageVisitors.size }))
       .sort((a, b) => b.visitors - a.visitors),
   };
+}
+
+function isTestAffiliateClick(click: AffiliateClickRow) {
+  return click.source_screen === "codex-production-check" || getMetaString(click.meta ?? {}, "source") === "codex-production-check";
 }
 
 function buildAcquisitionAnalytics({

@@ -434,6 +434,192 @@ export const seoGuides: SeoGuide[] = [
       },
     ],
   },
+  {
+    slug: "meilleur-forfait-mobile-5g",
+    title: "Meilleur forfait mobile 5G : comparer réseau, data et prix",
+    description:
+      "Guide pour choisir un forfait mobile 5G selon data, réseau, prix après promotion, Europe, Suisse et usage réel.",
+    eyebrow: "Forfait 5G",
+    categorySlug: "forfait-mobile",
+    intent: "comparer",
+    heroMetric: "5G + data",
+    intro:
+      "Un bon forfait mobile 5G ne se limite pas au nombre de gigas. Il faut regarder la couverture réseau dans tes lieux de vie, le prix après promotion, les zones incluses et la quantité de data réellement utile.",
+    painPoints: ["Data trop large", "Réseau instable", "Prix qui augmente", "Options internationales floues"],
+    steps: [
+      { title: "Vérifie ton usage data", body: "Streaming, partage de connexion et déplacements changent vite le volume nécessaire." },
+      { title: "Compare le réseau réel", body: "Le meilleur réseau dépend de ton domicile, de ton travail et de tes trajets réguliers." },
+      { title: "Lis le prix après promotion", body: "Le coût pertinent est le prix durable, pas uniquement le tarif des premiers mois." },
+    ],
+    signals: ["5G nécessaire", "Plus de 100 Go", "Partage de connexion", "Prix promo temporaire"],
+    faq: [
+      {
+        question: "Faut-il forcément prendre un forfait 5G ?",
+        answer:
+          "Non. La 5G est utile si ton téléphone est compatible, si la couverture est bonne et si tes usages justifient plus de débit.",
+      },
+      {
+        question: "Quel forfait 5G choisir ?",
+        answer:
+          "Compare d’abord réseau, data utile, zones incluses et prix après promotion. Le forfait le plus gros n’est pas toujours le plus rentable.",
+      },
+    ],
+  },
+  {
+    slug: "box-internet-sans-engagement",
+    title: "Box internet sans engagement : comparer liberté, fibre et prix annuel",
+    description:
+      "Guide pour comparer une box internet sans engagement selon fibre, frais, routeur, Wi-Fi, TV et coût total sur 12 mois.",
+    eyebrow: "Box sans engagement",
+    categorySlug: "box-internet",
+    intent: "optimiser",
+    heroMetric: "liberté",
+    intro:
+      "Une box internet sans engagement peut éviter de rester bloqué dans une offre devenue trop chère. Mais il faut vérifier les frais de départ, la qualité du matériel, les options et le coût complet sur l’année.",
+    painPoints: ["Engagement long", "Frais cachés", "Box ancienne", "Déménagement possible"],
+    steps: [
+      { title: "Compare les frais de départ", body: "Activation, livraison, dépôt ou résiliation peuvent changer le vrai prix." },
+      { title: "Vérifie la fibre à l’adresse", body: "Une offre séduisante ne vaut rien si elle n’est pas disponible ou stable chez toi." },
+      { title: "Regarde les options incluses", body: "TV, appels et répéteurs Wi-Fi doivent servir réellement pour justifier leur prix." },
+    ],
+    signals: ["Besoin flexible", "Promotion finie", "Déménagement", "Offre trop lourde"],
+    faq: [
+      {
+        question: "Une box sans engagement est-elle plus chère ?",
+        answer:
+          "Pas toujours. Elle peut être compétitive, mais il faut comparer le coût total avec frais et options inclus.",
+      },
+      {
+        question: "Pourquoi choisir une box sans engagement ?",
+        answer:
+          "Pour garder la liberté de changer si le prix augmente, si la qualité baisse ou si ton logement change.",
+      },
+    ],
+  },
+  {
+    slug: "changer-fournisseur-electricite",
+    title: "Changer de fournisseur d’électricité : étapes et points à vérifier",
+    description:
+      "Guide pour changer de fournisseur d’électricité en comparant prix, stabilité, offre verte, consommation et conditions.",
+    eyebrow: "Électricité",
+    categorySlug: "electricite",
+    intent: "changer",
+    heroMetric: "prix annuel",
+    intro:
+      "Changer de fournisseur d’électricité peut être simple, mais il faut éviter de choisir uniquement sur une mensualité attractive. La comparaison doit porter sur le prix annuel estimé, la structure tarifaire et la stabilité des conditions.",
+    painPoints: ["Mensualité élevée", "Offre indexée", "Consommation mal estimée", "Prix peu lisible"],
+    steps: [
+      { title: "Estime ton profil logement", body: "Surface, chauffage, foyer et équipements donnent une première base de consommation." },
+      { title: "Compare prix et stabilité", body: "Prix fixe, indexé ou offre verte : le bon choix dépend de ton objectif." },
+      { title: "Vérifie les conditions", body: "Regarde les modalités de souscription, d’évolution du prix et de résiliation." },
+    ],
+    signals: ["Hausse de facture", "Maison électrique", "Prix variable", "Offre ancienne"],
+    faq: [
+      {
+        question: "Changer de fournisseur d’électricité coupe-t-il le courant ?",
+        answer:
+          "Non, le changement se fait généralement sans coupure. Il faut toutefois vérifier les conditions exactes auprès du fournisseur choisi.",
+      },
+      {
+        question: "Comment choisir une offre d’électricité ?",
+        answer:
+          "Compare le prix annuel estimé, la stabilité, l’origine de l’énergie et l’adéquation avec ton logement.",
+      },
+    ],
+  },
+  {
+    slug: "comparateur-assurance-auto-pas-cher",
+    title: "Comparateur assurance auto pas cher : économiser sans se tromper",
+    description:
+      "Guide pour comparer une assurance auto pas chère selon véhicule, usage, franchises, assistance et niveau de couverture.",
+    eyebrow: "Assurance auto",
+    categorySlug: "assurance-auto",
+    intent: "économiser",
+    heroMetric: "jusqu’à 396€/an",
+    intro:
+      "Une assurance auto pas chère peut être intéressante si elle reste cohérente avec ton véhicule et ton usage. Le risque est de descendre trop bas en garanties ou d’accepter des franchises qui effacent l’économie.",
+    painPoints: ["Prime trop élevée", "Franchise importante", "Garanties inutiles", "Véhicule moins coté"],
+    steps: [
+      { title: "Adapte la couverture au véhicule", body: "Tous risques, intermédiaire ou tiers : la valeur du véhicule change le bon niveau." },
+      { title: "Compare les franchises", body: "Une mensualité basse peut cacher une franchise trop élevée en cas de sinistre." },
+      { title: "Vérifie assistance et exclusions", body: "Dépannage, prêt de véhicule et exclusions doivent rester compréhensibles." },
+    ],
+    signals: ["Bonus amélioré", "Kilométrage réduit", "Contrat ancien", "Voiture moins chère"],
+    faq: [
+      {
+        question: "Quelle assurance auto pas chère choisir ?",
+        answer:
+          "Choisis celle qui garde le bon niveau de couverture pour ton véhicule, avec des franchises et exclusions acceptables.",
+      },
+      {
+        question: "Comparer l’assurance auto est-il utile chaque année ?",
+        answer:
+          "Oui, surtout si ton bonus, ton véhicule ou ton kilométrage a changé. Le contrat peut devenir moins compétitif avec le temps.",
+      },
+    ],
+  },
+  {
+    slug: "banque-en-ligne-avec-carte-gratuite",
+    title: "Banque en ligne avec carte gratuite : conditions à comparer",
+    description:
+      "Guide pour comparer les banques en ligne avec carte gratuite selon frais, plafonds, paiements, retraits, voyage et application.",
+    eyebrow: "Carte gratuite",
+    categorySlug: "banque",
+    intent: "comparer",
+    heroMetric: "0€/mois",
+    intro:
+      "Une carte gratuite peut réduire les frais bancaires, mais les conditions varient : revenus, usage minimal, plafonds, retraits, paiements à l’étranger et type de carte. La gratuité doit être lisible.",
+    painPoints: ["Carte payante", "Conditions floues", "Frais à l’étranger", "Plafonds trop bas"],
+    steps: [
+      { title: "Vérifie la condition de gratuité", body: "Certaines cartes imposent un paiement mensuel, un revenu ou une utilisation minimale." },
+      { title: "Compare retraits et paiements", body: "Les frais à l’étranger ou hors réseau peuvent changer le coût réel." },
+      { title: "Teste l’usage quotidien", body: "Notifications, virements, sécurité et support comptent autant que le prix." },
+    ],
+    signals: ["Carte actuelle payante", "Voyage fréquent", "Besoin app mobile", "Frais bancaires"],
+    faq: [
+      {
+        question: "Une carte bancaire gratuite a-t-elle des limites ?",
+        answer:
+          "Oui, elle peut avoir des plafonds, conditions d’usage ou frais spécifiques. Il faut vérifier la brochure tarifaire.",
+      },
+      {
+        question: "Quelle banque en ligne avec carte gratuite choisir ?",
+        answer:
+          "La meilleure dépend de ton usage : paiements, retraits, voyages, épargne, application mobile et besoin de support.",
+      },
+    ],
+  },
+  {
+    slug: "comparateur-gaz-prix-fixe",
+    title: "Comparateur gaz prix fixe : stabilité ou économie immédiate ?",
+    description:
+      "Guide pour comparer une offre de gaz à prix fixe selon chauffage, cuisson, eau chaude, consommation et budget annuel.",
+    eyebrow: "Gaz",
+    categorySlug: "gaz",
+    intent: "comparer",
+    heroMetric: "jusqu’à 90€/an",
+    intro:
+      "Une offre de gaz à prix fixe peut rassurer si tu veux stabiliser ton budget, mais elle n’est pas toujours la moins chère. Le bon choix dépend de ton usage : chauffage, eau chaude ou simple cuisson.",
+    painPoints: ["Budget gaz instable", "Chauffage coûteux", "Offre groupée floue", "Prix indexé"],
+    steps: [
+      { title: "Identifie ton usage gaz", body: "Chauffage, eau chaude et cuisson n’ont pas le même poids dans la facture." },
+      { title: "Compare fixe et indexé", body: "Le prix fixe apporte de la visibilité, l’indexé peut être plus intéressant selon le marché." },
+      { title: "Regarde le coût annuel", body: "La mensualité ne suffit pas : compare l’estimation annuelle et les conditions d’évolution." },
+    ],
+    signals: ["Chauffage au gaz", "Maison", "Mensualité élevée", "Besoin de stabilité"],
+    faq: [
+      {
+        question: "Une offre gaz à prix fixe est-elle toujours préférable ?",
+        answer:
+          "Non. Elle apporte de la stabilité, mais il faut comparer le prix annuel estimé avec les offres indexées.",
+      },
+      {
+        question: "Comment réduire sa facture gaz ?",
+        answer:
+          "Compare ton usage réel, ton type de logement, le prix du kWh, l’abonnement et la stabilité du contrat.",
+      },
+    ],
+  },
 ];
 
 export function getGuide(slug: string) {

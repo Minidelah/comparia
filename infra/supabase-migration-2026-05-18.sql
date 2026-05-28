@@ -43,5 +43,5 @@ ALTER TABLE public.funnel_events ENABLE ROW LEVEL SECURITY;
 GRANT USAGE ON SCHEMA public TO service_role;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.leads TO service_role;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.funnel_events TO service_role;
-GRANT SELECT, INSERT ON TABLE public.affiliate_clicks TO service_role;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.affiliate_clicks TO service_role;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.offers TO service_role;
