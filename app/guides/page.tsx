@@ -37,7 +37,7 @@ export default function GuidesPage() {
               Des guides courts, orientés action, pour comprendre quoi comparer avant de cliquer sur une offre. Chaque guide renvoie vers le bon tunnel Comparia.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
-              {["Assurances", "Énergie", "Mobile", "Frontaliers", "Abonnements"].map((tag) => (
+              {["Box internet", "Mobile", "Énergie", "Assurances", "Banque", "Frontaliers"].map((tag) => (
                 <span key={tag} className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-slate-300">
                   {tag}
                 </span>

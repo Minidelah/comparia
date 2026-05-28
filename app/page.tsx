@@ -8,6 +8,7 @@ import SiteFooter from "@/components/SiteFooter";
 import PremiumVisual from "@/components/PremiumVisual";
 import { cashbackVisual, heroVisual, showcaseVisuals } from "@/lib/visuals";
 import { priorityComparators } from "@/lib/seo/priority-comparators";
+import { seoGuides } from "@/lib/seo/guides";
 
 const pillars = categories
   .filter((category) => category.status === "active")
@@ -51,6 +52,15 @@ const conversionProofs = [
     icon: "globe" as const,
   },
 ];
+
+const priorityGuideSlugs = [
+  "meilleure-box-internet-pas-chere",
+  "forfait-mobile-sans-engagement",
+  "assurance-habitation-pas-chere",
+  "banque-en-ligne-gratuite",
+];
+
+const priorityGuides = seoGuides.filter((guide) => priorityGuideSlugs.includes(guide.slug));
 
 const faqs = [
   {
@@ -307,6 +317,41 @@ export default function Home() {
                 ))}
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="px-5 pb-14 sm:px-8 lg:px-10">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <div>
+              <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Guides SEO</p>
+              <h2 className="mt-3 text-3xl font-bold sm:text-4xl">Des contenus prêts pour capter les recherches Google.</h2>
+            </div>
+            <Link href="/guides" className="inline-flex items-center gap-2 text-sm font-semibold text-cyan-200 transition hover:text-white">
+              Tous les guides
+              <BrandIcon name="arrow-right" className="h-4 w-4" />
+            </Link>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {priorityGuides.map((guide) => (
+              <Link
+                key={guide.slug}
+                href={`/guides/${guide.slug}`}
+                className="group rounded-[1.5rem] border border-neutral-800 bg-neutral-900/40 p-5 transition duration-300 hover:-translate-y-1 hover:border-cyan-300/30 hover:bg-cyan-400/10"
+              >
+                <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-cyan-300">
+                  <BrandIcon name={getCategoryIcon(guide.categorySlug)} className="h-4 w-4" />
+                  {guide.eyebrow}
+                </span>
+                <span className="mt-4 block text-lg font-black leading-6 text-white">{guide.title}</span>
+                <span className="mt-3 block text-sm leading-6 text-neutral-400">{guide.description}</span>
+                <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-cyan-200">
+                  Lire
+                  <BrandIcon name="arrow-right" className="h-4 w-4 transition group-hover:translate-x-0.5" />
+                </span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

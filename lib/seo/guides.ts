@@ -279,6 +279,161 @@ export const seoGuides: SeoGuide[] = [
       },
     ],
   },
+  {
+    slug: "meilleure-box-internet-pas-chere",
+    title: "Meilleure box internet pas chère : quoi vérifier avant de changer",
+    description:
+      "Guide pour comparer une box internet pas chère selon fibre, Wi-Fi, TV, engagement, prix après promotion et services inclus.",
+    eyebrow: "Box internet",
+    categorySlug: "box-internet",
+    intent: "comparer",
+    heroMetric: "jusqu’à 180€/an",
+    intro:
+      "Une box internet pas chère peut être une vraie économie, mais seulement si le prix reste cohérent après promotion et si la connexion correspond au foyer. Le bon choix dépend de la fibre disponible, du Wi-Fi, de la TV, des frais et de l’engagement.",
+    painPoints: ["Prix promotionnel qui remonte", "Wi-Fi insuffisant", "Options TV inutiles", "Frais de mise en service"],
+    steps: [
+      { title: "Vérifie la technologie disponible", body: "Fibre, ADSL ou câble : le débit réel et la stabilité changent fortement selon l’adresse." },
+      { title: "Compare le prix sur 12 mois", body: "Regarde le tarif après promotion, les frais d’activation, les frais de résiliation et la durée d’engagement." },
+      { title: "Garde seulement les options utiles", body: "TV, répéteur Wi-Fi ou appels inclus peuvent être intéressants, mais pas s’ils gonflent la facture sans usage réel." },
+    ],
+    signals: ["Facture box élevée", "Promotion terminée", "Fibre disponible", "TV peu utilisée"],
+    faq: [
+      {
+        question: "Quelle est la meilleure box internet pas chère ?",
+        answer:
+          "La meilleure box dépend de ton adresse, de ton besoin en débit, de la qualité Wi-Fi attendue et du prix après promotion. Comparer seulement le premier mois peut induire en erreur.",
+      },
+      {
+        question: "Faut-il prendre une box avec TV incluse ?",
+        answer:
+          "Seulement si tu l’utilises vraiment. Sinon, une offre internet seule peut souvent être plus lisible et moins coûteuse.",
+      },
+    ],
+  },
+  {
+    slug: "reduire-facture-internet",
+    title: "Réduire sa facture internet sans perdre une bonne connexion",
+    description:
+      "Méthode simple pour réduire une facture internet trop élevée en comparant débit, options, engagement et prix annuel.",
+    eyebrow: "Facture internet",
+    categorySlug: "box-internet",
+    intent: "économiser",
+    heroMetric: "box + options",
+    intro:
+      "La facture internet augmente souvent par petites touches : promotion terminée, options ajoutées, matériel facturé ou offre devenue trop ancienne. Avant de changer, il faut séparer le besoin réel du confort inutile.",
+    painPoints: ["Offre ancienne", "Options oubliées", "Débit non utilisé", "Mensualité qui grimpe"],
+    steps: [
+      { title: "Relis la facture actuelle", body: "Identifie le prix de base, les options, les frais annexes et la date de fin d’engagement." },
+      { title: "Mesure ton besoin réel", body: "Télétravail, streaming, jeux, foyer nombreux : le débit utile n’est pas le même pour tout le monde." },
+      { title: "Compare les offres activables", body: "Une bonne économie doit rester simple à activer et cohérente avec ton logement." },
+    ],
+    signals: ["Plus de 35€/mois", "Options TV non utilisées", "Contrat ancien", "Déménagement prévu"],
+    faq: [
+      {
+        question: "Comment payer moins cher sa box internet ?",
+        answer:
+          "Compare le prix annuel complet, retire les options inutiles et vérifie les offres sans engagement ou les promotions durables selon ton adresse.",
+      },
+      {
+        question: "Changer de box coupe-t-il internet longtemps ?",
+        answer:
+          "Cela dépend de l’opérateur et de la technologie. Il vaut mieux vérifier les délais d’activation et conserver l’ancien accès jusqu’à confirmation du nouveau service.",
+      },
+    ],
+  },
+  {
+    slug: "banque-en-ligne-gratuite",
+    title: "Banque en ligne gratuite : comparer frais, carte et services utiles",
+    description:
+      "Guide pour comparer une banque en ligne gratuite selon carte, frais, application, voyage, épargne et conditions d’utilisation.",
+    eyebrow: "Banque en ligne",
+    categorySlug: "banque",
+    intent: "comparer",
+    heroMetric: "jusqu’à 140€/an",
+    intro:
+      "Une banque en ligne gratuite peut réduire les frais du quotidien, mais les conditions comptent : carte, paiements à l’étranger, retraits, application, épargne et service client. Gratuit ne veut pas dire identique.",
+    painPoints: ["Frais bancaires récurrents", "Carte payante", "Frais voyage", "Application limitée"],
+    steps: [
+      { title: "Liste tes frais actuels", body: "Carte, tenue de compte, incidents, virements et retraits donnent une base de comparaison claire." },
+      { title: "Compare la carte et les conditions", body: "Débit immédiat ou différé, plafonds, revenus exigés et frais à l’étranger changent l’intérêt réel." },
+      { title: "Regarde l’usage quotidien", body: "Une bonne banque doit rester simple : application fiable, notifications, virements et support lisibles." },
+    ],
+    signals: ["Carte facturée", "Voyages fréquents", "Frais de tenue de compte", "App bancaire faible"],
+    faq: [
+      {
+        question: "Une banque en ligne gratuite est-elle vraiment gratuite ?",
+        answer:
+          "Elle peut l’être pour un usage standard, mais certaines conditions ou opérations spécifiques peuvent coûter. Il faut vérifier la grille tarifaire.",
+      },
+      {
+        question: "Quelle banque en ligne choisir ?",
+        answer:
+          "Le bon choix dépend de ton usage : frais bas, carte, voyage, épargne, application mobile ou accompagnement. Comparia aide à poser ces critères avant de choisir.",
+      },
+    ],
+  },
+  {
+    slug: "forfait-mobile-sans-engagement",
+    title: "Forfait mobile sans engagement : éviter de payer trop de data",
+    description:
+      "Guide pour comparer un forfait mobile sans engagement selon data, réseau, Europe, Suisse, prix après promo et usage réel.",
+    eyebrow: "Forfait mobile",
+    categorySlug: "forfait-mobile",
+    intent: "optimiser",
+    heroMetric: "sans engagement",
+    intro:
+      "Le forfait mobile sans engagement donne de la flexibilité, mais beaucoup d’utilisateurs paient encore trop de data ou des options peu utilisées. Le bon forfait est celui qui colle à ta consommation réelle.",
+    painPoints: ["Data surdimensionnée", "Prix promo temporaire", "Réseau irrégulier", "Suisse non incluse"],
+    steps: [
+      { title: "Regarde ta consommation réelle", body: "Les trois derniers mois suffisent souvent pour savoir si 20 Go, 100 Go ou plus sont utiles." },
+      { title: "Vérifie les zones incluses", body: "Europe, DOM, Suisse ou appels internationaux peuvent changer la facture finale." },
+      { title: "Compare la stabilité du prix", body: "Une offre très basse au départ peut devenir moins intéressante après quelques mois." },
+    ],
+    signals: ["Plus de 15€/mois", "Data inutilisée", "Besoin Europe", "Promotion qui expire"],
+    faq: [
+      {
+        question: "Quel forfait mobile sans engagement choisir ?",
+        answer:
+          "Choisis selon la data réellement consommée, le réseau disponible dans tes lieux de vie et les zones incluses. Le prix seul ne suffit pas.",
+      },
+      {
+        question: "Peut-on changer facilement de forfait mobile ?",
+        answer:
+          "Oui, surtout sans engagement. Il faut seulement vérifier la portabilité du numéro, les délais et les conditions de l’offre choisie.",
+      },
+    ],
+  },
+  {
+    slug: "assurance-habitation-pas-chere",
+    title: "Assurance habitation pas chère : comparer sans rogner les garanties",
+    description:
+      "Guide pour trouver une assurance habitation moins chère en comparant statut, surface, franchises, exclusions et garanties essentielles.",
+    eyebrow: "Assurance habitation",
+    categorySlug: "assurance-habitation",
+    intent: "économiser",
+    heroMetric: "jusqu’à 480€/an",
+    intro:
+      "Chercher une assurance habitation pas chère ne doit pas conduire à perdre les garanties essentielles. Le bon contrat protège le logement au juste prix, avec des franchises et exclusions compréhensibles.",
+    painPoints: ["Contrat qui augmente", "Franchise élevée", "Garanties doublons", "Surface mal déclarée"],
+    steps: [
+      { title: "Repars du logement réel", body: "Statut, surface, nombre de pièces et valeur des biens doivent être cohérents." },
+      { title: "Compare les garanties essentielles", body: "Dégâts des eaux, vol, incendie, responsabilité civile et assistance doivent rester lisibles." },
+      { title: "Vérifie le coût total", body: "Regarde la cotisation annuelle, les franchises et les exclusions avant de te décider." },
+    ],
+    signals: ["Hausse récente", "Déménagement", "Contrat ancien", "Garanties peu utilisées"],
+    faq: [
+      {
+        question: "Comment trouver une assurance habitation pas chère ?",
+        answer:
+          "Compare à logement équivalent, avec les mêmes garanties importantes. Une offre moins chère mais avec une franchise trop haute peut être moins intéressante.",
+      },
+      {
+        question: "Locataire et propriétaire comparent-ils les mêmes offres ?",
+        answer:
+          "Non. Le statut change les obligations et les garanties pertinentes. C’est pour cela que le comparateur commence par qualifier le logement.",
+      },
+    ],
+  },
 ];
 
 export function getGuide(slug: string) {
