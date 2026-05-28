@@ -3,8 +3,8 @@ import LegalPageShell from "@/components/legal/LegalPageShell";
 import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Contact — Comparia",
-  description: "Contacter Comparia pour une demande utilisateur, partenaire, affiliation ou données personnelles.",
+  title: "Contact — CompareTesFactures",
+  description: "Contacter CompareTesFactures pour une demande utilisateur, partenaire, affiliation ou données personnelles.",
 };
 
 const contactCards = [
@@ -30,7 +30,7 @@ export default function ContactPage() {
     <LegalPageShell
       eyebrow="Contact"
       title="Une demande, un partenariat ou une question conformité ?"
-      description="Comparia centralise les demandes utilisateur, les sujets partenaires et les demandes liées aux données personnelles."
+      description="CompareTesFactures centralise les demandes utilisateur, les sujets partenaires et les demandes liées aux données personnelles."
     >
       <div className="grid gap-4 md:grid-cols-3">
         {contactCards.map((card) => (

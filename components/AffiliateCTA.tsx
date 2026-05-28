@@ -1,15 +1,23 @@
 "use client";
 
 import { trackAffiliateClick } from "@/lib/affiliate/tracking";
+import { cn } from "@/lib/utils";
 
 type Props = {
   offerId: string;
   categorySlug?: string;
   href?: string;
   label: string;
+  className?: string;
 };
 
-export default function AffiliateCTA({ offerId, categorySlug, href = "/onboarding", label }: Props) {
+export default function AffiliateCTA({
+  offerId,
+  categorySlug,
+  href = "/onboarding",
+  label,
+  className,
+}: Props) {
   async function handleClick() {
     const lead = categorySlug ? readLead(categorySlug) : null;
 
@@ -25,7 +33,13 @@ export default function AffiliateCTA({ offerId, categorySlug, href = "/onboardin
   }
 
   return (
-    <button onClick={handleClick} className="mt-5 w-full rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-500 px-4 py-3 font-semibold text-white transition hover:shadow-lg hover:shadow-cyan-500/30">
+    <button
+      onClick={handleClick}
+      className={cn(
+        "mt-5 w-full rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-500 px-4 py-3 font-semibold text-white transition hover:shadow-lg hover:shadow-cyan-500/30",
+        className,
+      )}
+    >
       {label}
     </button>
   );
@@ -33,7 +47,7 @@ export default function AffiliateCTA({ offerId, categorySlug, href = "/onboardin
 
 function readLead(categorySlug: string) {
   try {
-    const raw = localStorage.getItem(`comparia_lead_${categorySlug}`);
+    const raw = localStorage.getItem(`ctf_lead_${categorySlug}`);
     if (!raw) return null;
     return JSON.parse(raw) as { leadId?: string };
   } catch {

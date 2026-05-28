@@ -3,8 +3,8 @@ import LegalPageShell from "@/components/legal/LegalPageShell";
 import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Mentions légales — Comparia",
-  description: "Informations légales, éditeur, hébergement et responsabilités de Comparia.",
+  title: "Mentions légales — CompareTesFactures",
+  description: "Informations légales, éditeur, hébergement et responsabilités de CompareTesFactures.",
 };
 
 export default function LegalNoticePage() {
@@ -12,7 +12,7 @@ export default function LegalNoticePage() {
     <LegalPageShell
       eyebrow="Cadre légal"
       title="Mentions légales"
-      description="Une page claire pour identifier l’éditeur, comprendre le rôle de Comparia et rassurer utilisateurs comme partenaires."
+      description="Une page claire pour identifier l’éditeur, comprendre le rôle de CompareTesFactures et rassurer utilisateurs comme partenaires."
     >
       <h2>Éditeur du site</h2>
       <ul>
@@ -44,8 +44,8 @@ export default function LegalNoticePage() {
 
       <h2>Nature du service</h2>
       <p>
-        Comparia est un service d’aide à la comparaison. Le site présente des estimations, des informations commerciales et des offres partenaires selon les réponses
-        fournies par l’utilisateur. Comparia ne remplace pas un conseil financier, juridique, fiscal ou assurantiel personnalisé.
+        CompareTesFactures est un service d’aide à la comparaison. Le site présente des estimations, des informations commerciales et des offres partenaires selon les réponses
+        fournies par l’utilisateur. CompareTesFactures ne remplace pas un conseil financier, juridique, fiscal ou assurantiel personnalisé.
       </p>
 
       <h2>Responsabilité</h2>
@@ -56,7 +56,7 @@ export default function LegalNoticePage() {
 
       <h2>Propriété intellectuelle</h2>
       <p>
-        Les textes, interfaces, visuels, composants, bases de données, tunnels de comparaison et éléments de marque de Comparia sont protégés. Toute reproduction,
+        Les textes, interfaces, visuels, composants, bases de données, tunnels de comparaison et éléments de marque de CompareTesFactures sont protégés. Toute reproduction,
         extraction automatisée, copie substantielle ou réutilisation non autorisée est interdite. Les marques et logos de partenaires appartiennent à leurs
         propriétaires respectifs et peuvent être utilisés à titre d’identification ou dans le cadre de relations d’affiliation.
       </p>

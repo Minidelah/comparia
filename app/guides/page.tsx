@@ -2,16 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import SiteFooter from "@/components/SiteFooter";
 import SiteNav from "@/components/SiteNav";
-import CompariaIcon, { getCategoryIcon } from "@/components/CompariaIcon";
+import BrandIcon, { getCategoryIcon } from "@/components/BrandIcon";
 import PremiumVisual from "@/components/PremiumVisual";
 import { getGuideCategory, seoGuides } from "@/lib/seo/guides";
 import { getCategoryVisual } from "@/lib/visuals";
 import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Guides économies factures | Comparia",
+  title: "Guides économies factures | CompareTesFactures",
   description:
-    "Guides pratiques pour réduire assurances, énergie, mobile, abonnements et dépenses frontalières avec Comparia.",
+    "Guides pratiques pour réduire assurances, énergie, mobile, abonnements et dépenses frontalières avec CompareTesFactures.",
   alternates: {
     canonical: `${siteConfig.url}/guides`,
   },
@@ -34,7 +34,7 @@ export default function GuidesPage() {
               Les décisions simples qui font baisser tes factures.
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-8 text-slate-300 sm:text-lg">
-              Des guides courts, orientés action, pour comprendre quoi comparer avant de cliquer sur une offre. Chaque guide renvoie vers le bon tunnel Comparia.
+              Des guides courts, orientés action, pour comprendre quoi comparer avant de cliquer sur une offre. Chaque guide renvoie vers le bon tunnel CompareTesFactures.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               {["Assurances", "Énergie", "Mobile", "Frontaliers", "Abonnements"].map((tag) => (
@@ -82,7 +82,7 @@ export default function GuidesPage() {
                 </div>
                 <div className="px-5 pb-5">
                   <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">
-                    <CompariaIcon name={getCategoryIcon(guide.categorySlug)} className="h-4 w-4" />
+                    <BrandIcon name={getCategoryIcon(guide.categorySlug)} className="h-4 w-4" />
                     {guide.intent}
                   </div>
                   <h2 className="mt-3 text-xl font-bold tracking-tight text-white">{guide.title}</h2>

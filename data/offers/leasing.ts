@@ -6,7 +6,7 @@ export const leasingOffers: AffiliateOffer[] = [
     id: "leasing-auto-watch",
     name: "Leasing auto à surveiller",
     category: "leasing",
-    provider: "Comparia",
+    provider: "CompareTesFactures",
     monthlyPrice: null,
     estimatedSaving: 240,
     cashback: 0,

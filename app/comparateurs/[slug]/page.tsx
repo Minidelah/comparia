@@ -7,7 +7,7 @@ import { getOfferSlotsForCategory } from "@/lib/offers";
 import AffiliateDisclosure from "@/components/AffiliateDisclosure";
 import ComparatorWizard from "@/components/ComparatorWizard";
 import GatedOffers from "@/components/GatedOffers";
-import CompariaIcon, { getCategoryIcon } from "@/components/CompariaIcon";
+import BrandIcon, { getCategoryIcon, type IconName } from "@/components/BrandIcon";
 import SiteFooter from "@/components/SiteFooter";
 import PremiumVisual from "@/components/PremiumVisual";
 import { getCategoryVisual } from "@/lib/visuals";
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: ComparatorPageProps): Promise
 
   if (!category) {
     return {
-      title: "Comparateur introuvable | Comparia",
+      title: "Comparateur introuvable | CompareTesFactures",
       robots: {
         index: false,
         follow: false,
@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: ComparatorPageProps): Promise
 
   const seo = getComparatorSeo(category);
   const visual = getCategoryVisual(category.slug);
-  const ogImage = visual.src.endsWith(".svg") ? "/comparia-hero.jpg" : visual.src;
+  const ogImage = visual.src.endsWith(".svg") ? "/comparetesfactures-hero.jpg" : visual.src;
 
   return {
     title: seo.title,
@@ -89,45 +89,79 @@ export default async function ComparatorDetailPage({
   const visual = getCategoryVisual(category.slug);
   const seo = getComparatorSeo(category);
   const jsonLd = JSON.stringify(buildComparatorJsonLd(category, seo)).replace(/</g, "\\u003c");
+  const featuredUniverses = getFeaturedUniverses(category.slug);
 
   return (
-    <main className="min-h-screen bg-[#05070d] px-5 py-5 pb-24 text-white sm:px-8 sm:pb-6">
+    <main className="min-h-screen overflow-hidden bg-[#060812] px-4 py-4 pb-24 text-white sm:px-8 sm:pb-6">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
-      <div className="mx-auto max-w-6xl">
+      <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_14%_8%,rgba(34,211,238,0.14),transparent_26%),radial-gradient(circle_at_88%_14%,rgba(16,185,129,0.10),transparent_22%),linear-gradient(180deg,rgba(255,255,255,0.035),transparent_24%)]" />
+      <div className="mx-auto max-w-7xl">
         <SiteNav />
 
-        <section className="mt-6 grid gap-5 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
-          <div className="rounded-[2rem] border border-white/10 bg-white/5 p-5 sm:p-7">
-            <PremiumVisual
-              src={visual.src}
-              alt={visual.alt}
-              eyebrow={visual.eyebrow}
-              title={visual.title}
-              metric={visual.metric ?? category.saving}
-              tone={visual.tone}
-              fit={visual.fit}
-              icon={getCategoryIcon(category.slug)}
-              priority
-              sizes="(min-width: 1024px) 42vw, 100vw"
-              className="rounded-[1.5rem]"
-            />
-            <p className="mt-4 text-sm uppercase tracking-[0.3em] text-cyan-300">{category.group}</p>
-            <h1 className="mt-3 text-4xl font-semibold tracking-tight">{category.title}</h1>
-            <p className="mt-3 max-w-2xl text-lg leading-8 text-slate-300">{category.headline}</p>
-            <div className="mt-5 inline-flex rounded-full bg-emerald-400/10 px-4 py-2 font-semibold text-emerald-300">
-              {category.status === "active" ? category.saving : "Ouverture prochaine"}
-            </div>
-            <div className="mt-5 grid gap-3 sm:grid-cols-3">
-              {["Gratuit", "Sans engagement", "Réponse rapide"].map((item) => (
-                <div key={item} className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-slate-300">
-                  {item}
+        <section className="mt-6 grid gap-5 lg:grid-cols-[minmax(0,1fr)_440px] lg:items-start">
+          <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.055] p-4 shadow-2xl shadow-black/30 backdrop-blur sm:p-6 lg:min-h-[650px]">
+            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.08),transparent_38%),radial-gradient(circle_at_82%_18%,rgba(34,211,238,0.15),transparent_24%)]" />
+            <div className="relative grid gap-6 xl:grid-cols-[0.95fr_1.05fr] xl:items-center">
+              <div className="order-2 xl:order-1">
+                <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.24em] text-cyan-100">
+                  <BrandIcon name={getCategoryIcon(category.slug)} className="h-4 w-4" />
+                  Comparateur {category.group.toLocaleLowerCase("fr-FR")}
                 </div>
-              ))}
+                <h1 className="mt-5 max-w-3xl text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
+                  {category.title}
+                </h1>
+                <p className="mt-4 max-w-2xl text-base leading-8 text-slate-300 sm:text-lg">{category.headline}</p>
+                <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                  <a
+                    href="#devis"
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-400 to-emerald-400 px-5 py-3.5 text-sm font-black text-slate-950 shadow-xl shadow-cyan-950/30 transition duration-300 hover:-translate-y-0.5 hover:shadow-cyan-500/20"
+                  >
+                    <BrandIcon name="sparkles" className="h-4 w-4" />
+                    Lancer ma comparaison
+                  </a>
+                  <a
+                    href="#offres"
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.06] px-5 py-3.5 text-sm font-bold text-white transition duration-300 hover:border-white/20 hover:bg-white/[0.09]"
+                  >
+                    <BrandIcon name="unlock" className="h-4 w-4" />
+                    Voir les offres
+                  </a>
+                </div>
+                <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                  {[
+                    { label: "Économie estimée", value: category.status === "active" ? category.saving : "bientôt", icon: "coins" as const },
+                    { label: "Temps moyen", value: "2 min", icon: "clock" as const },
+                    { label: "Engagement", value: "0€", icon: "shield" as const },
+                  ].map((item) => (
+                    <div key={item.label} className="rounded-2xl border border-white/10 bg-slate-950/45 p-4">
+                      <BrandIcon name={item.icon} className="h-5 w-5 text-emerald-300" />
+                      <p className="mt-3 text-xs uppercase tracking-[0.2em] text-slate-500">{item.label}</p>
+                      <p className="mt-1 text-lg font-black text-white">{item.value}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <PremiumVisual
+                src={visual.src}
+                alt={visual.alt}
+                eyebrow={visual.eyebrow}
+                title={visual.title}
+                metric={visual.metric ?? category.saving}
+                tone={visual.tone}
+                fit={visual.fit}
+                icon={getCategoryIcon(category.slug)}
+                priority
+                sizes="(min-width: 1280px) 40vw, (min-width: 1024px) 50vw, 100vw"
+                className="order-1 rounded-[1.5rem] xl:order-2"
+              />
             </div>
+            <TrustStrip />
           </div>
 
           <ComparatorWizard category={category} />
         </section>
+
+        <FeaturedUniverses universes={featuredUniverses} />
 
         {category.status === "active" && (
           <>
@@ -145,13 +179,13 @@ export default async function ComparatorDetailPage({
                 },
                 {
                   title: "3. Active",
-                  description: "Tu gardes la décision finale : Comparia éclaire le choix, elle ne choisit pas à ta place.",
+                  description: "Tu gardes la décision finale : CompareTesFactures éclaire le choix, sans choisir à ta place.",
                   icon: "unlock" as const,
                 },
               ].map(({ title, description, icon }) => (
-                <article key={title} className="rounded-[1.75rem] border border-white/10 bg-white/[0.04] p-5">
+                <article key={title} className="group rounded-[1.75rem] border border-white/10 bg-white/[0.045] p-5 shadow-xl shadow-black/10 transition duration-300 hover:-translate-y-1 hover:border-cyan-300/25 hover:bg-white/[0.065]">
                   <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-cyan-400/10 text-cyan-300 ring-1 ring-inset ring-cyan-300/20">
-                    <CompariaIcon name={icon} />
+                    <BrandIcon name={icon} />
                   </div>
                   <h2 className="font-bold">{title}</h2>
                   <p className="mt-3 text-sm leading-6 text-slate-300">{description}</p>
@@ -191,12 +225,12 @@ export default async function ComparatorDetailPage({
                 <div>
                   <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Guide comparateur</p>
                   <h2 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">
-                    Pourquoi comparer {category.title.toLocaleLowerCase("fr-FR")} avec Comparia ?
+                    Pourquoi comparer {category.title.toLocaleLowerCase("fr-FR")} avec CompareTesFactures ?
                   </h2>
                   <p className="mt-4 text-sm leading-7 text-slate-300 sm:text-base">{seo.intro}</p>
 
                   <div className="mt-5">
-                    <p className="text-sm font-semibold text-white">Ce que Comparia analyse</p>
+                    <p className="text-sm font-semibold text-white">Ce que CompareTesFactures analyse</p>
                     <div className="mt-3 flex flex-wrap gap-2">
                       {seo.analysisPoints.map((point) => (
                         <span
@@ -216,7 +250,7 @@ export default async function ComparatorDetailPage({
                     {seo.benefits.map((benefit) => (
                       <div key={benefit} className="flex gap-3 rounded-2xl border border-white/10 bg-white/[0.035] p-3">
                         <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-400/10 text-emerald-300 ring-1 ring-inset ring-emerald-300/20">
-                          <CompariaIcon name="sparkles" className="h-3.5 w-3.5" />
+                          <BrandIcon name="sparkles" className="h-3.5 w-3.5" />
                         </span>
                         <p className="text-sm leading-6 text-slate-300">{benefit}</p>
                       </div>
@@ -263,5 +297,73 @@ export default async function ComparatorDetailPage({
       )}
       <SiteFooter />
     </main>
+  );
+}
+
+type FeaturedUniverse = {
+  title: string;
+  href: string;
+  icon: IconName;
+  label: string;
+  metric: string;
+};
+
+function getFeaturedUniverses(currentSlug: string): FeaturedUniverse[] {
+  const slugs = ["box-internet", "forfait-mobile", "electricite", "assurance-auto", "banque"];
+  return slugs.map((slug) => {
+    const item = categories.find((category) => category.slug === slug);
+    return {
+      title: item?.title ?? slug,
+      href: `/comparateurs/${slug}`,
+      icon: getCategoryIcon(slug),
+      label: slug === currentSlug ? "En cours" : item?.group ?? "Comparateur",
+      metric: item?.saving ?? "Comparer",
+    };
+  });
+}
+
+function FeaturedUniverses({ universes }: { universes: FeaturedUniverse[] }) {
+  return (
+    <section className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+      {universes.map((universe) => (
+        <Link
+          key={universe.href}
+          href={universe.href}
+          className="group rounded-[1.5rem] border border-white/10 bg-white/[0.045] p-4 transition duration-300 hover:-translate-y-1 hover:border-cyan-300/30 hover:bg-white/[0.07]"
+        >
+          <div className="flex items-center justify-between gap-3">
+            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-950/70 text-cyan-200 ring-1 ring-inset ring-white/10">
+              <BrandIcon name={universe.icon} className="h-5 w-5" />
+            </span>
+            <span className="rounded-full border border-white/10 bg-white/[0.05] px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">
+              {universe.label}
+            </span>
+          </div>
+          <h2 className="mt-4 text-base font-black text-white">{universe.title}</h2>
+          <p className="mt-2 text-sm font-semibold text-emerald-300">{universe.metric}</p>
+        </Link>
+      ))}
+    </section>
+  );
+}
+
+function TrustStrip() {
+  const items = [
+    { label: "Classement transparent", icon: "check-circle" as const },
+    { label: "Logos partenaires lisibles", icon: "globe" as const },
+    { label: "Tunnel court, mobile first", icon: "phone" as const },
+  ];
+
+  return (
+    <div className="relative mt-6 grid gap-3 rounded-[1.5rem] border border-white/10 bg-slate-950/45 p-3 sm:grid-cols-3">
+      {items.map((item) => (
+        <div key={item.label} className="flex items-center gap-3 rounded-2xl px-2 py-2 text-sm font-semibold text-slate-300">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-300/10 text-emerald-300">
+            <BrandIcon name={item.icon} className="h-4 w-4" />
+          </span>
+          {item.label}
+        </div>
+      ))}
+    </div>
   );
 }

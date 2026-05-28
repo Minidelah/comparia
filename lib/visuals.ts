@@ -15,7 +15,7 @@ export type VisualAsset = {
 
 export const heroVisual: VisualAsset = {
   src: "/visuals/ai-dashboard.svg",
-  alt: "Dashboard fintech Comparia avec score d’optimisation, cashback et économies estimées",
+  alt: "Dashboard fintech CompareTesFactures avec score d’optimisation, cashback et économies estimées",
   eyebrow: "IA économies",
   title: "Un cockpit clair avant chaque clic",
   body: "Score, économie estimée et avantage potentiel restent lisibles avant la redirection partenaire.",
@@ -29,7 +29,7 @@ export const cashbackVisual: VisualAsset = {
   alt: "Illustration cashback premium avec carte de récompense et bouton d’activation",
   eyebrow: "Cashback",
   title: "Récompenses lisibles",
-  body: "Quand une offre rémunère, Comparia sépare clairement cashback, recommandation et sponsorisation.",
+  body: "Quand une offre rémunère, CompareTesFactures sépare clairement cashback, recommandation et sponsorisation.",
   tone: "emerald",
   fit: "contain",
   metric: "+35€",
@@ -161,7 +161,7 @@ const categoryVisuals: Record<string, VisualAsset> = {
     alt: "Chien ou chat protégé par une assurance animaux",
     eyebrow: "Animaux",
     title: "Soins animaux sans surprise",
-    body: "Chien, chat ou plusieurs animaux : Comparia prépare les offres compatibles.",
+    body: "Chien, chat ou plusieurs animaux : CompareTesFactures prépare les offres compatibles.",
     tone: "amber",
     fit: "contain",
     metric: "jusqu’à 180€/an",
@@ -203,7 +203,7 @@ const categoryVisuals: Record<string, VisualAsset> = {
     alt: "Applications et abonnements récurrents à optimiser",
     eyebrow: "Abonnements",
     title: "Les petites fuites visibles",
-    body: "Streaming, apps et loisirs : les prélèvements reviennent, Comparia les remet en question.",
+    body: "Streaming, apps et loisirs : les prélèvements reviennent, CompareTesFactures les remet en question.",
     tone: "violet",
     fit: "contain",
     metric: "mensuel",
@@ -248,9 +248,9 @@ export const groupVisuals: Record<Category["group"], VisualAsset> = {
 export function getCategoryVisual(slug: string): VisualAsset {
   return (
     categoryVisuals[slug] ?? {
-      src: "/comparia-hero.jpg",
-      alt: "Interface Comparia premium avec comparateur intelligent",
-      eyebrow: "Comparia",
+      src: "/comparetesfactures-hero.jpg",
+      alt: "Interface CompareTesFactures premium avec comparateur intelligent",
+      eyebrow: "CompareTesFactures",
       title: "Comparateur intelligent",
       body: "Une expérience visuelle cohérente pour comprendre vite où économiser.",
       tone: "cyan",

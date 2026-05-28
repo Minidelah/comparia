@@ -28,6 +28,7 @@ export type OfferSlot = {
   couponTitle?: string;
   couponEndsAt?: string;
   couponTerms?: string;
+  verified?: boolean;
 };
 
 type OfferRow = {
@@ -202,7 +203,7 @@ function mapOfferRow(row: OfferRow): OfferSlot | null {
     provider: row.provider,
     badge,
     title: row.provider ? `${row.provider} · ${row.title}` : row.title,
-    description: metadataDescription || "Offre partenaire prête à être testée dans ton tunnel Comparia.",
+    description: metadataDescription || "Offre partenaire prête à être testée dans ton tunnel CompareTesFactures.",
     annualSavings,
     estimatedSaving: row.annual_savings_estimate ? Math.round(row.annual_savings_estimate) : undefined,
     monthlyPrice: row.monthly_cost,
@@ -469,7 +470,7 @@ function buildDefaultTags(category: string) {
   if (category === "forfait-mobile") return ["Mobile", "Sans engagement", "Réseau"];
   if (category === "abonnements") return ["Abonnements", "Budget", "Suivi"];
   if (category === "change-chf-eur") return ["CHF/EUR", "Frontaliers", "Frais"];
-  return ["Comparia", "Économie", "Offre"];
+  return ["CompareTesFactures", "Économie", "Offre"];
 }
 
 function normalizeText(value: string) {

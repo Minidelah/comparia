@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import AffiliateDisclosure from "@/components/AffiliateDisclosure";
-import CompariaIcon, { getCategoryIcon } from "@/components/CompariaIcon";
+import BrandIcon, { getCategoryIcon } from "@/components/BrandIcon";
 import PremiumVisual from "@/components/PremiumVisual";
 import SiteFooter from "@/components/SiteFooter";
 import SiteNav from "@/components/SiteNav";
@@ -23,22 +23,22 @@ export async function generateMetadata({ params }: GuidePageProps): Promise<Meta
 
   if (!guide) {
     return {
-      title: "Guide introuvable | Comparia",
+      title: "Guide introuvable | CompareTesFactures",
       robots: { index: false, follow: false },
     };
   }
 
   const visual = getCategoryVisual(guide.categorySlug);
-  const ogImage = visual.src.endsWith(".svg") ? "/comparia-hero.jpg" : visual.src;
+  const ogImage = visual.src.endsWith(".svg") ? "/comparetesfactures-hero.jpg" : visual.src;
 
   return {
-    title: `${guide.title} | Comparia`,
+    title: `${guide.title} | CompareTesFactures`,
     description: guide.description,
     alternates: {
       canonical: getGuideUrl(guide.slug),
     },
     openGraph: {
-      title: `${guide.title} | Comparia`,
+      title: `${guide.title} | CompareTesFactures`,
       description: guide.description,
       url: getGuideUrl(guide.slug),
       type: "article",
@@ -47,7 +47,7 @@ export async function generateMetadata({ params }: GuidePageProps): Promise<Meta
     },
     twitter: {
       card: "summary_large_image",
-      title: `${guide.title} | Comparia`,
+      title: `${guide.title} | CompareTesFactures`,
       description: guide.description,
       images: [ogImage],
     },
@@ -132,7 +132,7 @@ export default async function GuideDetailPage({ params }: GuidePageProps) {
               {guide.painPoints.map((point) => (
                 <div key={point} className="flex gap-3 rounded-2xl border border-white/10 bg-slate-950/50 p-3">
                   <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-cyan-300/10 text-cyan-200 ring-1 ring-cyan-300/20">
-                    <CompariaIcon name="search" className="h-4 w-4" />
+                    <BrandIcon name="search" className="h-4 w-4" />
                   </span>
                   <p className="text-sm leading-6 text-slate-300">{point}</p>
                 </div>
@@ -141,7 +141,7 @@ export default async function GuideDetailPage({ params }: GuidePageProps) {
           </div>
 
           <div className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-6">
-            <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Méthode Comparia</p>
+            <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Méthode CompareTesFactures</p>
             <div className="mt-5 grid gap-3 md:grid-cols-3">
               {guide.steps.map((step, index) => (
                 <article key={step.title} className="rounded-[1.35rem] border border-white/10 bg-slate-950/50 p-4">

@@ -41,7 +41,7 @@ export async function analyzeUserExpenses(
           {
             role: "system",
             content:
-              "Tu es l’assistant financier IA de Comparia. Tu aides des utilisateurs français à comprendre leurs économies possibles sans conseil financier réglementé. Réponds uniquement en JSON strict, en français, avec des explications simples, prudentes et actionnables.",
+              "Tu es l’assistant financier IA de CompareTesFactures. Tu aides des utilisateurs français à comprendre leurs économies possibles sans conseil financier réglementé. Réponds uniquement en JSON strict, en français, avec des explications simples, prudentes et actionnables.",
           },
           {
             role: "user",
@@ -54,7 +54,7 @@ export async function analyzeUserExpenses(
                 offerSlugs: ruleAnalysis.recommendations.slice(0, 5).map((recommendation) => recommendation.slug),
               },
               contexte_utilisateur: summarizeAnswersForAi(answers),
-              economies_calculees_par_comparia: {
+              economies_calculees_par_comparetesfactures: {
                 totalSavingsEurPerYear: ruleAnalysis.summary.totalSavings,
                 monthlyLeakEur: ruleAnalysis.summary.monthlyLeak,
                 optimizationScore: ruleAnalysis.summary.optimizationScore,
@@ -70,9 +70,9 @@ export async function analyzeUserExpenses(
               constraints: [
                 "Ne promets jamais une économie garantie.",
                 "Ne crée pas de nouvelle catégorie.",
-                "Ne change pas les chiffres calculés par Comparia.",
+                "Ne change pas les chiffres calculés par CompareTesFactures.",
                 "Toutes les économies sont en euros (€), même si le revenu utilisateur est en CHF.",
-                "Ne parle pas de comparaisons réelles de marché : parle d’estimation indicative basée sur les règles Comparia.",
+                "Ne parle pas de comparaisons réelles de marché : parle d’estimation indicative basée sur les règles CompareTesFactures.",
                 "Si les données sont faibles, explique que l’estimation reste indicative.",
                 "Retourne uniquement un objet JSON valide, sans markdown.",
               ],
@@ -107,8 +107,8 @@ function buildFallbackInsight(ruleAnalysis: DiagnosticResult): AiExpenseInsight 
   return {
     summary:
       top.length > 0
-        ? `Comparia détecte ${top.length} levier${top.length > 1 ? "s" : ""} prioritaire${top.length > 1 ? "s" : ""}, avec une économie indicative de ${ruleAnalysis.summary.totalSavings}€/an.`
-        : "Comparia n’a pas détecté de fuite majeure avec les réponses actuelles.",
+        ? `CompareTesFactures détecte ${top.length} levier${top.length > 1 ? "s" : ""} prioritaire${top.length > 1 ? "s" : ""}, avec une économie indicative de ${ruleAnalysis.summary.totalSavings}€/an.`
+        : "CompareTesFactures n’a pas détecté de fuite majeure avec les réponses actuelles.",
     estimatedSavings: ruleAnalysis.summary.totalSavings,
     recommendations: top.map((recommendation) => ({
       title: recommendation.category,
@@ -120,7 +120,7 @@ function buildFallbackInsight(ruleAnalysis: DiagnosticResult): AiExpenseInsight 
     })),
     actionPriorities: top.slice(0, 3).map((recommendation) => `${recommendation.category} — ${recommendation.annualSavings}€/an estimés`),
     explanation:
-      "Cette analyse utilise le moteur Comparia actuel. Une fois la clé Mistral configurée, l’assistant affinera le résumé avec un langage plus personnalisé.",
+      "Cette analyse utilise le moteur CompareTesFactures actuel. Une fois la clé Mistral configurée, l’assistant affinera le résumé avec un langage plus personnalisé.",
     offerSlugs: top.map((recommendation) => recommendation.slug),
     generatedBy: "rules",
   };
@@ -234,7 +234,7 @@ function normalizeAiRecommendation(value: unknown, allowedSlugs: Set<string>): A
   const priority = normalizePriority(item.priority);
 
   return {
-    title: normalizeString(item.title, "Recommandation Comparia", 120),
+    title: normalizeString(item.title, "Recommandation CompareTesFactures", 120),
     categorySlug,
     annualSavings: normalizeNumber(item.annualSavings, 0, 0, 10_000),
     priority,

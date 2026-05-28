@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { categories, categoryGroups } from "@/lib/categories";
 import SiteNav from "@/components/SiteNav";
-import CompariaIcon, { getCategoryIcon } from "@/components/CompariaIcon";
+import BrandIcon, { getCategoryIcon } from "@/components/BrandIcon";
 import SiteFooter from "@/components/SiteFooter";
 import PremiumVisual from "@/components/PremiumVisual";
 import { getCategoryVisual, groupVisuals } from "@/lib/visuals";
@@ -14,12 +14,12 @@ export default function ComparateursPage() {
         <SiteNav />
 
         <section className="mt-7 max-w-3xl">
-          <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Comparateurs Comparia</p>
+          <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Comparateurs CompareTesFactures</p>
           <h1 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">
             Tous les grands contrats qui pèsent sur ton budget, réunis au même endroit.
           </h1>
           <p className="mt-5 text-slate-300">
-            Comparia n’a pas vocation à devenir un catalogue froid. Chaque comparateur s’inscrit dans un
+            CompareTesFactures n’a pas vocation à devenir un catalogue froid. Chaque comparateur s’inscrit dans un
             diagnostic plus large pour t’aider à savoir quoi optimiser en premier.
           </p>
         </section>
@@ -80,7 +80,7 @@ export default function ComparateursPage() {
                         />
                         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent" />
                         <div className="absolute bottom-3 left-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-950/80 text-cyan-300 ring-1 ring-inset ring-cyan-300/20 backdrop-blur">
-                          <CompariaIcon name={getCategoryIcon(category.slug)} className="h-5 w-5" />
+                          <BrandIcon name={getCategoryIcon(category.slug)} className="h-5 w-5" />
                         </div>
                       </div>
                       <div className="p-5">

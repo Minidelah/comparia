@@ -1,13 +1,14 @@
 @import "tailwindcss";
 @import "./styles/tokens.css";
+@import "./styles/design-system.css";
 
 :root {
-  --background: #05070d;
+  --background: #0a0a1a;
   --foreground: #f8fafc;
-  --surface: #252525;
-  --surface-strong: #2f2f2f;
+  --surface: #1a1b2e;
+  --surface-strong: #252538;
   --muted: #9ca3af;
-  --accent-soft: rgba(45, 255, 40, 0.16);
+  --accent-soft: rgba(59, 130, 246, 0.16);
   --border: rgba(255, 255, 255, 0.08);
   --card: rgba(255, 255, 255, 0.04);
   --shadow: rgba(0, 0, 0, 0.35);
@@ -29,8 +30,8 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background-image:
-      radial-gradient(circle at 10% 20%, rgba(45, 255, 40, 0.12), transparent 18%),
-      radial-gradient(circle at 90% 12%, rgba(56, 189, 248, 0.1), transparent 18%),
+      radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.12), transparent 18%),
+      radial-gradient(circle at 90% 12%, rgba(16, 185, 129, 0.1), transparent 18%),
       radial-gradient(circle at top, rgba(255, 255, 255, 0.04), transparent 16%);
     background-attachment: fixed;
   }
@@ -45,23 +46,9 @@
   }
 
   ::selection {
-    background: rgba(45, 255, 40, 0.18);
+    background: rgba(59, 130, 246, 0.18);
     color: white;
   }
-}
-
-@keyframes logo-marquee {
-  from {
-    transform: translateX(0);
-  }
-
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-.animate-logo-marquee {
-  animation: logo-marquee 28s linear infinite;
 }
 
 @keyframes premium-visual-sheen {
@@ -89,7 +76,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-logo-marquee,
   .premium-visual-card .premium-visual-sheen {
     animation: none;
   }

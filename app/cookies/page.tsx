@@ -3,8 +3,8 @@ import LegalPageShell from "@/components/legal/LegalPageShell";
 import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Politique cookies — Comparia",
-  description: "Utilisation des cookies, stockage local, mesure interne et liens affiliés Comparia.",
+  title: "Politique cookies — CompareTesFactures",
+  description: "Utilisation des cookies, stockage local, mesure interne et liens affiliés CompareTesFactures.",
 };
 
 export default function CookiesPage() {
@@ -12,17 +12,17 @@ export default function CookiesPage() {
     <LegalPageShell
       eyebrow="Cookies"
       title="Politique cookies et traceurs"
-      description="Comparia limite les traceurs au strict nécessaire pour le fonctionnement du service et la mesure interne du tunnel."
+      description="CompareTesFactures limite les traceurs au strict nécessaire pour le fonctionnement du service et la mesure interne du tunnel."
     >
-      <h2>Cookies utilisés par Comparia</h2>
+      <h2>Cookies utilisés par CompareTesFactures</h2>
       <p>
-        À ce stade, Comparia n’utilise pas de cookie publicitaire tiers sur le site. Le service peut utiliser du stockage local ou des événements serveur pour garder la
+        À ce stade, CompareTesFactures n’utilise pas de cookie publicitaire tiers sur le site. Le service peut utiliser du stockage local ou des événements serveur pour garder la
         continuité du parcours, par exemple l’identifiant d’un lead après validation du formulaire ou un identifiant visiteur pseudonyme pour la mesure d’audience interne.
       </p>
 
       <h2>Mesure d’audience interne</h2>
       <p>
-        Comparia mesure des événements simples : page vue, page comparateur vue, étape répondue, formulaire envoyé, offre débloquée, clic affilié. Cette mesure sert à comprendre
+        CompareTesFactures mesure des événements simples : page vue, page comparateur vue, étape répondue, formulaire envoyé, offre débloquée, clic affilié. Cette mesure sert à comprendre
         le tunnel et à améliorer la qualité des comparateurs.
       </p>
 
@@ -34,7 +34,7 @@ export default function CookiesPage() {
 
       <h2>Gestion des préférences</h2>
       <p>
-        L’utilisateur peut gérer les cookies depuis son navigateur. Si Comparia ajoute plus tard des outils analytics ou publicitaires non essentiels, un mécanisme de
+        L’utilisateur peut gérer les cookies depuis son navigateur. Si CompareTesFactures ajoute plus tard des outils analytics ou publicitaires non essentiels, un mécanisme de
         consentement dédié devra être affiché avant leur activation.
       </p>
 

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import AnalyticsTracker from "@/components/AnalyticsTracker";
+import { siteConfig } from "@/lib/site";
 import "./globals.css";
 
 function normalizeGoogleSiteVerification(value?: string) {
@@ -13,29 +14,38 @@ function normalizeGoogleSiteVerification(value?: string) {
 
 const googleSiteVerification = normalizeGoogleSiteVerification(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION);
 
+const defaultTitle = `${siteConfig.name} — ${siteConfig.tagline}`;
+const defaultDescription =
+  "Compare tes factures : assurances, énergie, mobile et abonnements. Diagnostic gratuit, offres classées et économies estimées sur comparetesfactures.fr.";
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://www.comparetesfactures.fr"),
-  title: "Comparia — Comparateurs intelligents",
-  description: "Compare assurances, énergie, mobile et services pour trouver les meilleures offres.",
+  metadataBase: new URL(siteConfig.url),
+  title: {
+    default: defaultTitle,
+    template: `%s | ${siteConfig.name}`,
+  },
+  description: defaultDescription,
   openGraph: {
-    title: "Comparia — Comparateurs intelligents",
-    description: "Compare assurances, énergie, mobile et services pour trouver les meilleures offres.",
+    title: defaultTitle,
+    description: defaultDescription,
     type: "website",
     locale: "fr_FR",
+    url: siteConfig.url,
+    siteName: siteConfig.name,
     images: [
       {
-        url: "/comparia-hero.jpg",
+        url: "/comparetesfactures-hero.jpg",
         width: 1100,
         height: 587,
-        alt: "Comparia — comparateurs intelligents pour économiser sur tes factures",
+        alt: `${siteConfig.name} — comparateur de factures et contrats pour économiser chaque mois`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Comparia — Comparateurs intelligents",
-    description: "Compare assurances, énergie, mobile et services pour trouver les meilleures offres.",
-    images: ["/comparia-hero.jpg"],
+    title: defaultTitle,
+    description: defaultDescription,
+    images: ["/comparetesfactures-hero.jpg"],
   },
   robots: {
     index: true,

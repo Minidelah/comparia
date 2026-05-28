@@ -15,7 +15,7 @@ import { ADMIN_SESSION_COOKIE, isAdminSessionToken, isSecretEqual } from "@/lib/
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Admin — Comparia",
+  title: "Admin — CompareTesFactures",
   robots: { index: false, follow: false, googleBot: { index: false, follow: false } },
 };
 
@@ -429,7 +429,7 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
     conversions: conversionsRange,
     traffic,
   });
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.comparetesfactures.fr";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://comparetesfactures.fr";
   const exportableLeads = buildExportableLeads(leads);
 
   return (
@@ -440,7 +440,7 @@ export default async function AdminPage({ searchParams }: { searchParams: AdminS
         <section className="mt-6 rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-4 sm:mt-8 sm:rounded-[2rem] sm:p-8">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Admin Comparia</p>
+              <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Admin CompareTesFactures</p>
               <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">Pilotage business.</h1>
               <p className="mt-4 max-w-3xl text-sm leading-6 text-slate-300">
                 Leads, tunnel de conversion, clics affiliés et catégories les plus actives — sans passer par Supabase à chaque fois.
@@ -617,7 +617,7 @@ function LockedAdmin({ expectedTokenConfigured }: { expectedTokenConfigured: boo
         <h1 className="mt-3 text-3xl font-semibold">Dashboard verrouillé.</h1>
         <p className="mt-4 text-sm leading-6 text-amber-100/80">
           {expectedTokenConfigured
-            ? "Ajoute ?token=TON_TOKEN_ADMIN une seule fois : Comparia créera ensuite une session admin sécurisée."
+            ? "Ajoute ?token=TON_TOKEN_ADMIN une seule fois : CompareTesFactures créera ensuite une session admin sécurisée."
             : "En production, configure ADMIN_DASHBOARD_TOKEN dans tes variables d’environnement avant d’ouvrir cette page."}
         </p>
       </section>
@@ -667,7 +667,7 @@ function LiveVisitorsPanel({ analytics }: { analytics: LiveAnalytics }) {
           <p className="text-sm uppercase tracking-[0.3em] text-emerald-300">Live analytics</p>
           <h2 className="mt-3 text-2xl font-semibold text-white sm:text-3xl">En direct sur le site.</h2>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400">
-            Comme Shopify : Comparia compte les visiteurs actifs des 5 dernières minutes via un heartbeat discret.
+            Comme Shopify : CompareTesFactures compte les visiteurs actifs des 5 dernières minutes via un heartbeat discret.
           </p>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:min-w-80">
@@ -867,7 +867,7 @@ function AdminActionCenter({ items }: { items: AdminActionItem[] }) {
           <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Action center</p>
           <h2 className="mt-3 text-2xl font-semibold text-white">Ce qu’il faut faire maintenant.</h2>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400">
-            Comparia transforme les signaux en priorités : trafic, leads, clics affiliés, offres Awin et commissions.
+            CompareTesFactures transforme les signaux en priorités : trafic, leads, clics affiliés, offres Awin et commissions.
           </p>
         </div>
         <span className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-semibold text-slate-200">
@@ -1187,7 +1187,7 @@ function AiOpportunityPanel({ insights }: { insights: DiagnosticInsights }) {
   return (
     <section className="rounded-[2rem] border border-cyan-300/15 bg-gradient-to-br from-cyan-400/10 via-blue-500/10 to-purple-500/10 p-6">
       <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Moteur IA</p>
-      <h2 className="mt-3 text-2xl font-semibold">Ce que Comparia détecte.</h2>
+      <h2 className="mt-3 text-2xl font-semibold">Ce que CompareTesFactures détecte.</h2>
       <div className="mt-6 space-y-3">
         <InsightLine label="Diagnostics sauvegardés" value={String(insights.count)} />
         <InsightLine label="Générés par Mistral" value={String(insights.mistralCount)} />

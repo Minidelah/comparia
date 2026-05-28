@@ -24,7 +24,7 @@ export type AttributionPayload = {
   lastTouch: AttributionTouch;
 };
 
-const ATTRIBUTION_KEY = "comparia_attribution_v1";
+const ATTRIBUTION_KEY = "ctf_attribution_v1";
 
 export function captureAttribution(pathname: string): AttributionPayload | null {
   if (typeof window === "undefined") return null;

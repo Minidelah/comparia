@@ -1,4 +1,4 @@
--- Comparia AI, cashback and expense analysis extension
+-- CompareTesFactures AI, cashback and expense analysis extension
 -- Rejouable : ce fichier prépare les tables produit sans casser l'existant.
 
 ALTER TABLE IF EXISTS public.financial_profiles
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS public.expense_analyses (
   annual_analyzed_spend numeric NOT NULL DEFAULT 0,
   monthly_leak numeric NOT NULL DEFAULT 0,
   total_estimated_savings numeric NOT NULL DEFAULT 0,
-  source text DEFAULT 'comparia',
+  source text DEFAULT 'comparetesfactures',
   input_snapshot jsonb NOT NULL DEFAULT '{}'::jsonb,
   created_at timestamptz DEFAULT now()
 );

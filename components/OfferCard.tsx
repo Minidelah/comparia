@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { OfferSlot } from "@/lib/offers";
 import AffiliateCTA from "@/components/AffiliateCTA";
+import BrandIcon from "@/components/BrandIcon";
 
 type Props = {
   offer: OfferSlot;
@@ -25,78 +26,103 @@ export default function OfferCard({ offer }: Props) {
   }
 
   return (
-    <article className="group relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-slate-950/75 p-5 shadow-2xl shadow-black/20 transition hover:-translate-y-1 hover:border-cyan-300/30 hover:shadow-cyan-950/25">
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-cyan-400/[0.08] via-transparent to-blue-500/[0.06] opacity-0 transition group-hover:opacity-100" />
+    <article className="card-premium group relative overflow-hidden hover-scale">
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-cyan-400/[0.06] via-transparent to-blue-500/[0.04] opacity-0 transition group-hover:opacity-100" />
+      
       <div className="relative flex items-start justify-between gap-4">
         <div className="flex min-w-0 items-center gap-3">
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white p-2 shadow-sm shadow-black/30">
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white p-2 shadow-sm shadow-black/20">
             {offer.logo ? (
-              // eslint-disable-next-line @next/next/no-img-element
               <img src={offer.logo} alt="" width={32} height={32} loading="lazy" className="h-8 w-8 object-contain" />
             ) : (
-              <span className="text-sm font-black text-slate-950">{offer.provider?.slice(0, 1) ?? "C"}</span>
+              <span className="text-sm font-black text-neutral-900">{offer.provider?.slice(0, 1) ?? "C"}</span>
             )}
           </span>
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-slate-300">{offer.provider ?? "Partenaire"}</p>
-            <p className="mt-1 text-xs text-amber-200">★ {rating.toFixed(1)}/5</p>
+            <h4 className="truncate text-sm font-semibold text-neutral-200">{offer.provider ?? "Partenaire"}</h4>
+            <div className="mt-1 flex items-center gap-1">
+              <span className="text-xs text-amber-300">★ {rating.toFixed(1)}</span>
+              {offer.verified && (
+                <span className="rounded-full bg-blue-500/20 px-2 py-0.5 text-xs font-semibold text-blue-300">Vérifié</span>
+              )}
+            </div>
           </div>
         </div>
         {offer.monthlyPrice !== undefined && offer.monthlyPrice !== null && (
-          <span className="rounded-full bg-white/[0.06] px-3 py-1 text-xs font-semibold text-slate-200">
-            {offer.monthlyPrice === 0 ? "0€/mois" : `${offer.monthlyPrice.toFixed(2).replace(".", ",")}€/mois`}
-          </span>
+          <div className="rounded-full bg-neutral-800 px-3 py-1.5 text-xs font-semibold text-neutral-100">
+            {offer.monthlyPrice === 0 ? "GRATUIT" : `${offer.monthlyPrice.toFixed(2).replace(".", ",")}€/mois`}
+          </div>
         )}
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
         <span
-          className={`mt-5 rounded-full px-3 py-1 text-xs font-semibold ${
+          className={`rounded-full px-3 py-1 text-xs font-semibold ${
             offer.badge === "Meilleur choix"
-              ? "bg-cyan-400/10 text-cyan-200"
+              ? "badge badge-primary"
               : offer.badge === "Sponsorisé"
-                ? "bg-amber-400/10 text-amber-200"
-                : "bg-emerald-400/10 text-emerald-300"
+                ? "badge badge-warning"
+                : "badge badge-success"
           }`}
         >
           {offer.badge}
         </span>
-        <span className="mt-5 text-sm font-semibold text-emerald-300">{offer.annualSavings}</span>
+        {offer.annualSavings && (
+          <span className="text-sm font-semibold text-emerald-400">{offer.annualSavings}</span>
+        )}
       </div>
-      <h3 className="relative mt-4 text-xl font-semibold">{offer.title}</h3>
-      <p className="mt-3 text-sm leading-6 text-slate-300">{offer.description}</p>
+      
+      <h3 className="relative mt-4 text-xl font-bold text-white">{offer.title}</h3>
+      <p className="mt-3 text-sm text-neutral-400">{offer.description}</p>
+      
       {offer.couponCode && (
-        <div className="mt-4 rounded-2xl border border-amber-300/25 bg-amber-300/[0.08] p-3">
+        <div className="mt-4 rounded-xl border border-amber-400/30 bg-amber-500/10 p-3">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-amber-200">Code promo détecté</p>
-              <p className="mt-2 font-mono text-lg font-black tracking-[0.16em] text-white">{offer.couponCode}</p>
-              {offer.couponEndsAt && <p className="mt-1 text-xs text-amber-100/75">Valable jusqu’au {formatDateFr(offer.couponEndsAt)}</p>}
+              <p className="text-xs font-semibold uppercase tracking-wider text-amber-300">Code promo détecté</p>
+              <p className="mt-2 font-mono text-lg font-black tracking-wider text-white">{offer.couponCode}</p>
+              {offer.couponEndsAt && <p className="mt-1 text-xs text-amber-200/80">Valable jusqu'au {formatDateFr(offer.couponEndsAt)}</p>}
             </div>
             <button
               type="button"
               onClick={copyCouponCode}
-              className="rounded-2xl border border-amber-200/30 bg-white px-4 py-2 text-sm font-bold text-slate-950 transition hover:bg-amber-100"
+              className="rounded-xl border border-amber-300/30 bg-white px-4 py-2 text-sm font-bold text-neutral-900 transition hover:bg-amber-100 focus:ring-2 focus:ring-amber-400/50"
             >
-              {copied ? "Copié" : "Copier"}
+              {copied ? "Copié ✓" : "Copier"}
             </button>
           </div>
         </div>
       )}
+      
       {offer.rankReason && (
-        <p className="mt-3 rounded-2xl border border-cyan-300/15 bg-cyan-400/10 px-3 py-2 text-xs font-semibold text-cyan-100">
+        <p className="mt-3 rounded-xl border border-cyan-400/20 bg-cyan-500/10 px-3 py-2 text-xs font-semibold text-cyan-200">
+          <BrandIcon name="info" className="mr-1 inline h-3 w-3" />
           {offer.rankReason}
         </p>
       )}
+      
       <div className="mt-4 flex flex-wrap gap-2">
         {(offer.tags ?? ["Profil compatible", "Souscription rapide", "Vérifiable"]).slice(0, 4).map((tag) => (
-          <span key={tag} className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs font-semibold text-slate-300">
+          <span key={tag} className="rounded-full border border-neutral-700 bg-neutral-800/70 px-3 py-1 text-xs font-semibold text-neutral-300">
             {tag}
           </span>
         ))}
       </div>
-      {offer.cashback && <p className="mt-3 text-sm font-semibold text-cyan-300">{offer.cashback}</p>}
-      <AffiliateCTA offerId={offer.id} categorySlug={offer.categorySlug} href={offer.affiliateUrl} label="Voir l’offre recommandée" />
+      
+      {offer.cashback && (
+        <p className="mt-3 flex items-center gap-2 text-sm font-semibold text-cyan-400">
+          <BrandIcon name="gift" className="h-4 w-4" />
+          {offer.cashback}
+        </p>
+      )}
+      
+      <AffiliateCTA 
+        offerId={offer.id} 
+        categorySlug={offer.categorySlug} 
+        href={offer.affiliateUrl} 
+        label="Voir l'offre recommandée"
+        className="mt-5"
+      />
     </article>
   );
 }

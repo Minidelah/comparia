@@ -1,4 +1,4 @@
--- Comparia production repair — 2026-05-21
+-- CompareTesFactures production repair — 2026-05-21
 -- À coller dans Supabase SQL Editor, pas le nom du fichier.
 -- Objectif : compléter les colonnes diagnostic et donner aux routes API serveur les droits nécessaires.
 
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS public.expense_analyses (
   annual_analyzed_spend numeric NOT NULL DEFAULT 0,
   monthly_leak numeric NOT NULL DEFAULT 0,
   total_estimated_savings numeric NOT NULL DEFAULT 0,
-  source text DEFAULT 'comparia',
+  source text DEFAULT 'comparetesfactures',
   input_snapshot jsonb NOT NULL DEFAULT '{}'::jsonb,
   created_at timestamptz DEFAULT now()
 );

@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 
-export const ADMIN_SESSION_COOKIE = "__comparia_admin";
-const ADMIN_SESSION_CONTEXT = "comparia-admin-session:v1";
+export const ADMIN_SESSION_COOKIE = "__ctf_admin";
+const ADMIN_SESSION_CONTEXT = "ctf-admin-session:v1";
 
 type RateLimitOptions = {
   key: string;

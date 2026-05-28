@@ -307,7 +307,7 @@ function getCategoryFromClickRefs(transaction: AwinTransaction) {
 
   for (const candidate of candidates) {
     if (typeof candidate !== "string") continue;
-    const match = candidate.match(/comparia[_-]([a-z0-9-]+)/i);
+    const match = candidate.match(/(?:ctf|comparetesfactures)[_-]([a-z0-9-]+)/i);
     if (match?.[1]) return match[1].toLowerCase();
     if (/^[a-z0-9-]{3,80}$/i.test(candidate)) return candidate.toLowerCase();
   }

@@ -12,6 +12,10 @@ export type Category = {
     helper: string;
     options: string[];
   }[];
+  badge?: string;
+  new?: boolean;
+  popular?: boolean;
+  rating?: number;
 };
 
 export const categories: Category[] = [
@@ -190,13 +194,14 @@ export const categories: Category[] = [
     title: "Box internet",
     group: "Maison",
     description: "Trouve une offre plus juste pour ton foyer.",
-    saving: "bientôt",
-    status: "coming-soon",
+    saving: "jusqu’à 180€/an",
+    status: "active",
     headline: "Trouve la bonne box pour ton foyer, pas juste l’offre la plus bruyante.",
-    questions: ["Fibre ou ADSL ?", "As-tu besoin de TV ou seulement d’internet ?"],
+    questions: ["Quelle offre t’intéresse ?", "Fibre ou ADSL ?", "As-tu besoin de TV ou seulement d’internet ?"],
     flow: [
+      { title: "Quelle offre t’intéresse ?", helper: "Choisis le panier le plus proche de ton besoin actuel.", options: ["Box internet", "Box + mobile", "Box + mobile + TV"] },
       { title: "Quelle connexion veux-tu ?", helper: "On élimine les offres inutiles dès le départ.", options: ["Fibre", "ADSL", "Je ne sais pas"] },
-      { title: "Tu veux surtout…", helper: "Le panier idéal dépend des services annexes.", options: ["Internet seul", "Internet + TV", "Internet + TV + mobile"] },
+      { title: "Tu veux surtout…", helper: "Le panier idéal dépend des services annexes.", options: ["Prix le plus bas", "Wi‑Fi performant", "Services inclus"] },
     ],
   },
   {

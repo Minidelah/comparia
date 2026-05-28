@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import OfferCard from "@/components/OfferCard";
+import OfferCardPremium from "@/components/OfferCardPremium";
 import type { OfferSlot } from "@/lib/offers";
 import { getAttributionMeta } from "@/lib/analytics/attribution";
+import BrandIcon from "@/components/BrandIcon";
 
 type Props = {
   categorySlug: string;
@@ -14,7 +15,7 @@ type Props = {
 
 export default function GatedOffers({ categorySlug, categoryTitle, categorySaving, offers }: Props) {
   const [unlocked, setUnlocked] = useState(false);
-  const leadStorageKey = `comparia_lead_${categorySlug}`;
+  const leadStorageKey = `ctf_lead_${categorySlug}`;
   const displayOffers = useMemo(
     () =>
       offers.length > 0
@@ -52,12 +53,12 @@ export default function GatedOffers({ categorySlug, categoryTitle, categorySavin
       }
     }
 
-    window.addEventListener("comparia:lead-captured", handleLeadCaptured);
-    window.addEventListener("comparia:lead-reset", handleLeadReset);
+    window.addEventListener("ctf:lead-captured", handleLeadCaptured);
+    window.addEventListener("ctf:lead-reset", handleLeadReset);
     return () => {
       window.clearTimeout(timer);
-      window.removeEventListener("comparia:lead-captured", handleLeadCaptured);
-      window.removeEventListener("comparia:lead-reset", handleLeadReset);
+      window.removeEventListener("ctf:lead-captured", handleLeadCaptured);
+      window.removeEventListener("ctf:lead-reset", handleLeadReset);
     };
   }, [categorySlug, leadStorageKey]);
 
@@ -74,26 +75,48 @@ export default function GatedOffers({ categorySlug, categoryTitle, categorySavin
           </p>
         </div>
 
-        <div className="mt-5 rounded-[2rem] border border-cyan-300/20 bg-gradient-to-br from-cyan-400/10 to-blue-500/10 p-5 sm:p-6">
+        <div className="mt-5 overflow-hidden rounded-[2rem] border border-cyan-300/20 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.16),transparent_34%),linear-gradient(135deg,rgba(255,255,255,0.07),rgba(255,255,255,0.035))] p-5 shadow-2xl shadow-black/20 sm:p-6">
           <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
             <div>
-              <p className="text-sm uppercase tracking-[0.28em] text-emerald-300">Lead qualifié = offres utiles</p>
+              <p className="text-sm uppercase tracking-[0.28em] text-emerald-300">Profil qualifié = offres utiles</p>
               <h3 className="mt-3 text-2xl font-semibold">{displayOffers.length} recommandations attendent ton profil.</h3>
               <p className="mt-3 text-sm leading-6 text-slate-300">
                 On évite la liste brute : tu vois d’abord les offres compatibles, puis le meilleur choix, le meilleur prix et les éventuels avantages.
               </p>
-              <a href="#devis" className="mt-5 inline-flex rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-500 px-5 py-3 font-semibold text-white">
+              <div className="mt-5 grid gap-2 text-sm text-slate-300">
+                {["Classement par pertinence", "Économies et avantages séparés", "Redirection partenaire suivie"].map((item) => (
+                  <div key={item} className="flex items-center gap-2">
+                    <BrandIcon name="check-circle" className="h-4 w-4 text-emerald-300" />
+                    {item}
+                  </div>
+                ))}
+              </div>
+              <a href="#devis" className="mt-5 inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-400 to-emerald-400 px-5 py-3 font-black text-slate-950 shadow-xl shadow-cyan-950/30 transition duration-300 hover:-translate-y-0.5">
+                <BrandIcon name="unlock" className="h-4 w-4" />
                 Finir mon devis express
               </a>
             </div>
             <div className="grid gap-3 sm:grid-cols-3">
-              {displayOffers.slice(0, 3).map((offer) => (
-                <div key={offer.id} className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-950/70 p-4">
-                  <div className="absolute inset-0 backdrop-blur-[3px]" />
-                  <div className="relative opacity-70">
-                    <p className="text-xs font-semibold text-cyan-300">{offer.badge}</p>
-                    <h4 className="mt-3 text-sm font-bold text-white">{offer.title}</h4>
-                    <p className="mt-2 text-xs text-emerald-300">{offer.annualSavings}</p>
+              {displayOffers.slice(0, 3).map((offer, index) => (
+                <div key={offer.id} className="relative min-h-44 overflow-hidden rounded-2xl border border-white/10 bg-slate-950/75 p-4">
+                  <div className="absolute inset-0 bg-slate-950/25 backdrop-blur-[3px]" />
+                  <div className="relative flex h-full flex-col justify-between opacity-80">
+                    <div>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white p-2 shadow-lg shadow-black/20">
+                          {offer.logo ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={offer.logo} alt="" width={28} height={28} loading="lazy" className="h-7 w-7 object-contain" />
+                          ) : (
+                            <BrandIcon name="shield" className="h-5 w-5 text-slate-950" />
+                          )}
+                        </span>
+                        <span className="rounded-full bg-white/[0.08] px-2 py-1 text-[11px] font-bold text-slate-300">#{index + 1}</span>
+                      </div>
+                      <p className="mt-4 text-xs font-semibold text-cyan-300">{offer.badge}</p>
+                      <h4 className="mt-2 text-sm font-bold leading-5 text-white">{offer.title}</h4>
+                    </div>
+                    <p className="mt-3 text-xs font-bold text-emerald-300">{offer.annualSavings}</p>
                   </div>
                 </div>
               ))}
@@ -116,8 +139,13 @@ export default function GatedOffers({ categorySlug, categoryTitle, categorySavin
         </p>
       </div>
       <div className="mt-5 grid gap-4 lg:grid-cols-3">
-        {displayOffers.map((offer) => (
-          <OfferCard key={offer.id} offer={offer} />
+        {displayOffers.map((offer, index) => (
+          <OfferCardPremium
+            key={offer.id}
+            offer={offer}
+            variant={index === 0 ? "featured" : "default"}
+            className={index === 0 ? "lg:col-span-2" : ""}
+          />
         ))}
       </div>
     </section>

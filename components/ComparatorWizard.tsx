@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { Category } from "@/lib/categories";
-import CompariaIcon, { getCategoryIcon } from "@/components/CompariaIcon";
+import BrandIcon, { getCategoryIcon, type IconName } from "@/components/BrandIcon";
 import { getAttributionMeta } from "@/lib/analytics/attribution";
 
 type LeadState = "idle" | "saving" | "saved" | "local";
@@ -20,7 +20,7 @@ export default function ComparatorWizard({ category }: { category: Category }) {
   const [leadState, setLeadState] = useState<LeadState>("idle");
   const [leadError, setLeadError] = useState<string | null>(null);
 
-  const leadStorageKey = `comparia_lead_${category.slug}`;
+  const leadStorageKey = `ctf_lead_${category.slug}`;
   const funnelConfig = getFunnelConfig(category);
   const flow = useMemo(() => [...category.flow, getIntentStep(category)], [category]);
   const isComplete = step >= flow.length;
@@ -83,7 +83,7 @@ export default function ComparatorWizard({ category }: { category: Category }) {
     setLeadState("idle");
     setLeadError(null);
     localStorage.removeItem(leadStorageKey);
-    window.dispatchEvent(new CustomEvent("comparia:lead-reset", { detail: { categorySlug: category.slug } }));
+    window.dispatchEvent(new CustomEvent("ctf:lead-reset", { detail: { categorySlug: category.slug } }));
   }
 
   function goBack() {
@@ -137,7 +137,7 @@ export default function ComparatorWizard({ category }: { category: Category }) {
         persisted: Boolean(payload.persisted),
       });
       window.dispatchEvent(
-        new CustomEvent("comparia:lead-captured", {
+        new CustomEvent("ctf:lead-captured", {
           detail: { categorySlug: category.slug, leadId: payload.leadId, persisted: Boolean(payload.persisted) },
         }),
       );
@@ -151,7 +151,7 @@ export default function ComparatorWizard({ category }: { category: Category }) {
       setLeadState("local");
       setLeadError("La route /api/leads n’a pas répondu. Vérifie le terminal npm run dev.");
       persistLeadLocally(leadStorageKey, { email, phone, firstName, persisted: false });
-      window.dispatchEvent(new CustomEvent("comparia:lead-captured", { detail: { categorySlug: category.slug, persisted: false } }));
+      window.dispatchEvent(new CustomEvent("ctf:lead-captured", { detail: { categorySlug: category.slug, persisted: false } }));
       trackFunnelEvent("lead_capture_failed", category.slug, { reason: "network_or_api_error" });
     }
 
@@ -159,26 +159,28 @@ export default function ComparatorWizard({ category }: { category: Category }) {
   }
 
   return (
-    <section id="devis" className="rounded-[2rem] border border-cyan-300/20 bg-slate-950/80 p-5 shadow-2xl shadow-cyan-950/20 sm:p-6">
+    <section id="devis" className="relative overflow-hidden rounded-[2rem] border border-cyan-300/20 bg-slate-950/85 p-5 shadow-2xl shadow-cyan-950/20 backdrop-blur sm:p-6 lg:sticky lg:top-5">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.16),transparent_35%)]" />
+      <div className="relative">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-cyan-400/10 text-cyan-300 ring-1 ring-inset ring-cyan-300/20">
-            <CompariaIcon name={getCategoryIcon(category.slug)} />
+            <BrandIcon name={getCategoryIcon(category.slug)} />
           </div>
           <div>
             <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">{funnelConfig.kicker}</p>
             <p className="mt-2 text-sm text-slate-400">{funnelConfig.promise}</p>
           </div>
         </div>
-        <span className="rounded-full bg-white/5 px-3 py-1 text-sm text-slate-300">{progress}%</span>
+        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-sm font-black text-slate-200">{progress}%</span>
       </div>
 
       <div className="mt-5 overflow-hidden rounded-full bg-white/10">
-        <div className="h-2 bg-gradient-to-r from-cyan-400 to-blue-500 transition-all" style={{ width: `${progress}%` }} />
+        <div className="h-2 bg-gradient-to-r from-cyan-400 to-emerald-400 transition-all duration-500" style={{ width: `${progress}%` }} />
       </div>
 
       {!isComplete && current ? (
-        <QuestionStep current={current} step={step} choose={choose} goBack={goBack} />
+        <QuestionStep current={current} step={step} categorySlug={category.slug} choose={choose} goBack={goBack} />
       ) : !leadCaptured ? (
         <div className="mt-6">
           <p className="text-sm uppercase tracking-[0.3em] text-emerald-300">Résultats prêts</p>
@@ -248,14 +250,15 @@ export default function ComparatorWizard({ category }: { category: Category }) {
                 className="mt-1 h-4 w-4 accent-cyan-400"
               />
               <span>
-                J’accepte d’être contacté au sujet de ma comparaison. Comparia garde mes données protégées et je peux demander leur suppression à tout moment.
+                J’accepte d’être contacté au sujet de ma comparaison. CompareTesFactures garde mes données protégées et je peux demander leur suppression à tout moment.
               </span>
             </label>
             <button
               type="submit"
               disabled={!canSubmit || leadState === "saving"}
-              className="rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-500 px-5 py-3 font-semibold text-white transition hover:shadow-lg hover:shadow-cyan-500/30 disabled:cursor-not-allowed disabled:opacity-45"
+              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-400 to-emerald-400 px-5 py-3.5 font-black text-slate-950 shadow-xl shadow-cyan-950/25 transition duration-300 hover:-translate-y-0.5 hover:shadow-cyan-500/20 disabled:cursor-not-allowed disabled:opacity-45"
             >
+              {leadState === "saving" && <BrandIcon name="loader" className="h-4 w-4 animate-spin" />}
               {leadState === "saving" ? "Préparation des offres…" : submitBlockReason ?? "Débloquer mes offres"}
             </button>
           </form>
@@ -290,7 +293,7 @@ export default function ComparatorWizard({ category }: { category: Category }) {
             ))}
           </div>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-            <a href="#offres" className="rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-500 px-5 py-3 text-center font-semibold text-white">
+            <a href="#offres" className="rounded-2xl bg-gradient-to-r from-cyan-400 to-emerald-400 px-5 py-3 text-center font-black text-slate-950">
               Voir les offres maintenant
             </a>
             <button type="button" onClick={reset} className="rounded-2xl border border-white/10 bg-white/5 px-5 py-3 font-semibold text-white transition hover:bg-white/10">
@@ -299,6 +302,7 @@ export default function ComparatorWizard({ category }: { category: Category }) {
           </div>
         </div>
       )}
+      </div>
     </section>
   );
 }
@@ -306,29 +310,25 @@ export default function ComparatorWizard({ category }: { category: Category }) {
 function QuestionStep({
   current,
   step,
+  categorySlug,
   choose,
   goBack,
 }: {
   current: WizardStep;
   step: number;
+  categorySlug: string;
   choose: (option: string) => void;
   goBack: () => void;
 }) {
+  const useVisualCards = current.options.length <= 4;
+
   return (
-    <div className="mt-6">
+    <div className="mt-6 fade-in">
       <h2 className="text-2xl font-semibold">{current.title}</h2>
       <p className="mt-2 text-slate-300">{current.helper}</p>
-      <div className="mt-5 grid gap-3">
-        {current.options.map((option) => (
-          <button
-            key={option}
-            type="button"
-            onClick={() => choose(option)}
-            className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-4 text-left font-semibold text-slate-100 transition hover:border-cyan-300/40 hover:bg-cyan-400/10"
-          >
-            <span>{option}</span>
-            <span className="text-cyan-300">→</span>
-          </button>
+      <div className={`mt-5 grid gap-3 ${useVisualCards ? "sm:grid-cols-3" : ""}`}>
+        {current.options.map((option, index) => (
+          <OptionCard key={option} option={option} index={index} categorySlug={categorySlug} visual={useVisualCards} onChoose={choose} />
         ))}
       </div>
       {step > 0 && (
@@ -338,6 +338,91 @@ function QuestionStep({
       )}
     </div>
   );
+}
+
+function OptionCard({
+  option,
+  index,
+  categorySlug,
+  visual,
+  onChoose,
+}: {
+  option: string;
+  index: number;
+  categorySlug: string;
+  visual: boolean;
+  onChoose: (option: string) => void;
+}) {
+  const icon = getOptionIcon(option, categorySlug);
+
+  if (!visual) {
+    return (
+      <button
+        type="button"
+        onClick={() => onChoose(option)}
+        className="group flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-4 text-left font-semibold text-slate-100 transition duration-300 hover:-translate-y-0.5 hover:border-cyan-300/40 hover:bg-cyan-400/10"
+      >
+        <span className="flex items-center gap-3">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-slate-950/70 text-xs font-black text-cyan-200 ring-1 ring-inset ring-white/10">
+            {index + 1}
+          </span>
+          {option}
+        </span>
+        <BrandIcon name="arrow-right" className="h-4 w-4 shrink-0 text-cyan-300 transition group-hover:translate-x-0.5" />
+      </button>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => onChoose(option)}
+      className="group min-h-36 rounded-2xl border border-white/10 bg-white/[0.055] p-4 text-center shadow-xl shadow-black/10 transition duration-300 hover:-translate-y-1 hover:border-orange-300/45 hover:bg-white/[0.085] focus:outline-none focus:ring-2 focus:ring-orange-300/40 sm:min-h-44"
+    >
+      <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-orange-300/25 bg-orange-300/10 text-orange-300 transition group-hover:scale-105 group-hover:bg-orange-300/15 sm:h-16 sm:w-16">
+        <BrandIcon name={icon} className="h-8 w-8 sm:h-9 sm:w-9" />
+      </span>
+      <span className="mt-4 block text-sm font-black uppercase tracking-[0.02em] text-white sm:text-base">
+        {option}
+      </span>
+      <span className="mx-auto mt-3 flex h-7 w-7 items-center justify-center rounded-full border border-cyan-200/70 bg-slate-950/60 text-[11px] font-black text-cyan-100 transition group-hover:border-orange-300 group-hover:text-orange-200">
+        {index + 1}
+      </span>
+    </button>
+  );
+}
+
+function getOptionIcon(option: string, categorySlug: string): IconName {
+  const text = normalizeOption(option);
+
+  if (text.includes("box") && text.includes("mobile") && text.includes("tv")) return "tv";
+  if (text.includes("box") && text.includes("mobile")) return "phone";
+  if (text.includes("box") || text.includes("internet") || text.includes("fibre") || text.includes("adsl") || text.includes("wifi")) return "router";
+  if (text.includes("tv")) return "tv";
+  if (text.includes("mobile") || text.includes("data") || text.includes("go") || text.includes("suisse") || text.includes("europe")) return "phone";
+  if (text.includes("voiture") || text.includes("auto") || text.includes("citadine") || text.includes("berline") || text.includes("suv") || text.includes("utilitaire")) return "car";
+  if (text.includes("moto") || text.includes("scooter") || text.includes("cc")) return "scooter";
+  if (text.includes("velo")) return "bike";
+  if (text.includes("logement") || text.includes("maison") || text.includes("appartement") || text.includes("studio") || text.includes("locataire") || text.includes("proprietaire")) return "home";
+  if (text.includes("chien") || text.includes("chat") || text.includes("animaux")) return "paw";
+  if (text.includes("sante") || text.includes("dentaire") || text.includes("optique") || text.includes("hospitalisation") || text.includes("lamal") || text.includes("cmu")) return "heart";
+  if (text.includes("gaz") || text.includes("chauffage") || text.includes("cuisine")) return "flame";
+  if (text.includes("electricite") || text.includes("verte")) return "bolt";
+  if (text.includes("prix") || text.includes("moins") || text.includes("frais") || text.includes("economie") || text.includes("mensualite") || text.includes("cashback")) return "coins";
+  if (text.includes("carte") || text.includes("banque") || text.includes("epargne") || text.includes("voyage")) return "credit-card";
+  if (text.includes("famille") || text.includes("couple") || text.includes("enfant")) return "users";
+  if (text.includes("professionnel") || text.includes("service")) return "briefcase";
+  if (text.includes("aujourd") || text.includes("semaine") || text.includes("rapidement")) return "clock";
+  if (text.includes("reseau") || text.includes("equilibre") || text.includes("performance")) return "sparkles";
+
+  return getCategoryIcon(categorySlug);
+}
+
+function normalizeOption(value: string) {
+  return value
+    .toLocaleLowerCase("fr-FR")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
 }
 
 function ValuePill({ label, value }: { label: string; value: string }) {

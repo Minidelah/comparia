@@ -1,6 +1,6 @@
-# Comparia
+# CompareTesFactures
 
-Comparia est une plateforme de comparateurs intelligents pour les Français et les frontaliers Suisse-France.
+CompareTesFactures est une plateforme de comparateurs intelligents pour les Français et les frontaliers Suisse-France.
 
 L’application aide l’utilisateur à :
 - détecter ses pertes invisibles ;
@@ -80,10 +80,12 @@ CRON_SECRET=
 Variables publiques recommandées pour la production :
 
 ```bash
-NEXT_PUBLIC_SITE_URL=https://ton-domaine.fr
+NEXT_PUBLIC_SITE_URL=https://comparetesfactures.fr
 NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=
-NEXT_PUBLIC_CONTACT_EMAIL=contact@ton-domaine.fr
-NEXT_PUBLIC_PRIVACY_EMAIL=privacy@ton-domaine.fr
+NEXT_PUBLIC_CONTACT_EMAIL=contact@comparetesfactures.fr
+NEXT_PUBLIC_SUPPORT_EMAIL=support@comparetesfactures.fr
+NEXT_PUBLIC_PRIVACY_EMAIL=privacy@comparetesfactures.fr
+NEXT_PUBLIC_DPO_EMAIL=dpo@comparetesfactures.fr
 NEXT_PUBLIC_LEGAL_EDITOR_NAME=
 NEXT_PUBLIC_LEGAL_EDITOR_STATUS=
 NEXT_PUBLIC_LEGAL_COMPANY_ID=
@@ -111,7 +113,7 @@ Routes disponibles :
 - `POST /api/diagnostics` : diagnostic + sauvegarde + résumé IA.
 - `POST /api/ai/analyze` : analyse IA seule, utile pour tester le moteur.
 
-Sans `MISTRAL_API_KEY`, Comparia utilise un fallback explicable basé sur les règles internes.
+Sans `MISTRAL_API_KEY`, CompareTesFactures utilise un fallback explicable basé sur les règles internes.
 
 ## Importer les offres Awin
 
@@ -148,10 +150,10 @@ L’import classe les programmes Awin acceptés par comparateur, génère des li
 
 ## Connecter Google Search Console
 
-Méthode recommandée : propriété **Préfixe de l’URL** sur `https://www.comparetesfactures.fr`.
+Méthode recommandée : propriété **Préfixe de l’URL** sur `https://comparetesfactures.fr`.
 
 1. Ouvrir Google Search Console.
-2. Ajouter la propriété `https://www.comparetesfactures.fr`.
+2. Ajouter la propriété `https://comparetesfactures.fr`.
 3. Choisir la méthode **Balise HTML**.
 4. Copier uniquement le contenu de la balise, par exemple dans :
 
@@ -175,11 +177,11 @@ NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=CODE_GOOGLE_ICI
 7. Soumettre le sitemap :
 
 ```text
-https://www.comparetesfactures.fr/sitemap.xml
+https://comparetesfactures.fr/sitemap.xml
 ```
 
 À vérifier après déploiement :
-- `/` affiche la landing Comparia ;
+- `/` affiche la landing CompareTesFactures ;
 - `/comparateurs` affiche les catégories ;
 - `/mentions-legales`, `/politique-confidentialite`, `/transparence-affiliation`, `/contact` sont accessibles ;
 - `/sitemap.xml` et `/robots.txt` répondent ;

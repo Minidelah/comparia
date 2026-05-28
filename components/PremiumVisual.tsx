@@ -1,5 +1,5 @@
 import Image from "next/image";
-import CompariaIcon, { type IconName } from "@/components/CompariaIcon";
+import BrandIcon, { type IconName } from "@/components/BrandIcon";
 import type { VisualTone } from "@/lib/visuals";
 
 type Props = {
@@ -99,7 +99,7 @@ export default function PremiumVisual({
             <div className="flex items-center justify-between gap-3">
               <div className="flex min-w-0 items-center gap-3">
                 <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border ${styles.badge}`}>
-                  <CompariaIcon name={icon} className="h-5 w-5" />
+                  <BrandIcon name={icon} className="h-5 w-5" />
                 </span>
                 <div className="min-w-0">
                   {eyebrow && <p className={`text-xs font-semibold uppercase tracking-[0.22em] ${styles.text}`}>{eyebrow}</p>}

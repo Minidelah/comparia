@@ -4,9 +4,9 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { captureAttribution } from "@/lib/analytics/attribution";
 
-const VISITOR_KEY = "comparia_visitor_id";
-const SESSION_KEY = "comparia_session_id";
-const LAST_PAGE_VIEW_KEY = "comparia_last_page_view";
+const VISITOR_KEY = "ctf_visitor_id";
+const SESSION_KEY = "ctf_session_id";
+const LAST_PAGE_VIEW_KEY = "ctf_last_page_view";
 const PRESENCE_INTERVAL_MS = 30_000;
 
 export default function AnalyticsTracker() {

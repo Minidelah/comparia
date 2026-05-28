@@ -212,7 +212,7 @@ export async function importAwinOffers({ dryRun = false } = {}): Promise<AwinImp
   }
   const classified = classifyProgrammes(programmes);
   if (programmes.length > 0 && classified.length === 0) {
-    warnings.push("Programmes Awin trouvés, mais aucun ne correspond encore clairement aux comparateurs Comparia.");
+    warnings.push("Programmes Awin trouvés, mais aucun ne correspond encore clairement aux comparateurs CompareTesFactures.");
   }
   const preparedOffers = await buildOfferRows({ token, publisherId, classified, warnings });
   const couponImport = await buildCouponRows({ token, publisherId, classified, warnings });
@@ -582,9 +582,9 @@ async function generateAwinLinks({
     advertiserId: programme.id,
     destinationUrl: normalizeDestinationUrl(programme.displayUrl),
     parameters: {
-      clickref: `comparia_${categorySlug}`,
+      clickref: `ctf_${categorySlug}`,
       clickref2: String(programme.id),
-      campaign: "comparia",
+      campaign: "comparetesfactures",
     },
     meta: {
       key: getLinkKey(programme.id, categorySlug),
@@ -914,7 +914,7 @@ function appendAwinClickref(value: string | null | undefined, categorySlug: stri
   if (!value || !isSafeUrl(value)) return null;
   try {
     const url = new URL(value);
-    url.searchParams.set("clickref", `comparia_${categorySlug}`);
+    url.searchParams.set("clickref", `ctf_${categorySlug}`);
     url.searchParams.set("clickref2", categorySlug);
     return url.toString();
   } catch {

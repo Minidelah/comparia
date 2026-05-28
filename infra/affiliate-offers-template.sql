@@ -1,4 +1,4 @@
--- Comparia affiliate offers template
+-- CompareTesFactures affiliate offers template
 -- Remplace les affiliate_url par TES liens affiliés avant de lancer ce fichier.
 -- Important : la colonne category doit correspondre au slug du comparateur.
 

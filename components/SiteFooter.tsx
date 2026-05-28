@@ -1,11 +1,12 @@
 import Link from "next/link";
+import { siteConfig } from "@/lib/site";
 
 export default function SiteFooter() {
   return (
     <footer className="border-t border-white/10 px-5 py-10 text-sm text-slate-400 sm:px-8 lg:px-10">
       <div className="mx-auto flex max-w-7xl flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="font-bold uppercase tracking-[0.24em] text-white">Comparia</p>
+          <p className="font-bold uppercase tracking-[0.24em] text-white">{siteConfig.name}</p>
           <p className="mt-3 max-w-xl leading-6">
             Des comparateurs pensés pour aider les utilisateurs à comprendre, choisir et activer les meilleures offres sans perdre le fil.
           </p>
