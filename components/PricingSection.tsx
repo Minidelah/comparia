@@ -48,7 +48,7 @@ export default function PricingSection({ title, description, plans, className }:
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {plans.map((plan, index) => (
+          {plans.map((plan) => (
             <div
               key={plan.id}
               className={cn("card-premium relative flex flex-col",

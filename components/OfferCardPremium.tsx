@@ -45,7 +45,6 @@ export default function OfferCardPremium({ offer, className, variant = "default"
         <div className="flex min-w-0 items-center gap-3">
           <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white p-2.5 shadow-lg shadow-black/25 ring-1 ring-black/5">
             {offer.logo ? (
-              // eslint-disable-next-line @next/next/no-img-element
               <img src={offer.logo} alt="" width={36} height={36} loading="lazy" className="h-9 w-9 object-contain" />
             ) : (
               <span className="text-sm font-black text-neutral-900">{offer.provider?.slice(0, 1) ?? "C"}</span>

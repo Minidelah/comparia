@@ -32,7 +32,7 @@ export default function Timeline({ items, className }: Props) {
       <div className="absolute left-4 top-0 h-full w-1 border-l border-neutral-800" />
 
       <div className="space-y-8">
-        {items.map((item, index) => (
+        {items.map((item) => (
           <div key={item.id} className="relative flex gap-6">
             {/* Icon */}
             <div className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full">

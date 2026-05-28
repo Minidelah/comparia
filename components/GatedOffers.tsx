@@ -105,7 +105,6 @@ export default function GatedOffers({ categorySlug, categoryTitle, categorySavin
                       <div className="flex items-center justify-between gap-2">
                         <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white p-2 shadow-lg shadow-black/20">
                           {offer.logo ? (
-                            // eslint-disable-next-line @next/next/no-img-element
                             <img src={offer.logo} alt="" width={28} height={28} loading="lazy" className="h-7 w-7 object-contain" />
                           ) : (
                             <BrandIcon name="shield" className="h-5 w-5 text-slate-950" />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import BrandIcon from "@/components/BrandIcon";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
@@ -24,12 +24,6 @@ export default function ModalPremium({
   className,
   overlayClassName,
 }: Props) {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -42,7 +36,7 @@ export default function ModalPremium({
     };
   }, [isOpen]);
 
-  if (!isOpen || !isMounted) return null;
+  if (!isOpen) return null;
 
   const sizeClasses = {
     sm: "max-w-md",

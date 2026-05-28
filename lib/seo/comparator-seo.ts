@@ -95,7 +95,7 @@ function savingPhrase(category: Category) {
 export function getComparatorSeo(category: Category): ComparatorSeoContent {
   const label = lowercaseFirst(category.title);
   const base: ComparatorSeoContent = {
-    title: `Comparateur ${category.title} : estime tes économies | ${siteConfig.name}`,
+    title: `Comparateur ${category.title} : estime tes économies`,
     description: `Compare ${label} avec ${siteConfig.name} : questionnaire gratuit, recommandations lisibles, offres triées et ${savingPhrase(category)}.`,
     intro: groupIntros[category.group],
     benefits: groupBenefits[category.group],

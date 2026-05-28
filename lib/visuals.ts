@@ -61,10 +61,10 @@ export const showcaseVisuals: VisualAsset[] = [
     alt: "Cartes bancaires premium et interface de paiement fintech",
     eyebrow: "Banque",
     title: "Frais et cartes utiles",
-    body: "Une identité visuelle plus fintech pour préparer la comparaison banque, carte et services.",
+    body: "Frais, carte, app mobile et usage voyage sont posés clairement avant de choisir.",
     tone: "violet",
     fit: "contain",
-    metric: "bientôt",
+    metric: "jusqu’à 140€/an",
   },
   {
     src: "/visuals/frontier-chf.svg",
@@ -195,7 +195,7 @@ const categoryVisuals: Record<string, VisualAsset> = {
     body: "Le bon panier dépend du foyer, pas seulement du prix d’appel.",
     tone: "blue",
     fit: "contain",
-    metric: "bientôt",
+    metric: "jusqu’à 180€/an",
   },
   "forfait-mobile": showcaseVisuals[1],
   abonnements: {

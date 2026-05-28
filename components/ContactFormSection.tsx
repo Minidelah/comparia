@@ -76,7 +76,7 @@ export default function ContactFormSection({
       await onSubmit(formData);
       setSubmitStatus("success");
       setFormData({});
-    } catch (error) {
+    } catch {
       setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);

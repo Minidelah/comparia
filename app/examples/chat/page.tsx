@@ -30,7 +30,7 @@ export default function ChatPage() {
       icon: "comparison",
     },
     {
-      href: "/support",
+      href: "/examples/support",
       label: "Support",
       icon: "help",
     },
@@ -41,37 +41,37 @@ export default function ChatPage() {
       title: "Comparateurs",
       links: [
         { href: "/comparateurs/box-internet", label: "Box Internet" },
-        { href: "/comparateurs/mobile", label: "Mobile" },
-        { href: "/comparateurs/box-mobile", label: "Box + Mobile" },
+        { href: "/comparateurs/forfait-mobile", label: "Mobile" },
+        { href: "/comparateurs/box-internet", label: "Box + Mobile" },
         { href: "/comparateurs/assurance-auto", label: "Assurance Auto" },
         { href: "/comparateurs/assurance-habitation", label: "Assurance Habitation" },
-        { href: "/comparateurs/energie", label: "Énergie" },
+        { href: "/comparateurs/electricite", label: "Énergie" },
       ],
     },
     {
       title: "Ressources",
       links: [
         { href: "/guides", label: "Guides pratiques" },
-        { href: "/blog", label: "Blog" },
-        { href: "/faq", label: "FAQ" },
-        { href: "/glossaire", label: "Glossaire" },
+        { href: "/examples/blog", label: "Blog" },
+        { href: "/examples/faq", label: "FAQ" },
+        { href: "/examples/glossaire", label: "Glossaire" },
       ],
     },
     {
       title: "Entreprise",
       links: [
         { href: "/a-propos", label: "À propos" },
-        { href: "/equipe", label: "Notre équipe" },
-        { href: "/carrieres", label: "Carrières" },
-        { href: "/presse", label: "Presse" },
+        { href: "/examples/team", label: "Notre équipe" },
+        { href: "/examples/carrieres", label: "Carrières" },
+        { href: "/examples/presse", label: "Presse" },
       ],
     },
     {
       title: "Support",
       links: [
         { href: "/contact", label: "Contact" },
-        { href: "/support", label: "Centre d'aide" },
-        { href: "/statut", label: "Statut du service" },
+        { href: "/examples/support", label: "Centre d'aide" },
+        { href: "/examples/statut", label: "Statut du service" },
       ],
     },
   ];
@@ -87,7 +87,7 @@ export default function ChatPage() {
     { href: "/mentions-legales", label: "Mentions légales" },
     { href: "/politique-confidentialite", label: "Politique de confidentialité" },
     { href: "/cookies", label: "Gestion des cookies" },
-    { href: "/cgu", label: "Conditions générales" },
+    { href: "/examples/cgu", label: "Conditions générales" },
   ];
 
   const scrollToBottom = () => {
@@ -142,7 +142,7 @@ export default function ChatPage() {
     }
 
     if (lowerMessage.includes("mobile") || lowerMessage.includes("forfait")) {
-      return "Pour comparer les forfaits mobile, rendez-vous sur notre page dédiée : /comparateurs/mobile. Vous y trouverez les meilleures offres du marché adaptées à vos besoins. Souhaitez-vous que je vous explique comment utiliser le comparateur ?";
+      return "Pour comparer les forfaits mobile, rendez-vous sur notre page dédiée : /comparateurs/forfait-mobile. Vous y trouverez les meilleures offres du marché adaptées à vos besoins. Souhaitez-vous que je vous explique comment utiliser le comparateur ?";
     }
 
     if (lowerMessage.includes("box") || lowerMessage.includes("internet")) {
@@ -154,7 +154,7 @@ export default function ChatPage() {
     }
 
     if (lowerMessage.includes("énergie") || lowerMessage.includes("électricité") || lowerMessage.includes("gaz")) {
-      return "Notre comparateur d'énergie vous aide à trouver le fournisseur d'électricité ou de gaz le plus adapté à votre consommation et votre budget. Accédez au comparateur ici : /comparateurs/energie.";
+      return "Notre comparateur d'énergie vous aide à trouver le fournisseur d'électricité ou de gaz le plus adapté à votre consommation et votre budget. Accédez au comparateur ici : /comparateurs/electricite.";
     }
 
     if (lowerMessage.includes("prix") || lowerMessage.includes("tarif")) {
@@ -186,7 +186,7 @@ export default function ChatPage() {
         <Breadcrumb
           items={[
             { href: "/", label: "Accueil", icon: "home" },
-            { href: "/support", label: "Support", icon: "help" },
+            { href: "/examples/support", label: "Support", icon: "help" },
             { label: "Chat en direct", icon: "message-circle" },
           ]}
           className="mb-6"
@@ -200,7 +200,7 @@ export default function ChatPage() {
           </p>
 
           <div className="mt-6 flex flex-wrap justify-center gap-4">
-            <Link href="/support">
+            <Link href="/examples/support">
               <Button variant="secondary" size="lg" className="gap-2">
                 <BrandIcon name="help" className="h-4 w-4" />
                 Centre d'aide
@@ -420,7 +420,7 @@ export default function ChatPage() {
           </p>
 
           <div className="flex flex-wrap justify-center gap-4">
-            <Link href="/support">
+            <Link href="/examples/support">
               <Button variant="primary" size="lg" className="gap-2">
                 <BrandIcon name="help" className="h-4 w-4" />
                 Centre d'aide

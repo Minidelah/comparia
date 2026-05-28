@@ -238,8 +238,8 @@ export const categories: Category[] = [
     title: "Banque",
     group: "Finances",
     description: "Compare frais, services et cartes réellement utiles.",
-    saving: "bientôt",
-    status: "coming-soon",
+    saving: "jusqu’à 140€/an",
+    status: "active",
     headline: "Compare les frais bancaires contre les services que tu utilises vraiment.",
     questions: ["Quelle banque utilises-tu ?", "Quels services te sont indispensables ?"],
     flow: [

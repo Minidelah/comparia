@@ -7,7 +7,6 @@ import BrandIcon, { getCategoryIcon } from "@/components/BrandIcon";
 import SiteFooter from "@/components/SiteFooter";
 import PremiumVisual from "@/components/PremiumVisual";
 import { cashbackVisual, heroVisual, showcaseVisuals } from "@/lib/visuals";
-import { Button } from "@/components/ui/Button";
 
 const pillars = categories
   .filter((category) => category.status === "active")
@@ -62,13 +61,6 @@ const steps = [
     title: "Compare et économise",
     description: "Accès aux meilleures offres + cash-back automatique",
   },
-];
-
-const partnerSignals = [
-  ["Consentement clair", "Le formulaire demande une acceptation explicite avant toute mise en relation."],
-  ["Leads qualifiés", "Chaque demande est rattachée à une catégorie, des réponses et un score d'intention."],
-  ["Tracking propre", "Clics affiliés, offres débloquées et événements du tunnel sont mesurés côté serveur."],
-  ["Transparence", "Les liens affiliés, sponsorisations et estimations sont expliqués avant redirection."],
 ];
 
 export default function Home() {

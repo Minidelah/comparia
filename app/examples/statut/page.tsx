@@ -25,7 +25,7 @@ export default function StatutPage() {
       icon: "comparison",
     },
     {
-      href: "/statut",
+      href: "/examples/statut",
       label: "Statut",
       icon: "activity",
     },
@@ -36,37 +36,37 @@ export default function StatutPage() {
       title: "Comparateurs",
       links: [
         { href: "/comparateurs/box-internet", label: "Box Internet" },
-        { href: "/comparateurs/mobile", label: "Mobile" },
-        { href: "/comparateurs/box-mobile", label: "Box + Mobile" },
+        { href: "/comparateurs/forfait-mobile", label: "Mobile" },
+        { href: "/comparateurs/box-internet", label: "Box + Mobile" },
         { href: "/comparateurs/assurance-auto", label: "Assurance Auto" },
         { href: "/comparateurs/assurance-habitation", label: "Assurance Habitation" },
-        { href: "/comparateurs/energie", label: "Énergie" },
+        { href: "/comparateurs/electricite", label: "Énergie" },
       ],
     },
     {
       title: "Ressources",
       links: [
         { href: "/guides", label: "Guides pratiques" },
-        { href: "/blog", label: "Blog" },
-        { href: "/faq", label: "FAQ" },
-        { href: "/glossaire", label: "Glossaire" },
+        { href: "/examples/blog", label: "Blog" },
+        { href: "/examples/faq", label: "FAQ" },
+        { href: "/examples/glossaire", label: "Glossaire" },
       ],
     },
     {
       title: "Entreprise",
       links: [
         { href: "/a-propos", label: "À propos" },
-        { href: "/equipe", label: "Notre équipe" },
-        { href: "/carrieres", label: "Carrières" },
-        { href: "/presse", label: "Presse" },
+        { href: "/examples/team", label: "Notre équipe" },
+        { href: "/examples/carrieres", label: "Carrières" },
+        { href: "/examples/presse", label: "Presse" },
       ],
     },
     {
       title: "Support",
       links: [
         { href: "/contact", label: "Contact" },
-        { href: "/support", label: "Centre d'aide" },
-        { href: "/statut", label: "Statut du service" },
+        { href: "/examples/support", label: "Centre d'aide" },
+        { href: "/examples/statut", label: "Statut du service" },
       ],
     },
   ];
@@ -82,7 +82,7 @@ export default function StatutPage() {
     { href: "/mentions-legales", label: "Mentions légales" },
     { href: "/politique-confidentialite", label: "Politique de confidentialité" },
     { href: "/cookies", label: "Gestion des cookies" },
-    { href: "/cgu", label: "Conditions générales" },
+    { href: "/examples/cgu", label: "Conditions générales" },
   ];
 
   const services = [
@@ -192,7 +192,7 @@ export default function StatutPage() {
           </p>
 
           <div className="mt-6 flex flex-wrap justify-center gap-4">
-            <Link href="/support">
+            <Link href="/examples/support">
               <Button variant="primary" size="lg" className="gap-2">
                 <BrandIcon name="help" className="h-4 w-4" />
                 Centre d'aide
@@ -312,7 +312,7 @@ export default function StatutPage() {
           </p>
 
           <div className="flex flex-wrap justify-center gap-4">
-            <Link href="/support">
+            <Link href="/examples/support">
               <Button variant="primary" size="lg" className="gap-2">
                 <BrandIcon name="help" className="h-4 w-4" />
                 Centre d'aide

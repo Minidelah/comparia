@@ -46,7 +46,7 @@ export default function NewsletterSection({
       await onSubmit(email);
       setSubmitStatus("success");
       setEmail("");
-    } catch (err) {
+    } catch {
       setSubmitStatus("error");
       setError("Une erreur est survenue. Veuillez réessayer.");
     } finally {
