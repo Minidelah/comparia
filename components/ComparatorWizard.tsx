@@ -124,6 +124,11 @@ export default function ComparatorWizard({ category }: { category: Category }) {
         }),
       });
       const payload = (await response.json()) as LeadResponse;
+
+      if (!response.ok) {
+        throw new Error(payload.reason ?? payload.details?.message ?? "lead_api_rejected");
+      }
+
       const nextState: LeadState = payload.persisted ? "saved" : "local";
       setLeadState(nextState);
       if (!payload.persisted) {

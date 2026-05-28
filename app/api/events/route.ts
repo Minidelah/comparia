@@ -11,6 +11,7 @@ const ALLOWED_EVENTS = new Set([
   "lead_capture_failed",
   "offers_unlocked",
   "affiliate_cta_clicked",
+  "diagnostic_completed",
 ]);
 
 export async function POST(request: Request) {

@@ -24,15 +24,53 @@ type EditableOfferState = {
   priority: string;
 };
 
+type NewOfferState = {
+  category: string;
+  provider: string;
+  title: string;
+  affiliateUrl: string;
+  description: string;
+  monthlyCost: string;
+  annualSavings: string;
+  cashback: string;
+  priority: string;
+  sponsored: boolean;
+};
+
 type Props = {
   offers: AdminOfferRow[];
 };
+
+const priorityCategories = [
+  "box-internet",
+  "forfait-mobile",
+  "electricite",
+  "gaz",
+  "assurance-habitation",
+  "assurance-auto",
+  "mutuelle-sante",
+  "banque",
+  "change-chf-eur",
+];
 
 export default function AdminOffersManager({ offers }: Props) {
   const [rows, setRows] = useState(offers);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [createDraft, setCreateDraft] = useState<NewOfferState>({
+    category: "box-internet",
+    provider: "",
+    title: "",
+    affiliateUrl: "",
+    description: "",
+    monthlyCost: "",
+    annualSavings: "",
+    cashback: "",
+    priority: "80",
+    sponsored: false,
+  });
   const [drafts, setDrafts] = useState<Record<string, EditableOfferState>>(() =>
     Object.fromEntries(offers.map((offer) => [offer.id, buildDraft(offer)])),
   );
@@ -83,6 +121,64 @@ export default function AdminOffersManager({ offers }: Props) {
     }
   }
 
+  async function createOffer(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSavingId("new-offer");
+    setMessage(null);
+    setError(null);
+
+    try {
+      const token = new URLSearchParams(window.location.search).get("token");
+      const response = await fetch("/api/admin/offers", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          category: createDraft.category,
+          provider: createDraft.provider,
+          title: createDraft.title,
+          affiliateUrl: createDraft.affiliateUrl,
+          description: createDraft.description,
+          monthlyCost: parseOptionalNumber(createDraft.monthlyCost),
+          annualSavings: parseOptionalNumber(createDraft.annualSavings),
+          cashbackAmount: parseOptionalNumber(createDraft.cashback),
+          priority: parseOptionalNumber(createDraft.priority),
+          sponsored: createDraft.sponsored,
+          active: true,
+        }),
+      });
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(typeof payload.error === "string" ? payload.error : "Création impossible.");
+      }
+
+      const created = payload.offer as AdminOfferRow;
+      setRows((current) => [created, ...current]);
+      setDrafts((current) => ({ ...current, [created.id]: buildDraft(created) }));
+      setCreateDraft({
+        category: "box-internet",
+        provider: "",
+        title: "",
+        affiliateUrl: "",
+        description: "",
+        monthlyCost: "",
+        annualSavings: "",
+        cashback: "",
+        priority: "80",
+        sponsored: false,
+      });
+      setCreateOpen(false);
+      setMessage("Offre partenaire ajoutée.");
+    } catch (caughtError) {
+      setError(caughtError instanceof Error ? caughtError.message : "Création impossible.");
+    } finally {
+      setSavingId(null);
+    }
+  }
+
   function updateDraft(offerId: string, key: keyof EditableOfferState, value: string) {
     setDrafts((current) => ({
       ...current,
@@ -106,6 +202,69 @@ export default function AdminOffersManager({ offers }: Props) {
         <div className="rounded-2xl border border-emerald-300/20 bg-emerald-400/10 px-4 py-3 text-sm font-semibold text-emerald-100">
           {rows.length} offre{rows.length > 1 ? "s" : ""} en base
         </div>
+      </div>
+
+      <div className="mt-5 rounded-[1.5rem] border border-cyan-300/15 bg-cyan-400/[0.06] p-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold text-white">Ajouter une offre partenaire manuelle</p>
+            <p className="mt-1 text-sm leading-6 text-slate-400">
+              Pratique pour brancher un lien Awin, un lien de parrainage ou une offre directe sans attendre un import.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setCreateOpen((value) => !value)}
+            className="rounded-2xl bg-white px-4 py-2.5 text-sm font-black text-slate-950 transition hover:bg-cyan-100"
+          >
+            {createOpen ? "Fermer" : "Ajouter une offre"}
+          </button>
+        </div>
+
+        {createOpen && (
+          <form onSubmit={createOffer} className="mt-4 grid gap-3 lg:grid-cols-4">
+            <label className="block">
+              <span className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Catégorie</span>
+              <select
+                value={createDraft.category}
+                onChange={(event) => setCreateDraft((current) => ({ ...current, category: event.target.value }))}
+                className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950/70 px-3 py-3 text-sm text-white outline-none transition focus:border-cyan-300/50"
+              >
+                {priorityCategories.map((category) => (
+                  <option key={category} value={category}>
+                    {formatSlug(category)}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <AdminTextInput label="Partenaire" value={createDraft.provider} required onChange={(value) => setCreateDraft((current) => ({ ...current, provider: value }))} />
+            <AdminTextInput label="Nom de l’offre" value={createDraft.title} required onChange={(value) => setCreateDraft((current) => ({ ...current, title: value }))} />
+            <AdminTextInput label="Lien affilié" value={createDraft.affiliateUrl} required placeholder="https://... ou /comparateurs/..." onChange={(value) => setCreateDraft((current) => ({ ...current, affiliateUrl: value }))} />
+            <div className="lg:col-span-2">
+              <AdminTextInput label="Description" value={createDraft.description} onChange={(value) => setCreateDraft((current) => ({ ...current, description: value }))} />
+            </div>
+            <AdminNumberInput label="Prix €/mois" value={createDraft.monthlyCost} onChange={(value) => setCreateDraft((current) => ({ ...current, monthlyCost: value }))} />
+            <AdminNumberInput label="Économie €/an" value={createDraft.annualSavings} onChange={(value) => setCreateDraft((current) => ({ ...current, annualSavings: value }))} />
+            <AdminNumberInput label="Cashback €" value={createDraft.cashback} onChange={(value) => setCreateDraft((current) => ({ ...current, cashback: value }))} />
+            <AdminNumberInput label="Priorité business" value={createDraft.priority} onChange={(value) => setCreateDraft((current) => ({ ...current, priority: value }))} />
+            <label className="flex items-center gap-3 rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm font-semibold text-slate-200">
+              <input
+                type="checkbox"
+                checked={createDraft.sponsored}
+                onChange={(event) => setCreateDraft((current) => ({ ...current, sponsored: event.target.checked }))}
+                className="h-4 w-4 accent-cyan-400"
+              />
+              Offre sponsorisée
+            </label>
+            <button
+              type="submit"
+              disabled={savingId === "new-offer"}
+              className="rounded-2xl bg-gradient-to-r from-cyan-400 to-emerald-400 px-4 py-3 text-sm font-black text-slate-950 transition hover:shadow-lg hover:shadow-cyan-500/20 disabled:opacity-60"
+            >
+              {savingId === "new-offer" ? "Ajout…" : "Créer l’offre"}
+            </button>
+          </form>
+        )}
       </div>
 
       {(message || error) && (
@@ -202,6 +361,34 @@ function AdminNumberInput({ label, value, onChange }: { label: string; value: st
         value={value}
         onChange={(event) => onChange(event.target.value)}
         className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950/70 px-3 py-3 text-sm text-white outline-none transition focus:border-cyan-300/50"
+      />
+    </label>
+  );
+}
+
+function AdminTextInput({
+  label,
+  value,
+  onChange,
+  required,
+  placeholder,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  required?: boolean;
+  placeholder?: string;
+}) {
+  return (
+    <label className="block">
+      <span className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">{label}</span>
+      <input
+        type="text"
+        value={value}
+        required={required}
+        placeholder={placeholder}
+        onChange={(event) => onChange(event.target.value)}
+        className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950/70 px-3 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-cyan-300/50"
       />
     </label>
   );
