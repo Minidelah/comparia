@@ -88,7 +88,7 @@ export default function MentionsLegalesPage() {
     <div className="min-h-screen bg-gradient-to-br from-neutral-950 via-neutral-900 to-neutral-950 text-white">
       {/* Navigation */}
       <NavigationPremium
-        logo={{ href: "/", label: "CompareTesFactures", icon: "logo" }}
+        logo={{ href: "/", label: "Comparia", icon: "logo" }}
         links={navLinks}
         cta={{ href: "/comparateurs", label: "Comparer maintenant", icon: "comparison" }}
       />
@@ -107,7 +107,7 @@ export default function MentionsLegalesPage() {
         <div className="mb-12 text-center">
           <h1 className="text-4xl font-bold text-white mb-4">Mentions légales</h1>
           <p className="text-xl text-neutral-400 max-w-3xl mx-auto">
-            Informations légales sur la société CompareTesFactures et ses services
+            Informations légales sur la société Comparia et ses services
           </p>
 
           <div className="mt-6 flex flex-wrap justify-center gap-4">
@@ -133,7 +133,7 @@ export default function MentionsLegalesPage() {
           <Card className="mb-6">
             <CardHeader title="Éditeur du site" />
             <CardBody>
-              <p className="mb-2"><strong>Raison sociale :</strong> CompareTesFactures</p>
+              <p className="mb-2"><strong>Raison sociale :</strong> Comparia</p>
               <p className="mb-2"><strong>Siège social :</strong> 123 Rue de la Comparaison, 75001 Paris, France</p>
               <p className="mb-2"><strong>Capital social :</strong> 100 000 €</p>
               <p className="mb-2"><strong>RCS Paris :</strong> 852 147 963</p>
@@ -157,10 +157,10 @@ export default function MentionsLegalesPage() {
             <CardHeader title="Propriété intellectuelle" />
             <CardBody>
               <p className="mb-4">
-                L'ensemble du contenu du site CompareTesFactures (textes, images, logos, vidéos, etc.) est protégé par le droit d'auteur et la propriété intellectuelle.
+                L'ensemble du contenu du site Comparia (textes, images, logos, vidéos, etc.) est protégé par le droit d'auteur et la propriété intellectuelle.
               </p>
               <p className="mb-4">
-                Toute reproduction, représentation, modification, publication, adaptation de tout ou partie des éléments du site, quel que soit le moyen ou le procédé utilisé, est interdite, sauf autorisation écrite préalable de CompareTesFactures.
+                Toute reproduction, représentation, modification, publication, adaptation de tout ou partie des éléments du site, quel que soit le moyen ou le procédé utilisé, est interdite, sauf autorisation écrite préalable de Comparia.
               </p>
               <p>
                 Les marques et logos reproduits sur le site sont déposés par les sociétés qui en sont propriétaires.
@@ -172,16 +172,16 @@ export default function MentionsLegalesPage() {
             <CardHeader title="Responsabilité" />
             <CardBody>
               <p className="mb-4">
-                Les informations et services proposés sur le site CompareTesFactures sont fournis à titre indicatif et ne sauraient engager la responsabilité de CompareTesFactures.
+                Les informations et services proposés sur le site Comparia sont fournis à titre indicatif et ne sauraient engager la responsabilité de Comparia.
               </p>
               <p className="mb-4">
-                CompareTesFactures s'efforce d'assurer au mieux de ses possibilités l'exactitude et la mise à jour des informations diffusées sur ce site, et se réserve le droit de corriger, à tout moment et sans préavis, le contenu.
+                Comparia s'efforce d'assurer au mieux de ses possibilités l'exactitude et la mise à jour des informations diffusées sur ce site, et se réserve le droit de corriger, à tout moment et sans préavis, le contenu.
               </p>
               <p className="mb-4">
-                CompareTesFactures ne saurait être tenue responsable des dommages directs ou indirects pouvant résulter de l'utilisation du site ou des informations qui y sont contenues.
+                Comparia ne saurait être tenue responsable des dommages directs ou indirects pouvant résulter de l'utilisation du site ou des informations qui y sont contenues.
               </p>
               <p>
-                Les liens hypertextes mis en place dans le cadre du présent site internet en direction d'autres ressources présentes sur le réseau Internet ne sauraient engager la responsabilité de CompareTesFactures.
+                Les liens hypertextes mis en place dans le cadre du présent site internet en direction d'autres ressources présentes sur le réseau Internet ne sauraient engager la responsabilité de Comparia.
               </p>
             </CardBody>
           </Card>
@@ -190,7 +190,7 @@ export default function MentionsLegalesPage() {
             <CardHeader title="Protection des données personnelles" />
             <CardBody>
               <p className="mb-4">
-                CompareTesFactures s'engage à protéger la confidentialité des données personnelles de ses utilisateurs conformément à la réglementation en vigueur, notamment le Règlement Général sur la Protection des Données (RGPD).
+                Comparia s'engage à protéger la confidentialité des données personnelles de ses utilisateurs conformément à la réglementation en vigueur, notamment le Règlement Général sur la Protection des Données (RGPD).
               </p>
               <p className="mb-4">
                 Pour plus d'informations sur la collecte, l'utilisation et la protection de vos données personnelles, veuillez consulter notre <Link href="/politique-confidentialite" className="text-primary-400 hover:underline">Politique de confidentialité</Link>.
@@ -205,7 +205,7 @@ export default function MentionsLegalesPage() {
             <CardHeader title="Cookies" />
             <CardBody>
               <p className="mb-4">
-                Le site CompareTesFactures utilise des cookies pour améliorer l'expérience utilisateur, analyser le trafic et personnaliser le contenu.
+                Le site Comparia utilise des cookies pour améliorer l'expérience utilisateur, analyser le trafic et personnaliser le contenu.
               </p>
               <p className="mb-4">
                 Pour plus d'informations sur l'utilisation des cookies et vos choix en matière de cookies, veuillez consulter notre <Link href="/cookies" className="text-primary-400 hover:underline">Politique de gestion des cookies</Link>.
@@ -229,13 +229,13 @@ export default function MentionsLegalesPage() {
             <CardHeader title="Médiation" />
             <CardBody>
               <p className="mb-4">
-                Conformément aux dispositions du Code de la consommation concernant le règlement amiable des litiges, CompareTesFactures adhère au service de médiation suivant :
+                Conformément aux dispositions du Code de la consommation concernant le règlement amiable des litiges, Comparia adhère au service de médiation suivant :
               </p>
               <p className="mb-2"><strong>Médiateur du e-commerce et de la consommation</strong></p>
               <p className="mb-2">Adresse : 123 Rue de la Médiation, 75008 Paris</p>
               <p className="mb-2">Site web : <a href="https://mediateur-ecommerce.fr" className="text-primary-400 hover:underline">https://mediateur-ecommerce.fr</a></p>
               <p>
-                En cas de litige non résolu avec CompareTesFactures, vous pouvez saisir gratuitement ce médiateur.
+                En cas de litige non résolu avec Comparia, vous pouvez saisir gratuitement ce médiateur.
               </p>
             </CardBody>
           </Card>
@@ -259,7 +259,7 @@ export default function MentionsLegalesPage() {
             <CardHeader title="Modification des mentions légales" />
             <CardBody>
               <p>
-                CompareTesFactures se réserve le droit de modifier les présentes mentions légales à tout moment. Les utilisateurs sont donc invités à les consulter régulièrement. La dernière mise à jour date du 15 juin 2024.
+                Comparia se réserve le droit de modifier les présentes mentions légales à tout moment. Les utilisateurs sont donc invités à les consulter régulièrement. La dernière mise à jour date du 15 juin 2024.
               </p>
             </CardBody>
           </Card>
@@ -300,7 +300,7 @@ export default function MentionsLegalesPage() {
         sections={footerSections}
         socialLinks={socialLinks}
         legalLinks={legalLinks}
-        copyright="© 2024 CompareTesFactures. Tous droits réservés."
+        copyright="© 2024 Comparia. Tous droits réservés."
       />
     </div>
   );

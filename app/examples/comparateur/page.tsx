@@ -179,7 +179,7 @@ export default function ComparateurPage() {
       <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_12%_8%,rgba(34,211,238,0.14),transparent_28%),radial-gradient(circle_at_88%_4%,rgba(59,130,246,0.12),transparent_24%)]" />
 
       <NavigationPremium
-        logo={{ href: "/", label: "CompareTesFactures", icon: "logo" }}
+        logo={{ href: "/", label: "Comparia", icon: "logo" }}
         links={navLinks}
         cta={{ href: "/comparateurs", label: "Comparer maintenant", icon: "comparison" }}
       />
@@ -295,7 +295,7 @@ export default function ComparateurPage() {
         sections={footerSections}
         socialLinks={socialLinks}
         legalLinks={legalLinks}
-        copyright="© 2024 CompareTesFactures. Tous droits réservés."
+        copyright="© 2024 Comparia. Tous droits réservés."
       />
     </div>
   );

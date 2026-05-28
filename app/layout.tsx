@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     siteName: siteConfig.name,
     images: [
       {
-        url: "/comparetesfactures-hero.jpg",
+        url: "/comparia-hero.jpg",
         width: 1100,
         height: 587,
         alt: `${siteConfig.name} — comparateur de factures et contrats pour économiser chaque mois`,
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: defaultTitle,
     description: defaultDescription,
-    images: ["/comparetesfactures-hero.jpg"],
+    images: ["/comparia-hero.jpg"],
   },
   robots: {
     index: true,

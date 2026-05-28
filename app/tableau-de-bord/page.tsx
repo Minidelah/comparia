@@ -40,7 +40,7 @@ export default function DashboardPage() {
             <div className="mt-6 grid gap-3 sm:grid-cols-3">
               <MetricCard label="Économies détectées" value="1 284€/an" />
               <MetricCard label="Fuite ce mois-ci" value="107€" />
-              <MetricCard label="Score CompareTesFactures" value="72/100" />
+              <MetricCard label="Score Comparia" value="72/100" />
             </div>
           </div>
 

@@ -14,7 +14,7 @@ export default function AdminCompliancePanel({ offers }: { offers: AdminOfferRow
           <p className="text-sm uppercase tracking-[0.3em] text-amber-200">Compliance affiliation</p>
           <h2 className="mt-3 text-2xl font-semibold text-white">Garde-fou partenaires.</h2>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
-            Helios est compatible avec CompareTesFactures, mais la marque doit être protégée : aucun achat de mot-clé marque, et les termes sensibles doivent rester en négatif.
+            Helios est compatible avec Comparia, mais la marque doit être protégée : aucun achat de mot-clé marque, et les termes sensibles doivent rester en négatif.
           </p>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:min-w-80">

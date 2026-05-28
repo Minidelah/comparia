@@ -88,7 +88,7 @@ export default function PolitiqueConfidentialitePage() {
     <div className="min-h-screen bg-gradient-to-br from-neutral-950 via-neutral-900 to-neutral-950 text-white">
       {/* Navigation */}
       <NavigationPremium
-        logo={{ href: "/", label: "CompareTesFactures", icon: "logo" }}
+        logo={{ href: "/", label: "Comparia", icon: "logo" }}
         links={navLinks}
         cta={{ href: "/comparateurs", label: "Comparer maintenant", icon: "comparison" }}
       />
@@ -133,7 +133,7 @@ export default function PolitiqueConfidentialitePage() {
           <Card className="mb-6">
             <CardBody>
               <p className="mb-4">
-                CompareTesFactures (« CompareTesFactures », « nous », « notre ») s'engage à protéger la vie privée et les données personnelles de ses utilisateurs (« vous », « votre »).
+                Comparia (« Comparia », « nous », « notre ») s'engage à protéger la vie privée et les données personnelles de ses utilisateurs (« vous », « votre »).
               </p>
               <p className="mb-4">
                 La présente Politique de confidentialité explique quelles données personnelles nous collectons, comment nous les utilisons, avec qui nous les partageons, comment nous les protégeons, et quels sont vos droits concernant vos données personnelles.
@@ -400,7 +400,7 @@ export default function PolitiqueConfidentialitePage() {
               <p className="mb-4">
                 Si vous avez des questions ou des préoccupations concernant cette Politique de confidentialité ou nos pratiques en matière de protection des données personnelles, vous pouvez nous contacter à l'adresse suivante :
               </p>
-              <p className="mb-2"><strong>CompareTesFactures</strong></p>
+              <p className="mb-2"><strong>Comparia</strong></p>
               <p className="mb-2">À l'attention du Délégué à la Protection des Données (DPO)</p>
               <p className="mb-2">123 Rue de la Comparaison</p>
               <p className="mb-4">75001 Paris, France</p>
@@ -444,7 +444,7 @@ export default function PolitiqueConfidentialitePage() {
         sections={footerSections}
         socialLinks={socialLinks}
         legalLinks={legalLinks}
-        copyright="© 2024 CompareTesFactures. Tous droits réservés."
+        copyright="© 2024 Comparia. Tous droits réservés."
       />
     </div>
   );

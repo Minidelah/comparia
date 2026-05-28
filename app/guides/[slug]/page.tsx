@@ -23,22 +23,22 @@ export async function generateMetadata({ params }: GuidePageProps): Promise<Meta
 
   if (!guide) {
     return {
-      title: "Guide introuvable | CompareTesFactures",
+      title: "Guide introuvable | Comparia",
       robots: { index: false, follow: false },
     };
   }
 
   const visual = getCategoryVisual(guide.categorySlug);
-  const ogImage = visual.src.endsWith(".svg") ? "/comparetesfactures-hero.jpg" : visual.src;
+  const ogImage = visual.src.endsWith(".svg") ? "/comparia-hero.jpg" : visual.src;
 
   return {
-    title: `${guide.title} | CompareTesFactures`,
+    title: `${guide.title} | Comparia`,
     description: guide.description,
     alternates: {
       canonical: getGuideUrl(guide.slug),
     },
     openGraph: {
-      title: `${guide.title} | CompareTesFactures`,
+      title: `${guide.title} | Comparia`,
       description: guide.description,
       url: getGuideUrl(guide.slug),
       type: "article",
@@ -47,7 +47,7 @@ export async function generateMetadata({ params }: GuidePageProps): Promise<Meta
     },
     twitter: {
       card: "summary_large_image",
-      title: `${guide.title} | CompareTesFactures`,
+      title: `${guide.title} | Comparia`,
       description: guide.description,
       images: [ogImage],
     },
@@ -141,7 +141,7 @@ export default async function GuideDetailPage({ params }: GuidePageProps) {
           </div>
 
           <div className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-6">
-            <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Méthode CompareTesFactures</p>
+            <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Méthode Comparia</p>
             <div className="mt-5 grid gap-3 md:grid-cols-3">
               {guide.steps.map((step, index) => (
                 <article key={step.title} className="rounded-[1.35rem] border border-white/10 bg-slate-950/50 p-4">

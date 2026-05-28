@@ -93,7 +93,7 @@ export default function TeamPage() {
       name: "Jean Dupont",
       role: "Fondateur & CEO",
       avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-      bio: "Entrepreneur passionné par les nouvelles technologies, Jean a fondé CompareTesFactures en 2018 avec pour mission de simplifier la comparaison des offres pour les consommateurs.",
+      bio: "Entrepreneur passionné par les nouvelles technologies, Jean a fondé Comparia en 2018 avec pour mission de simplifier la comparaison des offres pour les consommateurs.",
       social: [
         { name: "LinkedIn", url: "https://linkedin.com", icon: "linkedin" },
         { name: "Twitter", url: "https://twitter.com", icon: "twitter" },
@@ -201,7 +201,7 @@ export default function TeamPage() {
     <div className="min-h-screen bg-gradient-to-br from-neutral-950 via-neutral-900 to-neutral-950 text-white">
       {/* Navigation */}
       <NavigationPremium
-        logo={{ href: "/", label: "CompareTesFactures", icon: "logo" }}
+        logo={{ href: "/", label: "Comparia", icon: "logo" }}
         links={navLinks}
         cta={{ href: "/comparateurs", label: "Comparer maintenant", icon: "comparison" }}
       />
@@ -221,7 +221,7 @@ export default function TeamPage() {
         <div className="mb-12 text-center">
           <h1 className="text-4xl font-bold text-white mb-4">Notre équipe</h1>
           <p className="text-xl text-neutral-400 max-w-3xl mx-auto">
-            Découvrez les talents passionnés qui rendent CompareTesFactures possible
+            Découvrez les talents passionnés qui rendent Comparia possible
           </p>
 
           <div className="mt-6 flex flex-wrap justify-center gap-4">
@@ -243,7 +243,7 @@ export default function TeamPage() {
         {/* Stats */}
         <StatsSection
           title="Quelques chiffres"
-          description="Découvrez en quelques chiffres ce qui fait la force de CompareTesFactures"
+          description="Découvrez en quelques chiffres ce qui fait la force de Comparia"
           stats={stats}
         />
 
@@ -301,7 +301,7 @@ export default function TeamPage() {
         sections={footerSections}
         socialLinks={socialLinks}
         legalLinks={legalLinks}
-        copyright="© 2024 CompareTesFactures. Tous droits réservés."
+        copyright="© 2024 Comparia. Tous droits réservés."
       />
     </div>
   );

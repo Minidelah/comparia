@@ -63,7 +63,7 @@ export default function ExamplesPage() {
 
   const testimonials = [
     {
-      quote: "Grâce à CompareTesFactures, j'ai économisé plus de 400€ par an sur mes assurances et mon abonnement mobile. Le service est incroyable !",
+      quote: "Grâce à Comparia, j'ai économisé plus de 400€ par an sur mes assurances et mon abonnement mobile. Le service est incroyable !",
       author: "Marie Dupont",
       role: "Utilisatrice depuis 2023",
       avatar: "https://randomuser.me/api/portraits/women/44.jpg",
@@ -77,7 +77,7 @@ export default function ExamplesPage() {
       rating: 5,
     },
     {
-      quote: "Enfin un comparateur qui comprend vraiment mes besoins et me propose des offres adaptées. Merci CompareTesFactures !",
+      quote: "Enfin un comparateur qui comprend vraiment mes besoins et me propose des offres adaptées. Merci Comparia !",
       author: "Sophie Leroy",
       role: "Nouvelle cliente",
       avatar: "https://randomuser.me/api/portraits/women/68.jpg",
@@ -211,7 +211,7 @@ export default function ExamplesPage() {
     <div className="min-h-screen bg-gradient-to-br from-neutral-950 via-neutral-900 to-neutral-950 text-white">
       {/* Navigation */}
       <NavigationPremium
-        logo={{ href: "/", label: "CompareTesFactures", icon: "logo" }}
+        logo={{ href: "/", label: "Comparia", icon: "logo" }}
         links={navLinks}
         cta={{ href: "/comparateurs", label: "Comparer maintenant", icon: "comparison" }}
       />
@@ -222,7 +222,7 @@ export default function ExamplesPage() {
         subtitle="en moins de 2 minutes"
         description="Électricité, gaz, mobile, assurances : réponds à quelques questions et vois les offres les plus adaptées à ton profil."
         ctaPrimary={{ href: "/comparateurs", label: "Comparer maintenant" }}
-        ctaSecondary={{ href: "#univers-comparetesfactures", label: "Voir les univers" }}
+        ctaSecondary={{ href: "#univers-comparia", label: "Voir les univers" }}
         trustPoints={trustPoints}
       />
 
@@ -242,8 +242,8 @@ export default function ExamplesPage() {
 
       {/* Features Section */}
       <FeaturesSection
-        title="Pourquoi choisir CompareTesFactures ?"
-        description="Découvre toutes les fonctionnalités qui font de CompareTesFactures le meilleur comparateur du marché."
+        title="Pourquoi choisir Comparia ?"
+        description="Découvre toutes les fonctionnalités qui font de Comparia le meilleur comparateur du marché."
         features={features}
       />
 
@@ -275,7 +275,7 @@ export default function ExamplesPage() {
         sections={footerSections}
         socialLinks={socialLinks}
         legalLinks={legalLinks}
-        copyright="© 2024 CompareTesFactures. Tous droits réservés."
+        copyright="© 2024 Comparia. Tous droits réservés."
       />
     </div>
   );

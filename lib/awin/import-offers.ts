@@ -212,7 +212,7 @@ export async function importAwinOffers({ dryRun = false } = {}): Promise<AwinImp
   }
   const classified = classifyProgrammes(programmes);
   if (programmes.length > 0 && classified.length === 0) {
-    warnings.push("Programmes Awin trouvés, mais aucun ne correspond encore clairement aux comparateurs CompareTesFactures.");
+    warnings.push("Programmes Awin trouvés, mais aucun ne correspond encore clairement aux comparateurs Comparia.");
   }
   const preparedOffers = await buildOfferRows({ token, publisherId, classified, warnings });
   const couponImport = await buildCouponRows({ token, publisherId, classified, warnings });

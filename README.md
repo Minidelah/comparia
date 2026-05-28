@@ -1,6 +1,6 @@
-# CompareTesFactures
+# Comparia
 
-CompareTesFactures est une plateforme de comparateurs intelligents pour les Français et les frontaliers Suisse-France.
+Comparia est une plateforme de comparateurs intelligents pour les Français et les frontaliers Suisse-France.
 
 L’application aide l’utilisateur à :
 - détecter ses pertes invisibles ;
@@ -113,7 +113,7 @@ Routes disponibles :
 - `POST /api/diagnostics` : diagnostic + sauvegarde + résumé IA.
 - `POST /api/ai/analyze` : analyse IA seule, utile pour tester le moteur.
 
-Sans `MISTRAL_API_KEY`, CompareTesFactures utilise un fallback explicable basé sur les règles internes.
+Sans `MISTRAL_API_KEY`, Comparia utilise un fallback explicable basé sur les règles internes.
 
 ## Importer les offres Awin
 
@@ -181,7 +181,7 @@ https://comparetesfactures.fr/sitemap.xml
 ```
 
 À vérifier après déploiement :
-- `/` affiche la landing CompareTesFactures ;
+- `/` affiche la landing Comparia ;
 - `/comparateurs` affiche les catégories ;
 - `/mentions-legales`, `/politique-confidentialite`, `/transparence-affiliation`, `/contact` sont accessibles ;
 - `/sitemap.xml` et `/robots.txt` répondent ;

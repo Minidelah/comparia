@@ -1,4 +1,4 @@
--- CompareTesFactures AI, cashback and expense analysis extension
+-- Comparia AI, cashback and expense analysis extension
 -- Rejouable : ce fichier prépare les tables produit sans casser l'existant.
 
 ALTER TABLE IF EXISTS public.financial_profiles

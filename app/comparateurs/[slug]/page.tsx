@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: ComparatorPageProps): Promise
 
   if (!category) {
     return {
-      title: "Comparateur introuvable | CompareTesFactures",
+      title: "Comparateur introuvable | Comparia",
       robots: {
         index: false,
         follow: false,
@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: ComparatorPageProps): Promise
 
   const seo = getComparatorSeo(category);
   const visual = getCategoryVisual(category.slug);
-  const ogImage = visual.src.endsWith(".svg") ? "/comparetesfactures-hero.jpg" : visual.src;
+  const ogImage = visual.src.endsWith(".svg") ? "/comparia-hero.jpg" : visual.src;
 
   return {
     title: seo.title,
@@ -179,7 +179,7 @@ export default async function ComparatorDetailPage({
                 },
                 {
                   title: "3. Active",
-                  description: "Tu gardes la décision finale : CompareTesFactures éclaire le choix, sans choisir à ta place.",
+                  description: "Tu gardes la décision finale : Comparia éclaire le choix, sans choisir à ta place.",
                   icon: "unlock" as const,
                 },
               ].map(({ title, description, icon }) => (
@@ -225,12 +225,12 @@ export default async function ComparatorDetailPage({
                 <div>
                   <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Guide comparateur</p>
                   <h2 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">
-                    Pourquoi comparer {category.title.toLocaleLowerCase("fr-FR")} avec CompareTesFactures ?
+                    Pourquoi comparer {category.title.toLocaleLowerCase("fr-FR")} avec Comparia ?
                   </h2>
                   <p className="mt-4 text-sm leading-7 text-slate-300 sm:text-base">{seo.intro}</p>
 
                   <div className="mt-5">
-                    <p className="text-sm font-semibold text-white">Ce que CompareTesFactures analyse</p>
+                    <p className="text-sm font-semibold text-white">Ce que Comparia analyse</p>
                     <div className="mt-3 flex flex-wrap gap-2">
                       {seo.analysisPoints.map((point) => (
                         <span

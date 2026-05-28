@@ -86,28 +86,28 @@ export default function PressePage() {
 
   const pressReleases = [
     {
-      title: "CompareTesFactures lève 10 millions d'euros pour accélérer son développement",
+      title: "Comparia lève 10 millions d'euros pour accélérer son développement",
       date: "15 juin 2024",
-      excerpt: "CompareTesFactures, leader français de la comparaison en ligne, annonce une levée de fonds de 10 millions d'euros pour renforcer son positionnement et étendre ses services.",
-      content: "Paris, le 15 juin 2024 - CompareTesFactures, plateforme innovante de comparaison de contrats et d'abonnements, annonce aujourd'hui une levée de fonds de 10 millions d'euros auprès d'investisseurs français et internationaux. Cette levée de fonds permettra à l'entreprise d'accélérer son développement, d'étendre son offre de services, et de renforcer sa position de leader sur le marché français.",
+      excerpt: "Comparia, leader français de la comparaison en ligne, annonce une levée de fonds de 10 millions d'euros pour renforcer son positionnement et étendre ses services.",
+      content: "Paris, le 15 juin 2024 - Comparia, plateforme innovante de comparaison de contrats et d'abonnements, annonce aujourd'hui une levée de fonds de 10 millions d'euros auprès d'investisseurs français et internationaux. Cette levée de fonds permettra à l'entreprise d'accélérer son développement, d'étendre son offre de services, et de renforcer sa position de leader sur le marché français.",
     },
     {
-      title: "CompareTesFactures lance son comparateur d'assurances habitation",
+      title: "Comparia lance son comparateur d'assurances habitation",
       date: "10 mai 2024",
-      excerpt: "CompareTesFactures étend son offre avec un nouveau comparateur d'assurances habitation, permettant aux utilisateurs de trouver la meilleure couverture au meilleur prix.",
-      content: "Paris, le 10 mai 2024 - CompareTesFactures, spécialiste de la comparaison en ligne, annonce aujourd'hui le lancement de son nouveau comparateur d'assurances habitation. Ce nouveau service s'ajoute à l'offre existante de l'entreprise, qui comprend déjà des comparateurs pour les forfaits mobile, les box internet, et les offres d'énergie.",
+      excerpt: "Comparia étend son offre avec un nouveau comparateur d'assurances habitation, permettant aux utilisateurs de trouver la meilleure couverture au meilleur prix.",
+      content: "Paris, le 10 mai 2024 - Comparia, spécialiste de la comparaison en ligne, annonce aujourd'hui le lancement de son nouveau comparateur d'assurances habitation. Ce nouveau service s'ajoute à l'offre existante de l'entreprise, qui comprend déjà des comparateurs pour les forfaits mobile, les box internet, et les offres d'énergie.",
     },
     {
-      title: "CompareTesFactures remporte le prix de l'innovation digitale 2024",
+      title: "Comparia remporte le prix de l'innovation digitale 2024",
       date: "28 avril 2024",
-      excerpt: "CompareTesFactures a été récompensée pour son approche innovante de la comparaison en ligne et son engagement en faveur de la transparence.",
-      content: "Paris, le 28 avril 2024 - CompareTesFactures a reçu le prix de l'innovation digitale 2024 lors de la cérémonie des Digital Innovation Awards. Ce prix récompense l'approche unique de l'entreprise, qui combine technologie avancée et engagement en faveur de la transparence et de l'objectif pour les consommateurs.",
+      excerpt: "Comparia a été récompensée pour son approche innovante de la comparaison en ligne et son engagement en faveur de la transparence.",
+      content: "Paris, le 28 avril 2024 - Comparia a reçu le prix de l'innovation digitale 2024 lors de la cérémonie des Digital Innovation Awards. Ce prix récompense l'approche unique de l'entreprise, qui combine technologie avancée et engagement en faveur de la transparence et de l'objectif pour les consommateurs.",
     },
     {
-      title: "CompareTesFactures dépasse le million d'utilisateurs actifs",
+      title: "Comparia dépasse le million d'utilisateurs actifs",
       date: "15 mars 2024",
-      excerpt: "CompareTesFactures annonce avoir dépassé le cap du million d'utilisateurs actifs mensuels, confirmant son succès sur le marché français.",
-      content: "Paris, le 15 mars 2024 - CompareTesFactures, plateforme de comparaison en ligne, annonce aujourd'hui avoir dépassé le million d'utilisateurs actifs mensuels. Cette performance confirme le succès de l'entreprise sur le marché français et sa capacité à répondre aux besoins des consommateurs en matière de comparaison de contrats et d'abonnements.",
+      excerpt: "Comparia annonce avoir dépassé le cap du million d'utilisateurs actifs mensuels, confirmant son succès sur le marché français.",
+      content: "Paris, le 15 mars 2024 - Comparia, plateforme de comparaison en ligne, annonce aujourd'hui avoir dépassé le million d'utilisateurs actifs mensuels. Cette performance confirme le succès de l'entreprise sur le marché français et sa capacité à répondre aux besoins des consommateurs en matière de comparaison de contrats et d'abonnements.",
     },
   ];
 
@@ -128,8 +128,8 @@ export default function PressePage() {
 
   const pressKits = [
     {
-      title: "Kit presse CompareTesFactures 2024",
-      description: "Dossier complet avec toutes les informations sur CompareTesFactures, ses services, et ses chiffres clés.",
+      title: "Kit presse Comparia 2024",
+      description: "Dossier complet avec toutes les informations sur Comparia, ses services, et ses chiffres clés.",
       download: "/press-kits/comparetesfactures-2024.zip",
     },
     {
@@ -148,7 +148,7 @@ export default function PressePage() {
     <div className="min-h-screen bg-gradient-to-br from-neutral-950 via-neutral-900 to-neutral-950 text-white">
       {/* Navigation */}
       <NavigationPremium
-        logo={{ href: "/", label: "CompareTesFactures", icon: "logo" }}
+        logo={{ href: "/", label: "Comparia", icon: "logo" }}
         links={navLinks}
         cta={{ href: "/comparateurs", label: "Comparer maintenant", icon: "comparison" }}
       />
@@ -267,18 +267,18 @@ export default function PressePage() {
 
         {/* About */}
         <div className="mb-12">
-          <h2 className="text-2xl font-bold text-white mb-6">À propos de CompareTesFactures</h2>
+          <h2 className="text-2xl font-bold text-white mb-6">À propos de Comparia</h2>
 
           <Card variant="glass">
             <CardBody>
               <p className="text-neutral-300 mb-4">
-                CompareTesFactures est une plateforme française innovante de comparaison en ligne, fondée en 2018 avec pour mission de simplifier la recherche et la souscription de contrats et abonnements pour les consommateurs.
+                Comparia est une plateforme française innovante de comparaison en ligne, fondée en 2018 avec pour mission de simplifier la recherche et la souscription de contrats et abonnements pour les consommateurs.
               </p>
               <p className="text-neutral-300 mb-4">
-                Grâce à ses algorithmes avancés et son interface intuitive, CompareTesFactures permet aux utilisateurs de comparer facilement les offres de forfaits mobile, box internet, assurances, et énergie, et de trouver les meilleures options adaptées à leurs besoins et leur budget.
+                Grâce à ses algorithmes avancés et son interface intuitive, Comparia permet aux utilisateurs de comparer facilement les offres de forfaits mobile, box internet, assurances, et énergie, et de trouver les meilleures options adaptées à leurs besoins et leur budget.
               </p>
               <p className="text-neutral-300 mb-4">
-                Avec plus d'un million d'utilisateurs actifs mensuels, CompareTesFactures s'est imposée comme un acteur majeur du marché français de la comparaison en ligne, reconnu pour sa transparence, son objectivité, et son engagement en faveur des consommateurs.
+                Avec plus d'un million d'utilisateurs actifs mensuels, Comparia s'est imposée comme un acteur majeur du marché français de la comparaison en ligne, reconnu pour sa transparence, son objectivité, et son engagement en faveur des consommateurs.
               </p>
               <p className="text-neutral-300 mb-4">
                 L'entreprise, basée à Paris, emploie plus de 50 collaborateurs et continue de croître rapidement, avec l'ambition de devenir la référence européenne de la comparaison en ligne.
@@ -332,7 +332,7 @@ export default function PressePage() {
         sections={footerSections}
         socialLinks={socialLinks}
         legalLinks={legalLinks}
-        copyright="© 2024 CompareTesFactures. Tous droits réservés."
+        copyright="© 2024 Comparia. Tous droits réservés."
       />
     </div>
   );

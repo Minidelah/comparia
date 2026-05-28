@@ -18,7 +18,7 @@ export default function SiteNav({ compact = false }: Props) {
     <nav className="flex items-center justify-between gap-4">
       <Link href="/" className="group flex min-w-0 items-center gap-3">
         <span className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-cyan-300/10 ring-1 ring-inset ring-cyan-300/20 transition group-hover:bg-cyan-300/15">
-          <Image src="/comparetesfactures-logo.svg" alt={siteConfig.name} width={40} height={40} className="h-8 w-8" />
+          <Image src="/comparia-logo.svg" alt={siteConfig.name} width={40} height={40} className="h-8 w-8" />
         </span>
         <span className="min-w-0 leading-none">
           <span className="block max-w-[11.5rem] truncate text-[0.9rem] font-black uppercase tracking-[0.08em] sm:max-w-none sm:text-lg sm:tracking-[0.14em]">

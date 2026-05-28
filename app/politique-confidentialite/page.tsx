@@ -3,8 +3,8 @@ import LegalPageShell from "@/components/legal/LegalPageShell";
 import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Politique de confidentialité — CompareTesFactures",
-  description: "Données collectées, finalités, durée de conservation et droits des utilisateurs CompareTesFactures.",
+  title: "Politique de confidentialité — Comparia",
+  description: "Données collectées, finalités, durée de conservation et droits des utilisateurs Comparia.",
 };
 
 export default function PrivacyPolicyPage() {
@@ -12,7 +12,7 @@ export default function PrivacyPolicyPage() {
     <LegalPageShell
       eyebrow="Données personnelles"
       title="Politique de confidentialité"
-      description="CompareTesFactures collecte uniquement les informations nécessaires pour fournir une comparaison, suivre les demandes et améliorer le tunnel de conversion."
+      description="Comparia collecte uniquement les informations nécessaires pour fournir une comparaison, suivre les demandes et améliorer le tunnel de conversion."
     >
       <h2>Responsable du traitement</h2>
       <p>
@@ -39,7 +39,7 @@ export default function PrivacyPolicyPage() {
 
       <h2>Bases légales</h2>
       <p>
-        Selon le contexte, les traitements reposent sur le consentement de l’utilisateur, l’exécution d’une demande de comparaison, l’intérêt légitime de CompareTesFactures à
+        Selon le contexte, les traitements reposent sur le consentement de l’utilisateur, l’exécution d’une demande de comparaison, l’intérêt légitime de Comparia à
         mesurer ses performances ou le respect d’obligations légales.
       </p>
 
@@ -66,7 +66,7 @@ export default function PrivacyPolicyPage() {
 
       <h2>Sécurité</h2>
       <p>
-        CompareTesFactures applique une logique de minimisation, de limitation des accès et de séparation entre les clés publiques et les clés serveur. Les clés sensibles ne sont
+        Comparia applique une logique de minimisation, de limitation des accès et de séparation entre les clés publiques et les clés serveur. Les clés sensibles ne sont
         pas exposées côté navigateur.
       </p>
 

@@ -198,7 +198,7 @@ export default function CarrieresPage() {
     <div className="min-h-screen bg-gradient-to-br from-neutral-950 via-neutral-900 to-neutral-950 text-white">
       {/* Navigation */}
       <NavigationPremium
-        logo={{ href: "/", label: "CompareTesFactures", icon: "logo" }}
+        logo={{ href: "/", label: "Comparia", icon: "logo" }}
         links={navLinks}
         cta={{ href: "/comparateurs", label: "Comparer maintenant", icon: "comparison" }}
       />
@@ -257,7 +257,7 @@ export default function CarrieresPage() {
         <div className="mb-12">
           <h2 className="text-3xl font-bold text-white mb-4 text-center">Pourquoi nous rejoindre ?</h2>
           <p className="text-xl text-neutral-400 mb-8 text-center max-w-3xl mx-auto">
-            Chez CompareTesFactures, nous offrons bien plus qu'un emploi - une opportunité de faire partie 
+            Chez Comparia, nous offrons bien plus qu'un emploi - une opportunité de faire partie 
             d'une équipe dynamique et innovante
           </p>
 
@@ -458,7 +458,7 @@ export default function CarrieresPage() {
         sections={footerSections}
         socialLinks={socialLinks}
         legalLinks={legalLinks}
-        copyright="© 2024 CompareTesFactures. Tous droits réservés."
+        copyright="© 2024 Comparia. Tous droits réservés."
       />
     </div>
   );

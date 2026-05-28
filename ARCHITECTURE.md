@@ -1,8 +1,8 @@
-# Architecture CompareTesFactures
+# Architecture Comparia
 
 ## Vision produit
 
-CompareTesFactures n’est pas un simple comparateur. C’est un système d’optimisation financière continue :
+Comparia n’est pas un simple comparateur. C’est un système d’optimisation financière continue :
 
 `diagnostiquer → prioriser → activer → surveiller`
 

@@ -36,7 +36,7 @@ const faqs = [
     answer: "Pour recevoir ton résultat, être recontacté si une offre évolue et éviter de perdre ta comparaison en cours.",
   },
   {
-    question: "Comment CompareTesFactures classe les offres ?",
+    question: "Comment Comparia classe les offres ?",
     answer: "D'abord par adéquation avec ton profil, puis par prix, économies estimées et avantages éventuels.",
   },
   {
@@ -53,7 +53,7 @@ const steps = [
   },
   {
     step: 2,
-    title: "CompareTesFactures analyse tes besoins",
+    title: "Comparia analyse tes besoins",
     description: "Nos algorithmes détectent les économies possibles",
   },
   {
@@ -122,7 +122,7 @@ export default function Home() {
                 <BrandIcon name="arrow-right" className="h-4 w-4" />
               </Link>
               <a
-                href="#univers-comparetesfactures"
+                href="#univers-comparia"
                 className="btn-secondary inline-flex items-center justify-center gap-2"
               >
                 Voir les univers
@@ -204,7 +204,7 @@ export default function Home() {
               <h2 className="mt-4 text-3xl font-bold sm:text-4xl">Transforme chaque économie en action mesurable.</h2>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-neutral-300">
                 Les offres sont déjà structurées pour gérer cashback, priorité, note, tags et lien affilié. Quand un partenaire propose une récompense,
-                CompareTesFactures peut l'afficher proprement sans mélanger recommandation objective et rémunération.
+                Comparia peut l'afficher proprement sans mélanger recommandation objective et rémunération.
               </p>
             </div>
             <div className="grid gap-4 xl:grid-cols-[0.9fr_1fr] xl:items-stretch">
@@ -298,10 +298,10 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="univers-comparetesfactures" className="px-5 pb-14 sm:px-8 lg:px-10">
+      <section id="univers-comparia" className="px-5 pb-14 sm:px-8 lg:px-10">
         <div className="mx-auto max-w-7xl">
           <div className="mb-8">
-            <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Univers CompareTesFactures</p>
+            <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Univers Comparia</p>
             <h2 className="mt-3 text-3xl font-bold sm:text-4xl">Trois façons d'entrer dans tes économies.</h2>
           </div>
           <div className="grid gap-4 lg:grid-cols-3">

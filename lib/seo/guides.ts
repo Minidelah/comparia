@@ -103,7 +103,7 @@ export const seoGuides: SeoGuide[] = [
     intent: "comparer",
     heroMetric: "électricité + gaz",
     intro:
-      "Une facture énergie claire commence par une séparation nette : l’électricité et le gaz ne répondent pas toujours au même usage. CompareTesFactures aide à poser le bon diagnostic avant de regarder les offres.",
+      "Une facture énergie claire commence par une séparation nette : l’électricité et le gaz ne répondent pas toujours au même usage. Comparia aide à poser le bon diagnostic avant de regarder les offres.",
     painPoints: ["Mensualité incomprise", "Offre groupée floue", "Chauffage coûteux", "Prix qui bouge"],
     steps: [
       { title: "Sépare les usages", body: "Électricité courante, chauffage, eau chaude et cuisson n’ont pas le même impact." },

@@ -14,12 +14,12 @@ export default function ComparateursPage() {
         <SiteNav />
 
         <section className="mt-7 max-w-3xl">
-          <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Comparateurs CompareTesFactures</p>
+          <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Comparateurs Comparia</p>
           <h1 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">
             Tous les grands contrats qui pèsent sur ton budget, réunis au même endroit.
           </h1>
           <p className="mt-5 text-slate-300">
-            CompareTesFactures n’a pas vocation à devenir un catalogue froid. Chaque comparateur s’inscrit dans un
+            Comparia n’a pas vocation à devenir un catalogue froid. Chaque comparateur s’inscrit dans un
             diagnostic plus large pour t’aider à savoir quoi optimiser en premier.
           </p>
         </section>

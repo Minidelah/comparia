@@ -90,8 +90,8 @@ export default function FAQPage() {
 
   const generalFAQs = [
     {
-      question: "Qu'est-ce que CompareTesFactures ?",
-      answer: "CompareTesFactures est une plateforme de comparaison en ligne qui vous permet de trouver les meilleures offres pour vos contrats (mobile, internet, assurance, énergie, etc.) en quelques clics. Notre objectif est de vous aider à économiser du temps et de l'argent en vous proposant des offres adaptées à vos besoins.",
+      question: "Qu'est-ce que Comparia ?",
+      answer: "Comparia est une plateforme de comparaison en ligne qui vous permet de trouver les meilleures offres pour vos contrats (mobile, internet, assurance, énergie, etc.) en quelques clics. Notre objectif est de vous aider à économiser du temps et de l'argent en vous proposant des offres adaptées à vos besoins.",
       icon: "info",
     },
     {
@@ -197,7 +197,7 @@ export default function FAQPage() {
     <div className="min-h-screen bg-gradient-to-br from-neutral-950 via-neutral-900 to-neutral-950 text-white">
       {/* Navigation */}
       <NavigationPremium
-        logo={{ href: "/", label: "CompareTesFactures", icon: "logo" }}
+        logo={{ href: "/", label: "Comparia", icon: "logo" }}
         links={navLinks}
         cta={{ href: "/comparateurs", label: "Comparer maintenant", icon: "comparison" }}
       />
@@ -253,7 +253,7 @@ export default function FAQPage() {
         <section id="general" className="mb-12">
           <FAQSection
             title="Général"
-            description="Questions sur le fonctionnement général de CompareTesFactures"
+            description="Questions sur le fonctionnement général de Comparia"
             faqs={generalFAQs}
           />
         </section>
@@ -338,7 +338,7 @@ export default function FAQPage() {
         sections={footerSections}
         socialLinks={socialLinks}
         legalLinks={legalLinks}
-        copyright="© 2024 CompareTesFactures. Tous droits réservés."
+        copyright="© 2024 Comparia. Tous droits réservés."
       />
     </div>
   );

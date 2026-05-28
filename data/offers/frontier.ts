@@ -38,7 +38,7 @@ export const frontierOffers: AffiliateOffer[] = [
     id: "frontier-health-lamal",
     name: "Santé frontalier clarifiée",
     category: "frontier",
-    provider: "CompareTesFactures",
+    provider: "Comparia",
     monthlyPrice: null,
     estimatedSaving: 220,
     cashback: 0,

@@ -1,4 +1,4 @@
--- CompareTesFactures production repair — 2026-05-21
+-- Comparia production repair — 2026-05-21
 -- À coller dans Supabase SQL Editor, pas le nom du fichier.
 -- Objectif : compléter les colonnes diagnostic et donner aux routes API serveur les droits nécessaires.
 

@@ -250,7 +250,7 @@ export default function ComparatorWizard({ category }: { category: Category }) {
                 className="mt-1 h-4 w-4 accent-cyan-400"
               />
               <span>
-                J’accepte d’être contacté au sujet de ma comparaison. CompareTesFactures garde mes données protégées et je peux demander leur suppression à tout moment.
+                J’accepte d’être contacté au sujet de ma comparaison. Comparia garde mes données protégées et je peux demander leur suppression à tout moment.
               </span>
             </label>
             <button

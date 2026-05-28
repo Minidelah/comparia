@@ -149,7 +149,7 @@ export default function OnboardingPage() {
           <SiteNav compact />
 
           <section className="mt-8 rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20 sm:p-8">
-            <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Diagnostic CompareTesFactures</p>
+            <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Diagnostic Comparia</p>
             <h1 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">
               Tu pourrais économiser jusqu’à {summary?.totalSavings ?? 0}€/an.
             </h1>
@@ -159,13 +159,13 @@ export default function OnboardingPage() {
             </p>
             <p className="mt-4 text-sm text-slate-400">
               {saveState === "saving" && "Sauvegarde du diagnostic en cours…"}
-              {saveState === "saved" && "Diagnostic sauvegardé pour ton suivi CompareTesFactures."}
+              {saveState === "saved" && "Diagnostic sauvegardé pour ton suivi Comparia."}
               {saveState === "not-configured" && "Diagnostic prêt. La sauvegarde cloud sera activée dès que Supabase sera configuré."}
               {saveState === "saved-locally" && "Diagnostic sauvegardé sur cet appareil. La synchronisation cloud sera retentée plus tard."}
             </p>
             <div className="mt-6 grid gap-3 sm:grid-cols-3">
               <MetricCard label="Fuite mensuelle" value={`${summary?.monthlyLeak ?? 0}€`} />
-              <MetricCard label="Score CompareTesFactures" value={`${summary?.optimizationScore ?? 0}/100`} />
+              <MetricCard label="Score Comparia" value={`${summary?.optimizationScore ?? 0}/100`} />
               <MetricCard label="Priorité" value={topRecommendation?.category ?? "—"} />
             </div>
           </section>
@@ -190,7 +190,7 @@ export default function OnboardingPage() {
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div>
                   <p className="text-sm uppercase tracking-[0.3em] text-violet-200">
-                    Assistant IA {aiInsight.generatedBy === "mistral" ? "Mistral" : "CompareTesFactures"}
+                    Assistant IA {aiInsight.generatedBy === "mistral" ? "Mistral" : "Comparia"}
                   </p>
                   <h2 className="mt-3 text-2xl font-semibold">Lecture personnalisée de ton profil</h2>
                   <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-200">{aiInsight.summary}</p>
@@ -242,7 +242,7 @@ export default function OnboardingPage() {
             <h2 className="text-2xl font-semibold">Sauvegarde tes économies.</h2>
             <p className="mt-3 max-w-2xl text-slate-300">
               Crée ton compte pour suivre tes recommandations, recevoir les nouvelles opportunités et voir
-              combien tu as réellement gagné avec CompareTesFactures.
+              combien tu as réellement gagné avec Comparia.
             </p>
             <div className="mt-5 flex flex-col gap-3 sm:flex-row">
               <button className="rounded-2xl bg-white px-5 py-3 font-semibold text-slate-950 transition hover:bg-cyan-100">
@@ -413,7 +413,7 @@ export default function OnboardingPage() {
                   <>
                     <h1 className="text-3xl font-semibold">Quelles assurances paies-tu chaque mois ?</h1>
                     <p className="mt-3 text-slate-300">
-                      Laisse vide si tu n’es pas concerné. CompareTesFactures comprendra automatiquement 0€.
+                      Laisse vide si tu n’es pas concerné. Comparia comprendra automatiquement 0€.
                     </p>
                     <div className="mt-6 grid gap-4 sm:grid-cols-2">
                       <Field label="Assurance auto" value={monthlyAutoInsuranceCost} onChange={setMonthlyAutoInsuranceCost} placeholder="Ex. 58" />
@@ -475,7 +475,7 @@ export default function OnboardingPage() {
           <aside className="rounded-[2rem] border border-white/10 bg-slate-950/70 p-6">
             <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Pourquoi ces questions ?</p>
             <div className="mt-5 space-y-4 text-sm leading-6 text-slate-300">
-              <p>CompareTesFactures ne pousse pas une offre au hasard : il estime d’abord où ton argent s’échappe.</p>
+              <p>Comparia ne pousse pas une offre au hasard : il estime d’abord où ton argent s’échappe.</p>
               <p>Plus le profil est précis, plus la recommandation peut devenir utile — et crédible.</p>
               <p className="text-emerald-300">Tes données restent privées et tu gardes le contrôle.</p>
             </div>

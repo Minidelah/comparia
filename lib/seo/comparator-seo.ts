@@ -12,13 +12,13 @@ export type ComparatorSeoContent = {
 
 const groupIntros: Record<Category["group"], string> = {
   Assurances:
-    "Les contrats d’assurance peuvent sembler similaires, mais les écarts de prix viennent souvent des garanties, exclusions, franchises et habitudes conservées trop longtemps. CompareTesFactures aide à remettre le contrat en concurrence sans perdre de vue le niveau de protection utile.",
+    "Les contrats d’assurance peuvent sembler similaires, mais les écarts de prix viennent souvent des garanties, exclusions, franchises et habitudes conservées trop longtemps. Comparia aide à remettre le contrat en concurrence sans perdre de vue le niveau de protection utile.",
   Maison:
-    "Les factures du quotidien reviennent chaque mois et finissent par peser lourd. CompareTesFactures clarifie les usages réels, sépare les besoins importants des options secondaires, puis prépare une comparaison plus lisible avant toute redirection partenaire.",
+    "Les factures du quotidien reviennent chaque mois et finissent par peser lourd. Comparia clarifie les usages réels, sépare les besoins importants des options secondaires, puis prépare une comparaison plus lisible avant toute redirection partenaire.",
   Finances:
-    "Les services financiers doivent être comparés avec méthode : frais, usage réel, qualité d’application, conditions et économies potentielles. CompareTesFactures transforme ces éléments en lecture simple pour éviter les choix par défaut.",
+    "Les services financiers doivent être comparés avec méthode : frais, usage réel, qualité d’application, conditions et économies potentielles. Comparia transforme ces éléments en lecture simple pour éviter les choix par défaut.",
   Frontaliers:
-    "Les profils Suisse-France ont des arbitrages particuliers : revenus en CHF, dépenses en euros, santé, banque, change et services utilisés des deux côtés de la frontière. CompareTesFactures organise ces décisions pour rendre les pertes invisibles plus faciles à repérer.",
+    "Les profils Suisse-France ont des arbitrages particuliers : revenus en CHF, dépenses en euros, santé, banque, change et services utilisés des deux côtés de la frontière. Comparia organise ces décisions pour rendre les pertes invisibles plus faciles à repérer.",
 };
 
 const groupBenefits: Record<Category["group"], string[]> = {
@@ -108,7 +108,7 @@ export function getComparatorSeo(category: Category): ComparatorSeoContent {
       {
         question: `Le comparateur ${category.title} est-il gratuit ?`,
         answer:
-          "Oui. Le diagnostic est gratuit et sans engagement. Certaines offres peuvent rémunérer CompareTesFactures si tu souscris via un lien partenaire, mais la recommandation garde une séparation claire entre économie, cashback et sponsorisation.",
+          "Oui. Le diagnostic est gratuit et sans engagement. Certaines offres peuvent rémunérer Comparia si tu souscris via un lien partenaire, mais la recommandation garde une séparation claire entre économie, cashback et sponsorisation.",
       },
       {
         question: "Que se passe-t-il quand je clique sur une offre ?",

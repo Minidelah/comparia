@@ -1,4 +1,4 @@
--- CompareTesFactures admin/API grants
+-- Comparia admin/API grants
 -- À exécuter dans Supabase SQL Editor si l'admin affiche :
 -- "permission denied for table conversions" ou une erreur similaire.
 -- Ce script ne désactive pas le RLS : il donne seulement les droits nécessaires

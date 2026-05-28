@@ -33,7 +33,7 @@ async function persistDiagnosticStrict(supabase: SupabaseAdminClient, input: Per
     .upsert(
       {
         id: input.anonymousId,
-        display_name: "Visiteur CompareTesFactures",
+        display_name: "Visiteur Comparia",
         country: "FR",
       },
       { onConflict: "id" },

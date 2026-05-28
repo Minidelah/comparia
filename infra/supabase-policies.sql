@@ -1,4 +1,4 @@
--- CompareTesFactures RLS policies
+-- Comparia RLS policies
 -- Ce fichier est volontairement rejouable : on supprime les policies avant de les recréer.
 -- Les clés secrètes/service_role bypassent déjà le RLS côté Supabase, donc inutile de les tester dans chaque policy.
 
@@ -69,7 +69,7 @@ CREATE POLICY "subscriptions_owner_all" ON public.subscriptions
   USING (auth.uid() = user_id)
   WITH CHECK (auth.uid() = user_id);
 
--- Données générées par CompareTesFactures : l'utilisateur les lit, le backend les écrit.
+-- Données générées par Comparia : l'utilisateur les lit, le backend les écrit.
 CREATE POLICY "diagnostics_owner_select" ON public.diagnostics
   FOR SELECT
   USING (auth.uid() = user_id);

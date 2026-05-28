@@ -164,7 +164,7 @@ export default function PricingPage() {
 
   const comparisonItems = [
     {
-      title: "CompareTesFactures Free",
+      title: "Comparia Free",
       features: [
         { name: "Comparaisons illimitées", value: true },
         { name: "Alertes prix", value: "Basiques" },
@@ -181,7 +181,7 @@ export default function PricingPage() {
       },
     },
     {
-      title: "CompareTesFactures Premium",
+      title: "Comparia Premium",
       features: [
         { name: "Comparaisons illimitées", value: true },
         { name: "Alertes prix", value: "Personnalisées" },
@@ -199,7 +199,7 @@ export default function PricingPage() {
       popular: true,
     },
     {
-      title: "CompareTesFactures Enterprise",
+      title: "Comparia Enterprise",
       features: [
         { name: "Comparaisons illimitées", value: true },
         { name: "Alertes prix", value: "Personnalisées" },
@@ -250,7 +250,7 @@ export default function PricingPage() {
       icon: "clock",
     },
     {
-      question: "Puis-je utiliser CompareTesFactures pour mon entreprise ?",
+      question: "Puis-je utiliser Comparia pour mon entreprise ?",
       answer: "Absolument ! Notre plan Enterprise est spécialement conçu pour les professionnels et les entreprises.",
       icon: "briefcase",
     },
@@ -260,7 +260,7 @@ export default function PricingPage() {
     <div className="min-h-screen bg-gradient-to-br from-neutral-950 via-neutral-900 to-neutral-950 text-white">
       {/* Navigation */}
       <NavigationPremium
-        logo={{ href: "/", label: "CompareTesFactures", icon: "logo" }}
+        logo={{ href: "/", label: "Comparia", icon: "logo" }}
         links={navLinks}
         cta={{ href: "/comparateurs", label: "Comparer maintenant", icon: "comparison" }}
       />
@@ -355,7 +355,7 @@ export default function PricingPage() {
         sections={footerSections}
         socialLinks={socialLinks}
         legalLinks={legalLinks}
-        copyright="© 2024 CompareTesFactures. Tous droits réservés."
+        copyright="© 2024 Comparia. Tous droits réservés."
       />
     </div>
   );

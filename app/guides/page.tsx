@@ -9,9 +9,9 @@ import { getCategoryVisual } from "@/lib/visuals";
 import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Guides économies factures | CompareTesFactures",
+  title: "Guides économies factures | Comparia",
   description:
-    "Guides pratiques pour réduire assurances, énergie, mobile, abonnements et dépenses frontalières avec CompareTesFactures.",
+    "Guides pratiques pour réduire assurances, énergie, mobile, abonnements et dépenses frontalières avec Comparia.",
   alternates: {
     canonical: `${siteConfig.url}/guides`,
   },
@@ -34,7 +34,7 @@ export default function GuidesPage() {
               Les décisions simples qui font baisser tes factures.
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-8 text-slate-300 sm:text-lg">
-              Des guides courts, orientés action, pour comprendre quoi comparer avant de cliquer sur une offre. Chaque guide renvoie vers le bon tunnel CompareTesFactures.
+              Des guides courts, orientés action, pour comprendre quoi comparer avant de cliquer sur une offre. Chaque guide renvoie vers le bon tunnel Comparia.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               {["Assurances", "Énergie", "Mobile", "Frontaliers", "Abonnements"].map((tag) => (
