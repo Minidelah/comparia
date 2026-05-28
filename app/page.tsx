@@ -60,16 +60,22 @@ const steps = [
     step: 1,
     title: "Réponds à quelques questions",
     description: "2 minutes pour décrire ta situation financière",
+    icon: "search" as const,
+    detail: "Usage, contrat actuel, priorité et niveau d’urgence.",
   },
   {
     step: 2,
     title: "Comparia analyse tes besoins",
     description: "Nos algorithmes détectent les économies possibles",
+    icon: "sparkles" as const,
+    detail: "Prix, garanties, services utiles et avantages éventuels.",
   },
   {
     step: 3,
     title: "Compare et économise",
     description: "Accès aux meilleures offres + cash-back automatique",
+    icon: "unlock" as const,
+    detail: "Tu gardes le contrôle avant chaque redirection partenaire.",
   },
 ];
 
@@ -315,30 +321,55 @@ export default function Home() {
       </section>
 
       <section id="fonctionnement" className="px-5 pb-14 sm:px-8 lg:px-10">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-10">
-            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-400/30 bg-indigo-400/10 px-3 py-1.5 text-xs uppercase tracking-widest text-indigo-300 mb-4">
-              <span className="h-2 w-2 rounded-full bg-indigo-400" />
-              Processus simple
+        <div className="mx-auto max-w-7xl overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.035] p-5 shadow-2xl shadow-black/20 sm:p-8">
+          <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
+            <div>
+              <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Processus simple</p>
+              <h2 className="mt-3 max-w-3xl text-3xl font-black tracking-tight sm:text-4xl">
+                Un parcours clair, du diagnostic au choix final.
+              </h2>
             </div>
-            <h2 className="text-4xl font-bold">Comment ça marche</h2>
+            <p className="max-w-xl text-sm leading-6 text-neutral-400">
+              Chaque étape réduit le bruit : tu réponds, Comparia trie, puis tu compares seulement les options utiles.
+            </p>
           </div>
 
-          <div className="grid gap-5 md:grid-cols-3">
-            {steps.map((item) => (
-              <div key={item.step} className="relative">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 text-2xl font-black mb-4 text-white">
-                  {item.step}
+          <div className="mt-8 grid gap-4 lg:grid-cols-3">
+            {steps.map((item, index) => (
+              <article
+                key={item.step}
+                className="group relative overflow-hidden rounded-[1.5rem] border border-neutral-800 bg-slate-950/55 p-5 transition duration-300 hover:-translate-y-1 hover:border-cyan-300/30 hover:bg-cyan-400/10"
+              >
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-300/50 to-transparent opacity-0 transition group-hover:opacity-100" />
+                <div className="flex items-start justify-between gap-4">
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-cyan-400/10 text-cyan-300 ring-1 ring-inset ring-cyan-300/20">
+                    <BrandIcon name={item.icon} className="h-6 w-6" />
+                  </span>
+                  <span className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs font-black text-slate-300">
+                    0{item.step}
+                  </span>
                 </div>
-                <div className="rounded-2xl border border-neutral-800 bg-gradient-to-br from-neutral-800/50 to-neutral-900/50 p-6">
-                  <h3 className="text-xl font-bold mb-2">{item.title}</h3>
-                  <p className="text-neutral-400">{item.description}</p>
-                </div>
-                {item.step < 3 && (
-                  <div className="hidden md:block absolute top-8 -right-4 w-8 border-t border-neutral-800" />
+                <h3 className="mt-5 text-xl font-black text-white">{item.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-neutral-300">{item.description}</p>
+                <p className="mt-4 rounded-2xl border border-white/10 bg-white/[0.035] p-3 text-xs leading-5 text-neutral-400">{item.detail}</p>
+                {index < steps.length - 1 && (
+                  <div className="mt-5 hidden items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-cyan-300 lg:flex">
+                    Étape suivante
+                    <BrandIcon name="arrow-right" className="h-4 w-4" />
+                  </div>
                 )}
-              </div>
+              </article>
             ))}
+          </div>
+
+          <div className="mt-5 flex flex-col gap-3 rounded-[1.5rem] border border-emerald-300/15 bg-emerald-400/10 p-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm leading-6 text-emerald-100">
+              Gratuit, sans engagement, et pensé pour t’amener rapidement vers le bon comparateur.
+            </p>
+            <Link href="/comparateurs" className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-black text-slate-950 transition hover:bg-cyan-100">
+              Commencer
+              <BrandIcon name="arrow-right" className="h-4 w-4" />
+            </Link>
           </div>
         </div>
       </section>
@@ -356,21 +387,27 @@ export default function Home() {
                 icon: "home" as const,
                 image: "/category-maison.jpg",
                 body: "Électricité, gaz, box et mobile : les contrats du quotidien qui bougent vite.",
+                href: "/comparateurs#maison",
+                categories: ["Électricité", "Gaz", "Box", "Mobile"],
               },
               {
                 title: "Assurances",
                 icon: "shield" as const,
                 image: "/category-assurances.jpg",
                 body: "Auto, habitation, santé, animaux : là où la marge d'économie peut devenir très forte.",
+                href: "/comparateurs#assurances",
+                categories: ["Auto", "Habitation", "Santé", "Animaux"],
               },
               {
                 title: "Frontaliers",
                 icon: "coins" as const,
                 image: "/category-frontaliers.jpg",
                 body: "Change CHF/EUR et santé transfrontalière pour les profils qui ont des besoins à part.",
+                href: "/comparateurs#frontaliers",
+                categories: ["Change", "Santé", "CHF/EUR"],
               },
             ].map((item) => (
-              <article key={item.title} className="overflow-hidden rounded-[1.75rem] border border-neutral-800 bg-neutral-900/30 hover-lift hover-shadow transition-all">
+              <Link key={item.title} href={item.href} className="group overflow-hidden rounded-[1.75rem] border border-neutral-800 bg-neutral-900/30 transition-all hover:-translate-y-1 hover:border-cyan-300/30 hover:shadow-2xl hover:shadow-cyan-950/20">
                 <div className="relative aspect-video bg-neutral-900/70">
                   <Image
                     src={item.image}
@@ -382,15 +419,25 @@ export default function Home() {
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-neutral-950/25 to-transparent" />
                 </div>
                 <div className="p-5">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
                     <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-cyan-400/10 text-cyan-300 ring-1 ring-inset ring-cyan-300/20">
                       <BrandIcon name={item.icon} className="h-5 w-5" />
                     </span>
                     <h3 className="text-xl font-bold">{item.title}</h3>
+                    </div>
+                    <BrandIcon name="arrow-right" className="h-5 w-5 text-cyan-300 transition group-hover:translate-x-1" />
                   </div>
                   <p className="mt-3 text-sm leading-6 text-neutral-400">{item.body}</p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {item.categories.map((category) => (
+                      <span key={category} className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs font-semibold text-neutral-300">
+                        {category}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
         </div>
