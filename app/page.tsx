@@ -103,7 +103,7 @@ export default function Home() {
         <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <div>
             <h1 className="text-5xl font-black tracking-tight sm:text-6xl">
-              <span className="bg-gradient-to-r from-primary-400 via-blue-400 to-primary-400 bg-clip-text text-transparent">
+              <span className="text-cyan-200 drop-shadow-[0_0_24px_rgba(34,211,238,0.18)]">
                 Compare tes factures
               </span>
               <br />
