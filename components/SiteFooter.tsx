@@ -18,6 +18,7 @@ export default function SiteFooter() {
           <Link href="/a-propos" className="transition hover:text-white">À propos</Link>
           <Link href="/contact" className="transition hover:text-white">Contact</Link>
           <Link href="/transparence-affiliation" className="transition hover:text-white">Affiliation</Link>
+          <Link href="/sitemap.xml" className="transition hover:text-white">Sitemap</Link>
           <Link href="/mentions-legales" className="transition hover:text-white">Mentions légales</Link>
           <Link href="/politique-confidentialite" className="transition hover:text-white">Confidentialité</Link>
           <Link href="/cookies" className="transition hover:text-white">Cookies</Link>

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { categories } from "@/lib/categories";
 import { seoGuides } from "@/lib/seo/guides";
+import { priorityComparatorSlugs } from "@/lib/seo/priority-comparators";
 import { siteConfig } from "@/lib/site";
 
 const staticRoutes = [
@@ -31,7 +32,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${siteConfig.url}/comparateurs/${category.slug}`,
       lastModified: now,
       changeFrequency: "weekly" as const,
-      priority: category.status === "active" ? 0.8 : 0.4,
+      priority: priorityComparatorSlugs.has(category.slug) ? 0.92 : category.status === "active" ? 0.8 : 0.4,
     })),
     ...seoGuides.map((guide) => ({
       url: `${siteConfig.url}/guides/${guide.slug}`,

@@ -6,34 +6,7 @@ import BrandIcon, { getCategoryIcon } from "@/components/BrandIcon";
 import SiteFooter from "@/components/SiteFooter";
 import PremiumVisual from "@/components/PremiumVisual";
 import { getCategoryVisual, groupVisuals } from "@/lib/visuals";
-
-const prioritySeoLinks = [
-  {
-    href: "/comparateurs/box-internet",
-    title: "Comparateur box internet",
-    body: "Comparer fibre, Wi-Fi, TV et services inclus pour réduire une facture internet trop haute.",
-  },
-  {
-    href: "/comparateurs/forfait-mobile",
-    title: "Comparateur forfait mobile",
-    body: "Comparer data, réseau, Europe et Suisse incluse sans payer des options inutiles.",
-  },
-  {
-    href: "/comparateurs/electricite",
-    title: "Comparateur électricité",
-    body: "Comparer prix, stabilité et offre verte selon ton logement et ta consommation.",
-  },
-  {
-    href: "/comparateurs/assurance-habitation",
-    title: "Comparateur assurance habitation",
-    body: "Comparer ton contrat logement selon ton statut, la surface et les garanties utiles.",
-  },
-  {
-    href: "/comparateurs/banque",
-    title: "Comparateur banque en ligne",
-    body: "Comparer frais, carte, application mobile et services utiles au quotidien.",
-  },
-];
+import { priorityComparators } from "@/lib/seo/priority-comparators";
 
 export default function ComparateursPage() {
   return (
@@ -75,7 +48,7 @@ export default function ComparateursPage() {
             </p>
           </div>
           <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-            {prioritySeoLinks.map((link, index) => (
+            {priorityComparators.map((link, index) => (
               <Link
                 key={link.href}
                 href={link.href}

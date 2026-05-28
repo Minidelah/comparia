@@ -25,6 +25,22 @@ export const metadata: Metadata = {
     template: `%s | ${siteConfig.name}`,
   },
   description: defaultDescription,
+  keywords: [
+    "comparateur factures",
+    "comparateur box internet",
+    "comparateur forfait mobile",
+    "comparateur electricite",
+    "comparateur assurance habitation",
+    "comparateur banque en ligne",
+    "economiser chaque mois",
+    "Comparia",
+  ],
+  alternates: {
+    canonical: siteConfig.url,
+  },
+  applicationName: siteConfig.name,
+  creator: siteConfig.name,
+  publisher: siteConfig.name,
   openGraph: {
     title: defaultTitle,
     description: defaultDescription,

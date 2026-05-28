@@ -7,6 +7,7 @@ import BrandIcon, { getCategoryIcon } from "@/components/BrandIcon";
 import SiteFooter from "@/components/SiteFooter";
 import PremiumVisual from "@/components/PremiumVisual";
 import { cashbackVisual, heroVisual, showcaseVisuals } from "@/lib/visuals";
+import { priorityComparators } from "@/lib/seo/priority-comparators";
 
 const pillars = categories
   .filter((category) => category.status === "active")
@@ -27,6 +28,27 @@ const trustPoints = [
     title: "Données protégées",
     description: "Tes informations sont sécurisées et confidentielles.",
     icon: "lock" as const,
+  },
+];
+
+const conversionProofs = [
+  {
+    title: "Offres partenaires importées",
+    value: "Awin + manuel",
+    description: "Les liens peuvent venir de l’import Awin ou de l’admin interne.",
+    icon: "handshake" as const,
+  },
+  {
+    title: "Tunnel mesurable",
+    value: "Lead + clic",
+    description: "Diagnostic, déblocage des offres et clic affilié sont traçables.",
+    icon: "activity" as const,
+  },
+  {
+    title: "SEO prêt Google",
+    value: "Sitemap actif",
+    description: "Les pages prioritaires sont liées, indexables et déclarées dans le sitemap.",
+    icon: "globe" as const,
   },
 ];
 
@@ -190,6 +212,58 @@ export default function Home() {
               <p className="mt-2 text-sm leading-6 text-neutral-400">{point.description}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className="px-5 pb-14 sm:px-8 lg:px-10">
+        <div className="mx-auto grid max-w-7xl gap-4 lg:grid-cols-[0.88fr_1.12fr] lg:items-stretch">
+          <div className="rounded-[2rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.14),transparent_34%),rgba(255,255,255,0.045)] p-6 sm:p-8">
+            <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Pages qui doivent rapporter</p>
+            <h2 className="mt-3 text-3xl font-bold sm:text-4xl">Les comparateurs à pousser en priorité.</h2>
+            <p className="mt-4 text-sm leading-7 text-neutral-300">
+              Ces entrées couvrent les intentions les plus directes : box, mobile, énergie, assurance habitation et banque. Elles sont reliées depuis
+              l’accueil, la page comparateurs et le sitemap pour aider Google à comprendre la structure du site.
+            </p>
+            <div className="mt-6 grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+              {conversionProofs.map((proof) => (
+                <article key={proof.title} className="rounded-2xl border border-white/10 bg-slate-950/55 p-4">
+                  <div className="flex items-start gap-3">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-cyan-400/10 text-cyan-300 ring-1 ring-inset ring-cyan-300/20">
+                      <BrandIcon name={proof.icon} className="h-5 w-5" />
+                    </span>
+                    <span>
+                      <span className="block text-xs font-bold uppercase tracking-[0.18em] text-emerald-300">{proof.value}</span>
+                      <span className="mt-1 block font-bold text-white">{proof.title}</span>
+                      <span className="mt-1 block text-sm leading-6 text-neutral-400">{proof.description}</span>
+                    </span>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+            {priorityComparators.map((link, index) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="group flex min-h-56 flex-col justify-between rounded-[1.6rem] border border-neutral-800 bg-neutral-900/45 p-5 transition duration-300 hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-cyan-400/10"
+              >
+                <span>
+                  <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-slate-950 shadow-lg shadow-black/20">
+                    <BrandIcon name={getCategoryIcon(link.slug)} className="h-5 w-5" />
+                  </span>
+                  <span className="mt-5 block text-xs font-black uppercase tracking-[0.2em] text-cyan-300">Priorité #{index + 1}</span>
+                  <span className="mt-3 block text-lg font-black text-white">{link.title}</span>
+                  <span className="mt-3 block text-sm leading-6 text-neutral-400">{link.body}</span>
+                </span>
+                <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-cyan-200">
+                  Comparer
+                  <BrandIcon name="arrow-right" className="h-4 w-4 transition group-hover:translate-x-0.5" />
+                </span>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
