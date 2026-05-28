@@ -33,8 +33,8 @@ export async function POST(request: Request) {
   const description = getString(body, "description", 500);
   const affiliateUrl = getString(body, "affiliateUrl", 1000);
   const annualSavings = parseBoundedNumber(body.annualSavings, 0, 10_000);
-  const monthlyCost = parseBoundedNumber(body.monthlyCost, 0, 2_000);
-  const cashbackAmount = parseBoundedNumber(body.cashbackAmount, 0, 2_000);
+  const monthlyCost = parseBoundedMoney(body.monthlyCost, 0, 2_000);
+  const cashbackAmount = parseBoundedMoney(body.cashbackAmount, 0, 2_000);
   const priority = parseBoundedNumber(body.priority, 0, 1_000);
 
   if (!isSafeSlug(category) || !provider || !title || !isSafeOfferUrl(affiliateUrl)) {
@@ -121,7 +121,7 @@ export async function PATCH(request: Request) {
   if (typeof body.sponsored === "boolean") update.sponsored = body.sponsored;
 
   const annualSavings = parseBoundedNumber(body.annualSavings, 0, 10_000);
-  const cashbackAmount = parseBoundedNumber(body.cashbackAmount, 0, 2_000);
+  const cashbackAmount = parseBoundedMoney(body.cashbackAmount, 0, 2_000);
   const priority = parseBoundedNumber(body.priority, 0, 1_000);
 
   if (annualSavings !== null) update.annual_savings_estimate = annualSavings;
@@ -164,6 +164,13 @@ function parseBoundedNumber(value: unknown, min: number, max: number) {
   if (value === null || value === undefined || value === "") return null;
   if (typeof value !== "number" || !Number.isFinite(value)) return null;
   return Math.max(min, Math.min(max, Math.round(value)));
+}
+
+function parseBoundedMoney(value: unknown, min: number, max: number) {
+  if (value === null || value === undefined || value === "") return null;
+  if (typeof value !== "number" || !Number.isFinite(value)) return null;
+  const bounded = Math.max(min, Math.min(max, value));
+  return Math.round(bounded * 100) / 100;
 }
 
 function isSafeOfferUrl(value: string) {
