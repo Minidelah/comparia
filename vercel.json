@@ -8,6 +8,10 @@
     {
       "path": "/api/cron/awin-refresh",
       "schedule": "30 4 * * *"
+    },
+    {
+      "path": "/api/cron/organic-publish",
+      "schedule": "0 9 * * *"
     }
   ]
 }
