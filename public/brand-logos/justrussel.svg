@@ -1,0 +1,5 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="128" height="128" rx="32" fill="#F97316"/>
+  <path d="M41 68c0-17 10-30 23-30s23 13 23 30c0 15-10 25-23 25S41 83 41 68Z" fill="#FFF7ED"/>
+  <text x="64" y="75" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="900" fill="#9A3412">JR</text>
+</svg>

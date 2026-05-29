@@ -1,0 +1,5 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="128" height="128" rx="32" fill="#7C3AED"/>
+  <path d="M64 24 96 38v27c0 25-18 39-32 45-14-6-32-20-32-45V38l32-14Z" fill="#EDE9FE"/>
+  <text x="64" y="76" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="900" fill="#4C1D95">ACH</text>
+</svg>

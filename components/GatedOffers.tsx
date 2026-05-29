@@ -122,11 +122,7 @@ export default function GatedOffers({ categorySlug, categoryTitle, categorySavin
                     <div>
                       <div className="flex items-center justify-between gap-2">
                         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white p-2 shadow-lg shadow-black/25 ring-1 ring-white/70">
-                          {choice.logo ? (
-                            <img src={choice.logo} alt="" width={34} height={34} loading="lazy" className="h-8 w-8 object-contain" />
-                          ) : (
-                            <BrandIcon name={choice.icon} className="h-6 w-6 text-slate-950" />
-                          )}
+                          <LogoMark src={choice.logo} icon={choice.icon} size="large" />
                         </span>
                         <span className="rounded-full bg-white/[0.08] px-2 py-1 text-[11px] font-bold text-slate-300">Choix {index + 1}</span>
                       </div>
@@ -138,7 +134,7 @@ export default function GatedOffers({ categorySlug, categoryTitle, categorySavin
                       <div className="flex -space-x-2">
                         {choice.partnerLogos.map((logo) => (
                           <span key={`${choice.id}-${logo}`} className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-950 bg-white p-1 shadow-sm">
-                            <img src={logo} alt="" width={22} height={22} loading="lazy" className="h-5 w-5 object-contain" />
+                            <LogoMark src={logo} icon={choice.icon} size="small" />
                           </span>
                         ))}
                         {choice.partnerLogos.length === 0 ? (
@@ -272,4 +268,29 @@ function buildChoicePreviews(categorySlug: string, categoryTitle: string, offers
 
 function uniqueLogos(logos: Array<string | undefined>): string[] {
   return Array.from(new Set(logos.filter((logo): logo is string => Boolean(logo))));
+}
+
+function LogoMark({ src, icon, size }: { src?: string; icon: IconName; size: "small" | "large" }) {
+  const iconClassName = size === "large" ? "h-6 w-6 text-slate-950" : "h-4 w-4 text-slate-950";
+  const imageClassName = size === "large" ? "h-8 w-8 object-contain" : "h-5 w-5 object-contain";
+  const imageSize = size === "large" ? 34 : 22;
+
+  return (
+    <span className="relative flex h-full w-full items-center justify-center">
+      <BrandIcon name={icon} className={iconClassName} />
+      {src ? (
+        <img
+          src={src}
+          alt=""
+          width={imageSize}
+          height={imageSize}
+          loading="lazy"
+          className={`absolute ${imageClassName}`}
+          onError={(event) => {
+            event.currentTarget.remove();
+          }}
+        />
+      ) : null}
+    </span>
+  );
 }
