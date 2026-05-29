@@ -1,0 +1,29 @@
+<svg width="1000" height="1500" viewBox="0 0 1000 1500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <image href="backgrounds/pin-insurance-bg.png" width="1000" height="1500" preserveAspectRatio="xMidYMid slice"/>
+  <rect width="1000" height="1500" fill="url(#shade)"/>
+  <image href="../../public/comparia-logo.svg" x="76" y="78" width="68" height="68"/>
+  <text x="160" y="112" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="900">COMPARIA</text>
+  <text x="76" y="316" fill="#FFFFFF" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="900">
+    <tspan x="76" dy="0">Assurance</tspan>
+    <tspan x="76" dy="86">qui augmente ?</tspan>
+  </text>
+  <text x="78" y="520" fill="#CFFAFE" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700">
+    <tspan x="78" dy="0">Compare avant de renouveler :</tspan>
+    <tspan x="78" dy="48">garanties, franchises, prix annuel.</tspan>
+  </text>
+  <g transform="translate(78 1260)">
+    <rect width="844" height="96" rx="32" fill="url(#cta)"/>
+    <text x="422" y="61" text-anchor="middle" fill="#06111F" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="900">Comparer gratuitement</text>
+  </g>
+  <defs>
+    <linearGradient id="shade" x1="500" y1="0" x2="500" y2="1500">
+      <stop stop-color="#020617" stop-opacity="0.92"/>
+      <stop offset="0.47" stop-color="#020617" stop-opacity="0.56"/>
+      <stop offset="1" stop-color="#020617" stop-opacity="0.84"/>
+    </linearGradient>
+    <linearGradient id="cta" x1="78" y1="1260" x2="922" y2="1356">
+      <stop stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#34D399"/>
+    </linearGradient>
+  </defs>
+</svg>

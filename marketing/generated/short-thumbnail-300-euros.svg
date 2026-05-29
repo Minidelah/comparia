@@ -1,0 +1,29 @@
+<svg width="1080" height="1920" viewBox="0 0 1080 1920" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <image href="backgrounds/pin-general-bg.png" width="1080" height="1920" preserveAspectRatio="xMidYMid slice"/>
+  <rect width="1080" height="1920" fill="url(#shade)"/>
+  <image href="../../public/comparia-logo.svg" x="70" y="74" width="76" height="76"/>
+  <text x="162" y="118" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="900">COMPARIA</text>
+  <text x="70" y="380" fill="#FFFFFF" font-family="Arial, Helvetica, sans-serif" font-size="108" font-weight="900">
+    <tspan x="70" dy="0">300€</tspan>
+    <tspan x="70" dy="116">par an ?</tspan>
+  </text>
+  <text x="72" y="640" fill="#CFFAFE" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="800">
+    <tspan x="72" dy="0">Les factures à vérifier</tspan>
+    <tspan x="72" dy="54">avant de payer trop.</tspan>
+  </text>
+  <g transform="translate(70 1694)">
+    <rect width="940" height="108" rx="36" fill="url(#cta)"/>
+    <text x="470" y="68" text-anchor="middle" fill="#06111F" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="900">Faire le diagnostic</text>
+  </g>
+  <defs>
+    <linearGradient id="shade" x1="540" y1="0" x2="540" y2="1920">
+      <stop stop-color="#020617" stop-opacity="0.92"/>
+      <stop offset="0.48" stop-color="#020617" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#020617" stop-opacity="0.86"/>
+    </linearGradient>
+    <linearGradient id="cta" x1="70" y1="1694" x2="1010" y2="1802">
+      <stop stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#34D399"/>
+    </linearGradient>
+  </defs>
+</svg>

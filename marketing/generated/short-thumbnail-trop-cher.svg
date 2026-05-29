@@ -1,0 +1,41 @@
+<svg width="1080" height="1920" viewBox="0 0 1080 1920" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <image href="backgrounds/short-thumbnail-bg.png" width="1080" height="1920" preserveAspectRatio="xMidYMid slice"/>
+  <rect width="1080" height="1920" fill="url(#shade)"/>
+  <image href="../../public/comparia-logo.svg" x="70" y="74" width="76" height="76"/>
+  <text x="162" y="118" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="900">COMPARIA</text>
+  <text x="70" y="360" fill="#FFFFFF" font-family="Arial, Helvetica, sans-serif" font-size="94" font-weight="900">
+    <tspan x="70" dy="0">Tu payes</tspan>
+    <tspan x="70" dy="104">trop cher ?</tspan>
+  </text>
+  <text x="72" y="590" fill="#CFFAFE" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="800">
+    <tspan x="72" dy="0">Compare tes factures</tspan>
+    <tspan x="72" dy="54">en 2 minutes</tspan>
+  </text>
+  <g transform="translate(72 750)">
+    <rect width="302" height="66" rx="33" fill="rgba(34,211,238,0.2)" stroke="rgba(103,232,249,0.4)"/>
+    <text x="151" y="43" text-anchor="middle" fill="#E0F2FE" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="900">Box</text>
+  </g>
+  <g transform="translate(72 835)">
+    <rect width="350" height="66" rx="33" fill="rgba(52,211,153,0.18)" stroke="rgba(52,211,153,0.38)"/>
+    <text x="175" y="43" text-anchor="middle" fill="#D1FAE5" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="900">Assurance</text>
+  </g>
+  <g transform="translate(72 920)">
+    <rect width="300" height="66" rx="33" fill="rgba(34,211,238,0.2)" stroke="rgba(103,232,249,0.4)"/>
+    <text x="150" y="43" text-anchor="middle" fill="#E0F2FE" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="900">Énergie</text>
+  </g>
+  <g transform="translate(70 1694)">
+    <rect width="940" height="108" rx="36" fill="url(#cta)"/>
+    <text x="470" y="68" text-anchor="middle" fill="#06111F" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="900">Voir mes économies</text>
+  </g>
+  <defs>
+    <linearGradient id="shade" x1="540" y1="0" x2="540" y2="1920">
+      <stop stop-color="#020617" stop-opacity="0.9"/>
+      <stop offset="0.5" stop-color="#020617" stop-opacity="0.46"/>
+      <stop offset="1" stop-color="#020617" stop-opacity="0.84"/>
+    </linearGradient>
+    <linearGradient id="cta" x1="70" y1="1694" x2="1010" y2="1802">
+      <stop stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#34D399"/>
+    </linearGradient>
+  </defs>
+</svg>
