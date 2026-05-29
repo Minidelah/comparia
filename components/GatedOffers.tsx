@@ -19,9 +19,10 @@ type ChoicePreview = {
   helper: string;
   badge: string;
   icon: IconName;
-  logo?: string;
   partnerLogos: string[];
 };
+
+const COMPARIA_LOGO = "/comparia-logo.svg";
 
 export default function GatedOffers({ categorySlug, categoryTitle, categorySaving, offers }: Props) {
   const [unlocked, setUnlocked] = useState(false);
@@ -122,7 +123,7 @@ export default function GatedOffers({ categorySlug, categoryTitle, categorySavin
                     <div>
                       <div className="flex items-center justify-between gap-2">
                         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white p-2 shadow-lg shadow-black/25 ring-1 ring-white/70">
-                          <LogoMark src={choice.logo} icon={choice.icon} size="large" />
+                          <LogoMark icon={choice.icon} size="large" />
                         </span>
                         <span className="rounded-full bg-white/[0.08] px-2 py-1 text-[11px] font-bold text-slate-300">Choix {index + 1}</span>
                       </div>
@@ -190,52 +191,48 @@ function trackFunnelEvent(eventName: string, categorySlug: string, meta: Record<
 }
 
 function buildChoicePreviews(categorySlug: string, categoryTitle: string, offers: OfferSlot[]): ChoicePreview[] {
-  const partnerLogos = offers.map((offer) => offer.logo).filter((logo): logo is string => Boolean(logo));
   const categoryIcon = getCategoryIcon(categorySlug);
-  const firstLogo = partnerLogos[0];
-  const secondLogo = partnerLogos[1] ?? firstLogo;
-  const thirdLogo = partnerLogos[2] ?? secondLogo;
 
   const byCategory: Record<string, Omit<ChoicePreview, "partnerLogos">[]> = {
     "box-internet": [
-      { id: "box-internet", label: "Box internet", helper: "Fibre, Wi-Fi et prix mensuel comparés.", badge: "Maison connectée", icon: "router", logo: firstLogo },
-      { id: "box-mobile", label: "Box + mobile", helper: "Internet fixe et forfait regroupés.", badge: "Pack malin", icon: "phone", logo: secondLogo },
-      { id: "box-tv", label: "Box + TV", helper: "Débit, chaînes et engagement vérifiés.", badge: "Triple play", icon: "tv", logo: thirdLogo },
+      { id: "box-internet", label: "Box internet", helper: "Fibre, Wi-Fi et prix mensuel comparés.", badge: "Maison connectée", icon: "router" },
+      { id: "box-mobile", label: "Box + mobile", helper: "Internet fixe et forfait regroupés.", badge: "Pack malin", icon: "phone" },
+      { id: "box-tv", label: "Box + TV", helper: "Débit, chaînes et engagement vérifiés.", badge: "Triple play", icon: "tv" },
     ],
     "forfait-mobile": [
-      { id: "mobile-5g", label: "Forfait 5G", helper: "Data, réseau et prix réel du forfait.", badge: "Usage quotidien", icon: "phone", logo: firstLogo },
-      { id: "mobile-budget", label: "Petit prix", helper: "Forfaits simples pour payer moins.", badge: "Économie", icon: "coins", logo: secondLogo },
-      { id: "mobile-roaming", label: "Europe & Suisse", helper: "Options utiles pour voyager sans surprise.", badge: "International", icon: "globe", logo: thirdLogo },
+      { id: "mobile-5g", label: "Forfait 5G", helper: "Data, réseau et prix réel du forfait.", badge: "Usage quotidien", icon: "phone" },
+      { id: "mobile-budget", label: "Petit prix", helper: "Forfaits simples pour payer moins.", badge: "Économie", icon: "coins" },
+      { id: "mobile-roaming", label: "Europe & Suisse", helper: "Options utiles pour voyager sans surprise.", badge: "International", icon: "globe" },
     ],
     electricite: [
-      { id: "electricite-prix", label: "Prix bas", helper: "Offres classées par gain estimé.", badge: "Économie", icon: "bolt", logo: firstLogo },
-      { id: "electricite-stable", label: "Prix stable", helper: "Contrats plus lisibles sur la durée.", badge: "Sérénité", icon: "shield", logo: secondLogo },
-      { id: "electricite-verte", label: "Offre verte", helper: "Options énergie verte et garanties.", badge: "Responsable", icon: "sparkles", logo: thirdLogo },
+      { id: "electricite-prix", label: "Prix bas", helper: "Offres classées par gain estimé.", badge: "Économie", icon: "bolt" },
+      { id: "electricite-stable", label: "Prix stable", helper: "Contrats plus lisibles sur la durée.", badge: "Sérénité", icon: "shield" },
+      { id: "electricite-verte", label: "Offre verte", helper: "Options énergie verte et garanties.", badge: "Responsable", icon: "sparkles" },
     ],
     gaz: [
-      { id: "gaz-chauffage", label: "Chauffage", helper: "Offres adaptées à ta consommation.", badge: "Foyer", icon: "flame", logo: firstLogo },
-      { id: "gaz-prix", label: "Prix maîtrisé", helper: "Mensualités et conditions comparées.", badge: "Budget", icon: "shield", logo: secondLogo },
-      { id: "gaz-service", label: "Service client", helper: "Souscription et suivi plus simples.", badge: "Confort", icon: "home", logo: thirdLogo },
+      { id: "gaz-chauffage", label: "Chauffage", helper: "Offres adaptées à ta consommation.", badge: "Foyer", icon: "flame" },
+      { id: "gaz-prix", label: "Prix maîtrisé", helper: "Mensualités et conditions comparées.", badge: "Budget", icon: "shield" },
+      { id: "gaz-service", label: "Service client", helper: "Souscription et suivi plus simples.", badge: "Confort", icon: "home" },
     ],
     "assurance-habitation": [
-      { id: "habitation-locataire", label: "Locataire", helper: "Garanties essentielles et prix comparés.", badge: "Logement", icon: "home", logo: firstLogo },
-      { id: "habitation-proprietaire", label: "Propriétaire", helper: "Protection adaptée au bien et aux risques.", badge: "Protection", icon: "shield", logo: secondLogo },
-      { id: "habitation-assistance", label: "Assistance", helper: "Dégâts, urgence et services inclus.", badge: "Soutien", icon: "help", logo: thirdLogo },
+      { id: "habitation-locataire", label: "Locataire", helper: "Garanties essentielles et prix comparés.", badge: "Logement", icon: "home" },
+      { id: "habitation-proprietaire", label: "Propriétaire", helper: "Protection adaptée au bien et aux risques.", badge: "Protection", icon: "shield" },
+      { id: "habitation-assistance", label: "Assistance", helper: "Dégâts, urgence et services inclus.", badge: "Soutien", icon: "help" },
     ],
     "assurance-auto": [
-      { id: "auto-tiers", label: "Au tiers", helper: "Couverture simple pour réduire le coût.", badge: "Prix", icon: "car", logo: firstLogo },
-      { id: "auto-tous-risques", label: "Tous risques", helper: "Protection renforcée pour ton véhicule.", badge: "Garantie", icon: "shield", logo: secondLogo },
-      { id: "auto-assistance", label: "Assistance", helper: "Dépannage, kilométrage et options utiles.", badge: "Service", icon: "help", logo: thirdLogo },
+      { id: "auto-tiers", label: "Au tiers", helper: "Couverture simple pour réduire le coût.", badge: "Prix", icon: "car" },
+      { id: "auto-tous-risques", label: "Tous risques", helper: "Protection renforcée pour ton véhicule.", badge: "Garantie", icon: "shield" },
+      { id: "auto-assistance", label: "Assistance", helper: "Dépannage, kilométrage et options utiles.", badge: "Service", icon: "help" },
     ],
     "assurance-moto": [
-      { id: "moto-tiers", label: "Moto au tiers", helper: "L’essentiel pour rouler assuré.", badge: "Prix", icon: "scooter", logo: firstLogo },
-      { id: "moto-vol", label: "Vol & incendie", helper: "Garanties utiles selon ton deux-roues.", badge: "Protection", icon: "shield", logo: secondLogo },
-      { id: "moto-assistance", label: "Assistance", helper: "Dépannage et options du quotidien.", badge: "Service", icon: "help", logo: thirdLogo },
+      { id: "moto-tiers", label: "Moto au tiers", helper: "L’essentiel pour rouler assuré.", badge: "Prix", icon: "scooter" },
+      { id: "moto-vol", label: "Vol & incendie", helper: "Garanties utiles selon ton deux-roues.", badge: "Protection", icon: "shield" },
+      { id: "moto-assistance", label: "Assistance", helper: "Dépannage et options du quotidien.", badge: "Service", icon: "help" },
     ],
     banque: [
-      { id: "banque-carte", label: "Carte gratuite", helper: "Frais, plafonds et conditions comparés.", badge: "Compte", icon: "credit-card", logo: firstLogo },
-      { id: "banque-mobile", label: "App mobile", helper: "Pilotage simple et services inclus.", badge: "Digital", icon: "phone", logo: secondLogo },
-      { id: "banque-voyage", label: "Voyage", helper: "Paiements, retraits et frais à l’étranger.", badge: "International", icon: "globe", logo: thirdLogo },
+      { id: "banque-carte", label: "Carte gratuite", helper: "Frais, plafonds et conditions comparés.", badge: "Compte", icon: "credit-card" },
+      { id: "banque-mobile", label: "App mobile", helper: "Pilotage simple et services inclus.", badge: "Digital", icon: "phone" },
+      { id: "banque-voyage", label: "Voyage", helper: "Paiements, retraits et frais à l’étranger.", badge: "International", icon: "globe" },
     ],
   };
 
@@ -247,50 +244,43 @@ function buildChoicePreviews(categorySlug: string, categoryTitle: string, offers
       helper: offer.description,
       badge: offer.badge,
       icon: categoryIcon,
-      logo: offer.logo,
     }));
 
   const fallbackChoices =
     choices.length > 0
       ? choices
       : [
-          { id: `${categorySlug}-best`, label: `Choix ${categoryTitle}`, helper: "Profil, prix et avantages comparés.", badge: "Meilleur choix", icon: categoryIcon, logo: firstLogo },
-          { id: `${categorySlug}-price`, label: "Meilleur prix", helper: "Option pensée pour réduire la facture.", badge: "Économie", icon: "coins" as const, logo: secondLogo },
-          { id: `${categorySlug}-service`, label: "Service utile", helper: "Avantages et conditions vérifiés.", badge: "Confort", icon: "shield" as const, logo: thirdLogo },
+          { id: `${categorySlug}-best`, label: `Choix ${categoryTitle}`, helper: "Profil, prix et avantages comparés.", badge: "Meilleur choix", icon: categoryIcon },
+          { id: `${categorySlug}-price`, label: "Meilleur prix", helper: "Option pensée pour réduire la facture.", badge: "Économie", icon: "coins" as const },
+          { id: `${categorySlug}-service`, label: "Service utile", helper: "Avantages et conditions vérifiés.", badge: "Confort", icon: "shield" as const },
         ];
 
-  return fallbackChoices.slice(0, 3).map((choice, index) => ({
+  return fallbackChoices.slice(0, 3).map((choice) => ({
     ...choice,
-    logo: choice.logo ?? partnerLogos[index],
-    partnerLogos: uniqueLogos([choice.logo, partnerLogos[index], partnerLogos[index + 1], partnerLogos[0]]).slice(0, 3),
+    partnerLogos: [COMPARIA_LOGO],
   }));
-}
-
-function uniqueLogos(logos: Array<string | undefined>): string[] {
-  return Array.from(new Set(logos.filter((logo): logo is string => Boolean(logo))));
 }
 
 function LogoMark({ src, icon, size }: { src?: string; icon: IconName; size: "small" | "large" }) {
   const iconClassName = size === "large" ? "h-6 w-6 text-slate-950" : "h-4 w-4 text-slate-950";
   const imageClassName = size === "large" ? "h-8 w-8 object-contain" : "h-5 w-5 object-contain";
   const imageSize = size === "large" ? 34 : 22;
+  const logoSrc = src ?? COMPARIA_LOGO;
 
   return (
     <span className="relative flex h-full w-full items-center justify-center">
       <BrandIcon name={icon} className={iconClassName} />
-      {src ? (
-        <img
-          src={src}
-          alt=""
-          width={imageSize}
-          height={imageSize}
-          loading="lazy"
-          className={`absolute ${imageClassName}`}
-          onError={(event) => {
-            event.currentTarget.remove();
-          }}
-        />
-      ) : null}
+      <img
+        src={logoSrc}
+        alt=""
+        width={imageSize}
+        height={imageSize}
+        loading="lazy"
+        className={`absolute ${imageClassName}`}
+        onError={(event) => {
+          event.currentTarget.remove();
+        }}
+      />
     </span>
   );
 }
