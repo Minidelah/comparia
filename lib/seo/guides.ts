@@ -620,6 +620,254 @@ export const seoGuides: SeoGuide[] = [
       },
     ],
   },
+  {
+    slug: "comparateur-factures-maison",
+    title: "Comparateur de factures maison : par où commencer pour économiser",
+    description:
+      "Méthode simple pour comparer les factures de la maison : électricité, gaz, box internet, mobile et abonnements.",
+    eyebrow: "Factures maison",
+    categorySlug: "electricite",
+    intent: "optimiser",
+    heroMetric: "maison",
+    intro:
+      "Quand plusieurs factures pèsent en même temps, le plus dur est de savoir par où commencer. Un bon comparateur de factures maison ne regarde pas seulement le prix : il hiérarchise les contrats selon le potentiel d’économie, la simplicité d’action et l’urgence.",
+    painPoints: ["Trop de contrats à suivre", "Factures qui augmentent", "Offres difficiles à comparer", "Priorité floue"],
+    steps: [
+      { title: "Liste les dépenses récurrentes", body: "Électricité, gaz, internet, mobile, assurances et abonnements donnent une première carte claire du budget." },
+      { title: "Classe par potentiel", body: "Commence par les contrats chers, anciens ou récemment augmentés plutôt que par les petites lignes." },
+      { title: "Passe au bon comparateur", body: "Une fois la priorité identifiée, utilise le tunnel dédié pour obtenir un résultat plus pertinent." },
+    ],
+    signals: ["Hausse mensuelle", "Contrats anciens", "Budget serré", "Dépenses dispersées"],
+    faq: [
+      {
+        question: "Quelle facture comparer en premier ?",
+        answer:
+          "Commence par les contrats les plus chers ou les plus anciens : assurance habitation, auto, box internet, énergie ou mutuelle selon ton profil.",
+      },
+      {
+        question: "Un comparateur de factures remplace-t-il un budget ?",
+        answer:
+          "Non. Il complète le budget en montrant quelles lignes peuvent être remises en concurrence rapidement.",
+      },
+    ],
+  },
+  {
+    slug: "economiser-300-euros-par-an",
+    title: "Économiser 300 euros par an : les factures à vérifier en priorité",
+    description:
+      "Guide pratique pour viser 300 euros d’économies annuelles en comparant assurance, box, mobile, énergie et banque.",
+    eyebrow: "Pouvoir d’achat",
+    categorySlug: "assurance-auto",
+    intent: "économiser",
+    heroMetric: "300€/an",
+    intro:
+      "Économiser 300 euros par an ne demande pas forcément de changer son mode de vie. Le plus efficace est souvent de remettre en concurrence quelques contrats du quotidien qui ont vieilli, augmenté ou ne correspondent plus à ton usage.",
+    painPoints: ["Contrats inchangés depuis longtemps", "Petites hausses répétées", "Options oubliées", "Promotions expirées"],
+    steps: [
+      { title: "Regarde les gros postes", body: "Assurance auto, habitation, mutuelle et énergie concentrent souvent les écarts les plus visibles." },
+      { title: "Vérifie box et mobile", body: "Une promotion terminée ou trop de data inutilisée peut créer une économie simple." },
+      { title: "Additionne les petits gains", body: "30€ ici, 80€ là, 120€ ailleurs : le total annuel devient vite concret." },
+    ],
+    signals: ["Plusieurs hausses", "Budget mensuel tendu", "Contrats peu relus", "Factures automatiques"],
+    faq: [
+      {
+        question: "Peut-on vraiment économiser 300 euros par an ?",
+        answer:
+          "Oui, selon le profil. L’écart peut venir d’un seul contrat très cher ou de plusieurs petites optimisations cumulées.",
+      },
+      {
+        question: "Faut-il tout changer pour économiser ?",
+        answer:
+          "Non. L’objectif est d’identifier les contrats qui valent vraiment une comparaison, pas de changer pour changer.",
+      },
+    ],
+  },
+  {
+    slug: "facture-box-trop-chere",
+    title: "Facture box trop chère : les signes qu’il faut comparer",
+    description:
+      "Repère les signes d’une facture box internet trop chère et compare fibre, Wi-Fi, TV, engagement et prix après promotion.",
+    eyebrow: "Box internet",
+    categorySlug: "box-internet",
+    intent: "économiser",
+    heroMetric: "box",
+    intro:
+      "Une facture box devient souvent trop chère sans alerte claire : fin de promotion, options TV peu utilisées, matériel ancien, frais ajoutés ou débit qui ne suit plus les besoins du foyer.",
+    painPoints: ["Prix supérieur à 35€/mois", "Promotion terminée", "Options inutilisées", "Wi-Fi faible"],
+    steps: [
+      { title: "Compare le prix complet", body: "Regarde le tarif actuel, le prix après promotion et les frais liés au changement." },
+      { title: "Évalue le besoin réel", body: "Un foyer seul, une famille, le télétravail et le streaming n’exigent pas la même offre." },
+      { title: "Teste les paniers utiles", body: "Box seule, box + mobile ou box + TV : chaque panier doit correspondre à un usage réel." },
+    ],
+    signals: ["TV non utilisée", "Fibre disponible", "Offre ancienne", "Frais qui s’ajoutent"],
+    faq: [
+      {
+        question: "À partir de quand une box internet est trop chère ?",
+        answer:
+          "Il n’y a pas de seuil unique, mais une box ancienne au-dessus de 35€/mois mérite souvent une comparaison, surtout si les options sont peu utilisées.",
+      },
+      {
+        question: "Changer de box fait-il perdre son numéro fixe ?",
+        answer:
+          "La portabilité est souvent possible, mais elle doit être demandée correctement au moment du changement.",
+      },
+    ],
+  },
+  {
+    slug: "facture-mobile-trop-chere",
+    title: "Facture mobile trop chère : réduire son forfait sans se tromper",
+    description:
+      "Guide pour réduire une facture mobile trop chère en comparant data, réseau, Europe, Suisse et prix durable.",
+    eyebrow: "Mobile",
+    categorySlug: "forfait-mobile",
+    intent: "économiser",
+    heroMetric: "mobile",
+    intro:
+      "Une facture mobile trop chère vient souvent d’un forfait surdimensionné, d’une promotion expirée ou d’options internationales qui ne servent pas. La bonne comparaison commence par la consommation réelle.",
+    painPoints: ["Data non utilisée", "Prix promo fini", "Options internationales", "Réseau moyen"],
+    steps: [
+      { title: "Lis ta data réelle", body: "Ton téléphone affiche souvent la consommation mensuelle. C’est le meilleur point de départ." },
+      { title: "Vérifie les zones utiles", body: "France, Europe ou Suisse : ne paie pas une zone que tu n’utilises jamais." },
+      { title: "Compare le prix durable", body: "Le prix après quelques mois compte plus que le tarif d’appel." },
+    ],
+    signals: ["Plus de 15€/mois", "Moins de 20 Go utilisés", "Suisse inutile", "Offre ancienne"],
+    faq: [
+      {
+        question: "Comment savoir si mon forfait mobile est trop cher ?",
+        answer:
+          "Compare ton prix mensuel à ta data réellement utilisée, au réseau nécessaire et aux zones incluses. Un gros forfait peu utilisé est souvent optimisable.",
+      },
+      {
+        question: "Faut-il garder son opérateur historique ?",
+        answer:
+          "Pas forcément. Le bon choix dépend de la couverture réelle dans tes lieux de vie et du prix durable.",
+      },
+    ],
+  },
+  {
+    slug: "assurance-auto-prix-augmente",
+    title: "Assurance auto qui augmente : que vérifier avant de changer",
+    description:
+      "Guide pour comprendre une hausse d’assurance auto et comparer garanties, franchises, usage et prix annuel.",
+    eyebrow: "Assurance auto",
+    categorySlug: "assurance-auto",
+    intent: "changer",
+    heroMetric: "hausse",
+    intro:
+      "Une assurance auto qui augmente n’est pas toujours injustifiée, mais elle mérite une vérification. Si ton véhicule vieillit, si ton usage baisse ou si ton bonus évolue, ton contrat peut ne plus être compétitif.",
+    painPoints: ["Prime en hausse", "Véhicule moins coté", "Kilométrage réduit", "Franchise élevée"],
+    steps: [
+      { title: "Identifie la hausse", body: "Compare l’ancien prix, le nouveau prix et les garanties qui ont réellement changé." },
+      { title: "Mets à jour ton profil", body: "Usage, stationnement, kilométrage et valeur du véhicule peuvent modifier le bon niveau de couverture." },
+      { title: "Compare à garanties égales", body: "Le prix ne suffit pas : franchises, assistance et exclusions doivent rester cohérentes." },
+    ],
+    signals: ["Hausse annuelle", "Bonus meilleur", "Usage réduit", "Voiture ancienne"],
+    faq: [
+      {
+        question: "Pourquoi mon assurance auto augmente ?",
+        answer:
+          "La hausse peut venir du profil, du marché, des sinistres, de frais ou d’une évolution tarifaire. Comparer permet de vérifier si le prix reste compétitif.",
+      },
+      {
+        question: "Faut-il réduire les garanties pour payer moins ?",
+        answer:
+          "Pas toujours. Il faut d’abord adapter les garanties à la valeur du véhicule et au risque réel.",
+      },
+    ],
+  },
+  {
+    slug: "assurance-habitation-augmentation",
+    title: "Assurance habitation qui augmente : comparer avant de renouveler",
+    description:
+      "Guide pour réagir à une hausse d’assurance habitation et comparer logement, garanties, franchise et prix annuel.",
+    eyebrow: "Assurance habitation",
+    categorySlug: "assurance-habitation",
+    intent: "changer",
+    heroMetric: "hausse",
+    intro:
+      "Quand l’assurance habitation augmente, beaucoup de foyers laissent passer par habitude. Pourtant, un logement, une surface ou un statut qui n’a pas changé peut parfois obtenir une offre plus cohérente ailleurs.",
+    painPoints: ["Cotisation en hausse", "Contrat ancien", "Garanties floues", "Franchise peu lisible"],
+    steps: [
+      { title: "Relis le contrat actuel", body: "Vérifie garanties, exclusions, franchise et assistance avant de comparer." },
+      { title: "Requalifie le logement", body: "Locataire, propriétaire, surface et valeur des biens doivent être à jour." },
+      { title: "Compare le coût annuel", body: "Une économie utile doit rester compatible avec les garanties essentielles." },
+    ],
+    signals: ["Hausse sans changement", "Déménagement", "Surface différente", "Contrat jamais comparé"],
+    faq: [
+      {
+        question: "Que faire si mon assurance habitation augmente ?",
+        answer:
+          "Commence par vérifier les garanties et la franchise, puis compare des offres similaires pour voir si la hausse reste cohérente.",
+      },
+      {
+        question: "Peut-on changer d’assurance habitation facilement ?",
+        answer:
+          "Souvent oui selon l’ancienneté et la situation du contrat, mais il faut s’assurer de ne pas créer de période sans couverture.",
+      },
+    ],
+  },
+  {
+    slug: "frontaliers-suisse-economiser-factures",
+    title: "Frontaliers Suisse : les factures à comparer en priorité",
+    description:
+      "Guide pour frontaliers Suisse-France : change CHF/EUR, santé, mobile, assurance et factures du foyer à optimiser.",
+    eyebrow: "Frontaliers",
+    categorySlug: "change-chf-eur",
+    intent: "optimiser",
+    heroMetric: "CHF/EUR",
+    intro:
+      "Un frontalier Suisse-France a souvent des dépenses classiques et des besoins spécifiques : change CHF/EUR, santé, mobile, banque, assurance et logement. Le bon ordre de comparaison évite de perdre du temps.",
+    painPoints: ["Frais de change", "Santé complexe", "Mobile Suisse", "Banque chère"],
+    steps: [
+      { title: "Commence par le change", body: "Si tu convertis régulièrement des CHF, les frais invisibles peuvent peser sur l’année." },
+      { title: "Clarifie la santé", body: "LAMal, CMU/PUMA et mutuelle complémentaire doivent être regardées selon ton foyer." },
+      { title: "Optimise les contrats classiques", body: "Box, mobile, assurance auto et habitation restent aussi des leviers d’économie." },
+    ],
+    signals: ["Salaire CHF", "Dépenses EUR", "Régime santé flou", "Mobile transfrontalier"],
+    faq: [
+      {
+        question: "Quelle facture comparer en premier quand on est frontalier ?",
+        answer:
+          "Le change CHF/EUR est souvent prioritaire si les montants convertis sont réguliers, puis viennent santé, banque, mobile et assurances.",
+      },
+      {
+        question: "Comparia couvre-t-il les besoins frontaliers ?",
+        answer:
+          "Oui, avec des parcours dédiés au change CHF/EUR et à l’assurance santé frontalier, en plus des comparateurs classiques.",
+      },
+    ],
+  },
+  {
+    slug: "checklist-factures-a-verifier",
+    title: "Checklist factures à vérifier : les 10 lignes qui peuvent coûter trop cher",
+    description:
+      "Checklist pratique pour vérifier les factures du foyer : énergie, box, mobile, assurances, banque, santé et abonnements.",
+    eyebrow: "Checklist",
+    categorySlug: "abonnements",
+    intent: "optimiser",
+    heroMetric: "10 lignes",
+    intro:
+      "Une bonne checklist de factures évite de se disperser. L’idée n’est pas de tout changer, mais de repérer les lignes qui ont augmenté, qui ne servent plus ou qui n’ont pas été comparées depuis longtemps.",
+    painPoints: ["Prélèvements oubliés", "Contrats automatiques", "Prix qui montent", "Services doublons"],
+    steps: [
+      { title: "Vérifie les contrats lourds", body: "Assurances, énergie, box et mutuelle peuvent créer les plus gros écarts." },
+      { title: "Nettoie les petites lignes", body: "Streaming, apps, sport et logiciels peuvent peser une fois additionnés." },
+      { title: "Planifie une revue trimestrielle", body: "Une vérification régulière évite d’attendre plusieurs années avant de comparer." },
+    ],
+    signals: ["Abonnements doublons", "Assurances anciennes", "Factures qui augmentent", "Budget peu lisible"],
+    faq: [
+      {
+        question: "Quelles factures vérifier chaque année ?",
+        answer:
+          "Assurance auto, habitation, mutuelle, énergie, box internet, mobile, banque et abonnements récurrents méritent une vérification annuelle.",
+      },
+      {
+        question: "Comment ne pas oublier ses abonnements ?",
+        answer:
+          "Regarde les prélèvements bancaires des trois derniers mois et classe chaque ligne en utile, à réduire ou à supprimer.",
+      },
+    ],
+  },
 ];
 
 export function getGuide(slug: string) {
