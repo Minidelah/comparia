@@ -132,7 +132,7 @@ export default function ComparatorWizard({ category }: { category: Category }) {
       const nextState: LeadState = payload.persisted ? "saved" : "local";
       setLeadState(nextState);
       if (!payload.persisted) {
-        setLeadError(payload.details?.message ?? payload.reason ?? "Sauvegarde Supabase non confirmée");
+        setLeadError("La sauvegarde en ligne n’a pas été confirmée. Le comparatif reste disponible sur cet appareil.");
       }
       persistLeadLocally(leadStorageKey, {
         email,
@@ -154,7 +154,7 @@ export default function ComparatorWizard({ category }: { category: Category }) {
       });
     } catch {
       setLeadState("local");
-      setLeadError("La route /api/leads n’a pas répondu. Vérifie le terminal npm run dev.");
+      setLeadError("La sauvegarde en ligne n’a pas été confirmée. Tu peux quand même consulter tes offres et réessayer plus tard.");
       persistLeadLocally(leadStorageKey, { email, phone, firstName, persisted: false });
       window.dispatchEvent(new CustomEvent("ctf:lead-captured", { detail: { categorySlug: category.slug, persisted: false } }));
       trackFunnelEvent("lead_capture_failed", category.slug, { reason: "network_or_api_error" });
@@ -287,7 +287,7 @@ export default function ComparatorWizard({ category }: { category: Category }) {
             <div className="mt-4 rounded-2xl border border-amber-300/30 bg-amber-300/10 p-4 text-sm leading-6 text-amber-100">
               <p className="font-semibold">Sauvegarde non confirmée</p>
               <p className="mt-1">{leadError}</p>
-              <p className="mt-2 text-amber-100/80">Le comparatif reste utilisable. Vérifie le dashboard admin si le problème persiste.</p>
+              <p className="mt-2 text-amber-100/80">Le comparatif reste utilisable et tes réponses restent disponibles sur cet appareil.</p>
             </div>
           )}
           <div className="mt-4 flex flex-wrap gap-2">
@@ -382,15 +382,15 @@ function OptionCard({
     <button
       type="button"
       onClick={() => onChoose(option)}
-      className="group min-h-36 rounded-2xl border border-white/10 bg-white/[0.055] p-4 text-center shadow-xl shadow-black/10 transition duration-300 hover:-translate-y-1 hover:border-orange-300/45 hover:bg-white/[0.085] focus:outline-none focus:ring-2 focus:ring-orange-300/40 sm:min-h-44"
+      className="group min-h-36 rounded-2xl border border-white/10 bg-white/[0.055] p-4 text-center shadow-xl shadow-black/10 transition duration-300 hover:-translate-y-1 hover:border-cyan-300/45 hover:bg-white/[0.085] focus:outline-none focus:ring-2 focus:ring-cyan-300/40 sm:min-h-44"
     >
-      <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-orange-300/25 bg-orange-300/10 text-orange-300 transition group-hover:scale-105 group-hover:bg-orange-300/15 sm:h-16 sm:w-16">
+      <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-300/25 bg-cyan-300/10 text-cyan-300 transition group-hover:scale-105 group-hover:border-emerald-300/35 group-hover:bg-emerald-300/10 group-hover:text-emerald-200 sm:h-16 sm:w-16">
         <BrandIcon name={icon} className="h-8 w-8 sm:h-9 sm:w-9" />
       </span>
       <span className="mt-4 block text-sm font-black uppercase tracking-[0.02em] text-white sm:text-base">
         {option}
       </span>
-      <span className="mx-auto mt-3 flex h-7 w-7 items-center justify-center rounded-full border border-cyan-200/70 bg-slate-950/60 text-[11px] font-black text-cyan-100 transition group-hover:border-orange-300 group-hover:text-orange-200">
+      <span className="mx-auto mt-3 flex h-7 w-7 items-center justify-center rounded-full border border-cyan-200/70 bg-slate-950/60 text-[11px] font-black text-cyan-100 transition group-hover:border-emerald-300 group-hover:text-emerald-200">
         {index + 1}
       </span>
     </button>

@@ -197,7 +197,7 @@ export default async function ComparatorDetailPage({
               <PremiumVisual
                 src={visual.src}
                 alt={visual.alt}
-                eyebrow="Identité visuelle"
+                eyebrow="Repères utiles"
                 title={visual.title}
                 metric={category.saving}
                 tone={visual.tone}
@@ -206,8 +206,8 @@ export default async function ComparatorDetailPage({
                 sizes="(min-width: 1024px) 36vw, 100vw"
               />
               <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6">
-                <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Pourquoi cette page est claire</p>
-                <h2 className="mt-3 text-2xl font-semibold">Le visuel sert la conversion, pas la décoration.</h2>
+                <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Comment Comparia trie</p>
+                <h2 className="mt-3 text-2xl font-semibold">Le comparatif part de ton besoin réel.</h2>
                 <p className="mt-3 text-sm leading-7 text-slate-300">{visual.body}</p>
                 <div className="mt-5 grid gap-3 sm:grid-cols-3">
                   {category.flow.slice(0, 3).map((step) => (
@@ -275,9 +275,16 @@ export default async function ComparatorDetailPage({
               <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6">
                 <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Transparence avant activation</p>
                 <ul className="mt-5 space-y-3 text-sm leading-6 text-slate-300">
-                  <li>• Une économie chiffrée avant le clic.</li>
-                  <li>• Une recommandation hiérarchisée plutôt qu’une liste brute.</li>
-                  <li>• Une distinction claire entre meilleur choix, cashback et sponsorisation.</li>
+                  {[
+                    "Une économie estimée avant le clic.",
+                    "Une recommandation hiérarchisée plutôt qu’une liste brute.",
+                    "Une distinction claire entre meilleur choix, avantage et sponsorisation.",
+                  ].map((item) => (
+                    <li key={item} className="flex gap-3">
+                      <BrandIcon name="check-circle" className="mt-1 h-4 w-4 shrink-0 text-emerald-300" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
               <AffiliateDisclosure />
@@ -288,10 +295,10 @@ export default async function ComparatorDetailPage({
       {category.status === "active" && (
         <div className="fixed inset-x-4 bottom-4 z-40 sm:hidden">
           <Link
-            href="#offres"
+            href="#devis"
             className="block rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-500 px-5 py-4 text-center font-bold text-white shadow-2xl shadow-cyan-950/60"
           >
-            Voir les offres
+            Comparer maintenant
           </Link>
         </div>
       )}
@@ -350,7 +357,7 @@ function FeaturedUniverses({ universes }: { universes: FeaturedUniverse[] }) {
 function TrustStrip() {
   const items = [
     { label: "Classement transparent", icon: "check-circle" as const },
-    { label: "Logos partenaires lisibles", icon: "globe" as const },
+    { label: "Résultat lisible", icon: "globe" as const },
     { label: "Tunnel court, mobile first", icon: "phone" as const },
   ];
 

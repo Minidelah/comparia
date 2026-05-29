@@ -6,7 +6,6 @@ import BrandIcon, { getCategoryIcon } from "@/components/BrandIcon";
 import SiteFooter from "@/components/SiteFooter";
 import PremiumVisual from "@/components/PremiumVisual";
 import { getCategoryVisual, groupVisuals } from "@/lib/visuals";
-import { priorityComparators } from "@/lib/seo/priority-comparators";
 
 export default function ComparateursPage() {
   return (
@@ -20,8 +19,8 @@ export default function ComparateursPage() {
             Tous les grands contrats qui pèsent sur ton budget, réunis au même endroit.
           </h1>
           <p className="mt-5 text-slate-300">
-            Comparia n’a pas vocation à devenir un catalogue froid. Chaque comparateur s’inscrit dans un
-            diagnostic plus large pour t’aider à savoir quoi optimiser en premier.
+            Choisis une catégorie, réponds à quelques questions et accède à un comparatif adapté à ton profil. L’objectif :
+            savoir rapidement où tu peux économiser sans te perdre dans une liste d’offres.
           </p>
         </section>
 
@@ -36,35 +35,6 @@ export default function ComparateursPage() {
             </a>
           ))}
         </nav>
-
-        <section className="mt-8 rounded-[2rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.14),transparent_36%),rgba(255,255,255,0.045)] p-5 sm:p-6">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Pages prioritaires</p>
-              <h2 className="mt-3 text-2xl font-semibold">Les recherches les plus rentables à couvrir.</h2>
-            </div>
-            <p className="max-w-xl text-sm leading-6 text-slate-400">
-              Cinq entrées SEO claires pour capter les intentions box, mobile, énergie, assurance et banque.
-            </p>
-          </div>
-          <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-            {priorityComparators.map((link, index) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="group rounded-[1.35rem] border border-white/10 bg-slate-950/60 p-4 transition duration-300 hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-cyan-400/10"
-              >
-                <span className="text-xs font-black uppercase tracking-[0.2em] text-cyan-300">#{index + 1}</span>
-                <h3 className="mt-3 text-base font-black text-white">{link.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-400">{link.body}</p>
-                <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-cyan-200">
-                  Ouvrir
-                  <BrandIcon name="arrow-right" className="h-4 w-4 transition group-hover:translate-x-0.5" />
-                </span>
-              </Link>
-            ))}
-          </div>
-        </section>
 
         <div className="mt-8 space-y-8">
           {categoryGroups.map((group) => (

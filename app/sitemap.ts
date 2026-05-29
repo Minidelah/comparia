@@ -9,7 +9,6 @@ const staticRoutes = [
   "/comparateurs",
   "/guides",
   "/onboarding",
-  "/tableau-de-bord",
   "/a-propos",
   "/contact",
   "/mentions-legales",

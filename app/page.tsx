@@ -95,7 +95,7 @@ export default function Home() {
       <section className="relative overflow-hidden px-5 py-12 sm:px-8 sm:py-20 lg:px-10">
         <div className="pointer-events-none absolute inset-0 -z-10">
           <div className="absolute inset-0 bg-gradient-to-b from-blue-950/50 via-neutral-950 to-neutral-950" />
-          <div className="absolute left-1/2 top-0 h-96 w-96 -translate-x-1/2 rounded-full bg-gradient-to-r from-cyan-500/40 via-blue-500/30 to-purple-500/20 blur-3xl" />
+          <div className="absolute left-1/2 top-0 h-96 w-96 -translate-x-1/2 rounded-full bg-gradient-to-r from-cyan-500/35 via-blue-500/25 to-emerald-500/18 blur-3xl" />
           <div className="absolute right-0 top-1/4 h-72 w-72 rounded-full bg-cyan-500/15 blur-3xl" />
           <div className="absolute -left-20 bottom-0 h-96 w-96 rounded-full bg-blue-500/10 blur-3xl" />
         </div>
@@ -215,12 +215,12 @@ export default function Home() {
             <div>
               <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200">
                 <BrandIcon name="cashback" className="h-4 w-4" />
-                Cashback prêt à brancher
+                Économies suivies
               </div>
-              <h2 className="mt-4 text-3xl font-bold sm:text-4xl">Transforme chaque économie en action mesurable.</h2>
+              <h2 className="mt-4 text-3xl font-bold sm:text-4xl">Tu vois clairement ce qui peut faire baisser la facture.</h2>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-neutral-300">
-                Les offres sont déjà structurées pour gérer cashback, priorité, note, tags et lien affilié. Quand un partenaire propose une récompense,
-                Comparia peut l'afficher proprement sans mélanger recommandation objective et rémunération.
+                Comparia sépare les économies estimées, les avantages éventuels et les conditions utiles avant de te rediriger. Le but est simple :
+                comprendre vite ce qui vaut le coup, sans mélanger prix, bonus et promesses commerciales.
               </p>
             </div>
             <div className="grid gap-4 xl:grid-cols-[0.9fr_1fr] xl:items-stretch">
@@ -238,9 +238,9 @@ export default function Home() {
               />
               <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
                 {[
-                  ["Cashback", "Montant isolé et lisible avant le clic."],
-                  ["Affiliation", "Clics trackés avec catégorie, source et horodatage."],
-                  ["Priorité", "Les offres restent classées selon l'intérêt utilisateur."],
+                  ["Prix", "Le coût reste lisible avant de passer à l’étape suivante."],
+                  ["Avantages", "Les bonus éventuels sont séparés de la recommandation."],
+                  ["Pertinence", "Les options affichées restent liées à ton profil."],
                 ].map(([title, body]) => (
                   <article key={title} className="rounded-2xl border border-neutral-800 bg-neutral-900/50 p-5">
                     <p className="text-lg font-bold text-white">{title}</p>
@@ -292,11 +292,11 @@ export default function Home() {
         <div className="mx-auto max-w-7xl">
           <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <div>
-              <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Visuels premium</p>
-              <h2 className="mt-3 text-3xl font-bold sm:text-4xl">Chaque univers a maintenant sa propre identité.</h2>
+              <p className="text-sm uppercase tracking-[0.3em] text-cyan-300">Univers Comparia</p>
+              <h2 className="mt-3 text-3xl font-bold sm:text-4xl">Des repères visuels pour choisir plus vite.</h2>
             </div>
             <p className="max-w-xl text-sm leading-6 text-neutral-400">
-              Illustrations locales, légères et cohérentes : pas de dépendance fragile, un rendu fintech, et des images prêtes pour le SEO.
+              Chaque famille de contrats garde une interface claire : maison, assurances, finances et frontaliers se parcourent sans confusion.
             </p>
           </div>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">

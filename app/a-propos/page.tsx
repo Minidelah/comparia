@@ -13,7 +13,7 @@ export default function AboutPage() {
     <LegalPageShell
       eyebrow="À propos"
       title="Un comparateur pensé pour les décisions utiles, pas pour noyer l’utilisateur."
-      description="Comparia aide les particuliers à comparer leurs contrats du quotidien avec une approche simple, transparente et orientée conversion qualifiée."
+      description="Comparia aide les particuliers à comparer leurs contrats du quotidien avec une approche simple, transparente et centrée sur les économies utiles."
     >
       <h2>Notre mission</h2>
       <p>
@@ -33,13 +33,12 @@ export default function AboutPage() {
         <li>Collecter uniquement les informations utiles à la comparaison.</li>
         <li>Afficher les économies estimées avant le clic.</li>
         <li>Distinguer les offres sponsorisées, les cashbacks et les recommandations principales.</li>
-        <li>Suivre les conversions pour améliorer la qualité des mises en relation.</li>
+        <li>Améliorer les recommandations grâce aux retours et aux résultats observés.</li>
       </ul>
 
       <h2>Pour les partenaires</h2>
       <p>
-        Comparia est construit comme un canal d’acquisition propre : formulaires avec consentement, catégories qualifiées, tracking des clics affiliés et dashboard de
-        pilotage. Les partenaires peuvent nous contacter à{" "}
+        Comparia travaille avec des partenaires capables de proposer des offres claires, utiles et cohérentes avec les profils comparés. Les partenaires peuvent nous contacter à{" "}
         <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a>.
       </p>
 

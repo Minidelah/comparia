@@ -154,13 +154,13 @@ export default function OnboardingPage() {
               Tu pourrais économiser jusqu’à {summary?.totalSavings ?? 0}€/an.
             </h1>
             <p className="mt-4 max-w-2xl text-slate-300">
-              Voici les optimisations les plus prometteuses pour ton profil. Les chiffres sont volontairement
-              simples pour ce premier diagnostic ; le prochain palier sera de les relier à de vraies offres.
+              Voici les optimisations les plus prometteuses pour ton profil. Les montants restent des estimations,
+              mais ils t’aident à choisir le bon comparateur en priorité.
             </p>
             <p className="mt-4 text-sm text-slate-400">
               {saveState === "saving" && "Sauvegarde du diagnostic en cours…"}
               {saveState === "saved" && "Diagnostic sauvegardé pour ton suivi Comparia."}
-              {saveState === "not-configured" && "Diagnostic prêt. La sauvegarde cloud sera activée dès que Supabase sera configuré."}
+              {saveState === "not-configured" && "Diagnostic prêt. La sauvegarde en ligne sera retentée automatiquement plus tard."}
               {saveState === "saved-locally" && "Diagnostic sauvegardé sur cet appareil. La synchronisation cloud sera retentée plus tard."}
             </p>
             <div className="mt-6 grid gap-3 sm:grid-cols-3">
@@ -186,10 +186,10 @@ export default function OnboardingPage() {
           )}
 
           {aiInsight && (
-            <section className="mt-6 rounded-[2rem] border border-violet-300/20 bg-gradient-to-br from-violet-400/10 via-cyan-400/10 to-blue-500/10 p-6">
+            <section className="mt-6 rounded-[2rem] border border-cyan-300/20 bg-gradient-to-br from-cyan-400/10 via-blue-500/10 to-emerald-400/10 p-6">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div>
-                  <p className="text-sm uppercase tracking-[0.3em] text-violet-200">
+                  <p className="text-sm uppercase tracking-[0.3em] text-cyan-200">
                     Assistant IA {aiInsight.generatedBy === "mistral" ? "Mistral" : "Comparia"}
                   </p>
                   <h2 className="mt-3 text-2xl font-semibold">Lecture personnalisée de ton profil</h2>
@@ -206,7 +206,10 @@ export default function OnboardingPage() {
                   <p className="text-sm font-semibold text-white">Priorités d’action</p>
                   <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-300">
                     {aiInsight.actionPriorities.map((priority) => (
-                      <li key={priority}>• {priority}</li>
+                      <li key={priority} className="flex gap-3">
+                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-300" />
+                        <span>{priority}</span>
+                      </li>
                     ))}
                   </ul>
                 </div>
@@ -239,15 +242,14 @@ export default function OnboardingPage() {
           </section>
 
           <section className="mt-6 rounded-[2rem] border border-white/10 bg-white/5 p-6">
-            <h2 className="text-2xl font-semibold">Sauvegarde tes économies.</h2>
+            <h2 className="text-2xl font-semibold">Passe à l’action sur la bonne catégorie.</h2>
             <p className="mt-3 max-w-2xl text-slate-300">
-              Crée ton compte pour suivre tes recommandations, recevoir les nouvelles opportunités et voir
-              combien tu as réellement gagné avec Comparia.
+              Choisis le comparateur prioritaire, affine ton profil et consulte les offres utiles sans repartir de zéro.
             </p>
             <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-              <button className="rounded-2xl bg-white px-5 py-3 font-semibold text-slate-950 transition hover:bg-cyan-100">
-                Créer mon compte
-              </button>
+              <Link href="/comparateurs" className="rounded-2xl bg-white px-5 py-3 text-center font-semibold text-slate-950 transition hover:bg-cyan-100">
+                Choisir un comparateur
+              </Link>
               <button
                 onClick={() => setShowResults(false)}
                 className="rounded-2xl border border-white/10 bg-white/5 px-5 py-3 font-semibold transition hover:bg-white/10"
@@ -268,7 +270,7 @@ export default function OnboardingPage() {
         <SiteNav compact />
 
         <div className="mt-8 overflow-hidden rounded-full border border-white/10 bg-white/5">
-          <div className="h-2 bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-400 transition-all" style={{ width: progress }} />
+          <div className="h-2 bg-gradient-to-r from-cyan-400 via-blue-500 to-emerald-400 transition-all" style={{ width: progress }} />
         </div>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_0.42fr]">
@@ -465,7 +467,7 @@ export default function OnboardingPage() {
               <button
                 onClick={nextStep}
                 disabled={!canContinue}
-                className="rounded-2xl bg-blue-500 px-5 py-3 font-semibold transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-40"
+                className="rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-500 px-5 py-3 font-semibold transition hover:shadow-lg hover:shadow-cyan-500/20 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {step === stepLabels.length ? "Voir mes économies" : "Continuer"}
               </button>
@@ -476,7 +478,7 @@ export default function OnboardingPage() {
             <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Pourquoi ces questions ?</p>
             <div className="mt-5 space-y-4 text-sm leading-6 text-slate-300">
               <p>Comparia ne pousse pas une offre au hasard : il estime d’abord où ton argent s’échappe.</p>
-              <p>Plus le profil est précis, plus la recommandation peut devenir utile — et crédible.</p>
+              <p>Plus le profil est précis, plus la recommandation peut devenir utile et facile à comparer.</p>
               <p className="text-emerald-300">Tes données restent privées et tu gardes le contrôle.</p>
             </div>
           </aside>
