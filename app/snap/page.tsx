@@ -40,8 +40,15 @@ const quickChoices: {
     saving: "jusqu’à 130€/an",
   },
   {
-    title: "Assurance",
-    helper: "Auto ou habitation",
+    title: "Assurance auto",
+    helper: "Prix, garanties, franchises",
+    href: `/comparateurs/assurance-auto?${utm}`,
+    icon: getCategoryIcon("assurance-auto"),
+    saving: "jusqu’à 396€/an",
+  },
+  {
+    title: "Assurance habitation",
+    helper: "Locataire, propriétaire, assistance",
     href: `/comparateurs/assurance-habitation?${utm}`,
     icon: getCategoryIcon("assurance-habitation"),
     saving: "jusqu’à 480€/an",
